@@ -1,6 +1,7 @@
 ---
 permalink: /quickstart_gui/
 title: "GUI Quick Start"
+layout: single
 toc: true
 toc_label: "Contents"
 toc_icon: "list"
