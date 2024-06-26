@@ -8,7 +8,7 @@ toc_sticky: true  # Makes the TOC stick on scroll
 ---
 This page describes basic installation of the full OpenRVDAS package and basic manipulation of its graphic user interface. A separate [OpenRVDAS Quickstart](quick_start.md) document describes how to configure simple OpenRVDAS loggers and run them from the command line.
 
-## Installation and Quickstart
+# Installation and Quickstart
 The simplest way to get started with OpenRVDAS is to bring up a clean dedicated Ubuntu 23 or
 Centos 8 machine, either on actual hardware or as a virtual machine via a tool like [VirtualBox](https://www.virtualbox.org/).
 (There is no reason why you _shouldn't_ run it on your personal laptop or other machine, but  if you do, you will need to
@@ -103,7 +103,7 @@ What is going on here is that, in addition to writing raw data to port 6224, the
 
 The sections below describe the architecture and the nature of logger configurations and control scripts in greater detail.
 
-## Under the Hood
+# Under the Hood
 What's going on here is that the supervisor daemon is running a handful of Python scripts, most centrally, one called `logger_manager.py`. The logger manager consults a database to see what loggers exists, and which logger configurations should be running, then starts/stops the appropriate processes accordingly.
 
 Rather than talking to the logger manager directly, we use the Django-based GUI to read/write the database to update what the logger manager should be doing.
@@ -135,16 +135,16 @@ Valid commands:
   ...
 ```
 
-## Displaying Logger Data
+# Displaying Logger Data
 
-### InfluxDB/Grafana
+## InfluxDB/Grafana
 The preferred way to display live and historical OpenRVDAS data is to use the suite of InfluxDB and Grafana
 tools that are installed and configured using the utils/install_influxdb.sh script, Please see the
 [Grafana/InfluxDB](../docs/grafana_displays.md) page for information on using these tools.
 
 ![Grafana Dashboard Example](../assets/images/grafana_dashboard.png)
 
-### Highcharts + native
+## Highcharts + native
 OpenRVDAS does still ship with its own Highcharts-based widgets for displaying live and historical data using Javascript-based web widgets. A set of sample web displays created with these widgets is available at [http://openrvdas/display](http://openrvdas/display); the
 source files for these displays are under the project's
 [display](../display) directory. If you are using the
