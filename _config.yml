@@ -75,7 +75,7 @@ author:
   links:
     - label: "Ocean Data Tools Home"
       icon: "fas fa-fw fa-link"
-      url: "https:/oceandata.tools/openrvdas"
+      url: "https:/oceandata.tools"
     - label: "GitHub Repository"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/OceanDataTools/openrvdas"
