@@ -45,7 +45,7 @@ def logger(port, instrument):
 
 ![UDPWriter data flow](images/network_writer.png)
 
-The document [OpenRVDAS Components](components.md) describes many of the currently-implemented Readers, Transforms and Writers, and you can examine the directories [logger/readers/](../logger/readers), [logger/transforms/](../logger/transforms) and [logger/writers/](../logger/writers) for the full set of standard, implemented components.
+The document [OpenRVDAS Components](../_pages/components.md) describes many of the currently-implemented Readers, Transforms and Writers, and you can examine the directories [logger/readers/](../logger/readers), [logger/transforms/](../logger/transforms) and [logger/writers/](../logger/writers) for the full set of standard, implemented components.
 
 ## Using the Listener Class
 

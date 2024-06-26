@@ -9,7 +9,7 @@ Draft 2019-07-20
 
 This document enumerates and describes current OpenRVDAS Reader, Writer
 and Transform components. For background on using them, please see the
-[OpenRVDAS Introduction to Loggers](intro_to_loggers.md).
+[OpenRVDAS Introduction to Loggers](../docs/intro_to_loggers.md).
 
 ## Contents
 
@@ -55,7 +55,7 @@ The core of OpenRVDAS are three types of simple components designed to be
   udp_writer.write(prefixed_record)
   ```
 
-As described in [OpenRVDAS Introduction to Loggers](intro_to_loggers.md), we can combine these components to create simple and powerful loggers:
+As described in [OpenRVDAS Introduction to Loggers](../docs/intro_to_loggers.md), we can combine these components to create simple and powerful loggers:
 
 ```
 def logger(port, instrument):
@@ -86,7 +86,7 @@ listener.run()
 ```
 implements the following dataflow:
 
-![Generic listener](images/generic_listener.png)
+![Generic listener](../docs/images/generic_listener.png)
  
 As with simple invocation of the listen.py script, all readers are called in parallel, via separate threads. The values they return are passed through each transform in series, then distributed to the writers, where they are written in parallel. But in this case we have greater control over the configurations of each component than the command line interface allows, including control over in which order transforms are applied.
 
@@ -108,15 +108,15 @@ Note that we've used one of the as-yet-unintroduced tricks of the architecture a
 
 A ComposedWriter is just a structural wrapper that connects a list of Transforms (again in series) with a set of Writers (again in parallel), and packages it up to look like a simple writer:
 
-![Composed Writer](images/composed_writer.png)
+![Composed Writer](../docs/images/composed_writer.png)
 
 By wrapping our PrefixTransform and NetworkWriter into a ComposedWriter, we achieve the desired dataflow:
 
-![Using a Composed Writer](images/using_a_composed_writer.png)
+![Using a Composed Writer](../docs/images/using_a_composed_writer.png)
 
 Unsurprisingly, there is also a ComposedReader that takes a list of one or more Readers (which it runs in parallel) and one or more Transforms (which it runs in series):
 
-![Composed Reader](images/composed_reader.png)
+![Composed Reader](../docs/images/composed_reader.png)
 
 ## Using Configuration Files
 
@@ -177,7 +177,7 @@ or execute
 ```
 logger/listener/listen.py --config_file gyr1_config.yaml
 ```
-from the command line to read the file and assemble the components as specified. Please see [OpenRVDAS Configuration Files](configuration_files.md) for more information on the syntax and use of configuration files.
+from the command line to read the file and assemble the components as specified. Please see [OpenRVDAS Configuration Files](../docs/configuration_files.md) for more information on the syntax and use of configuration files.
 
 Note that not all implemented Reader, Transform and Writer components are recognized by ListenerFromLoggerConfig; please see the headers of [logger/listener/listen.py](../logger/listener/listen.py) for details.
 
@@ -311,7 +311,7 @@ Below, we list and briefly describe (most of) the currently-implemented Reader, 
   parser = RecordParser(definition_path='local/devices/*.yaml,/opt/openrvdas/local/devices/*.yaml')
   ```
 
-  If ```return_json=True```, output a JSON-encoded string for the dict; if ```return_das_record=True```, return a [DASRecord](../logger/utils/das_record.py) for it. See [Parsing](parsing.md) for more details.
+  If ```return_json=True```, output a JSON-encoded string for the dict; if ```return_das_record=True```, return a [DASRecord](../logger/utils/das_record.py) for it. See [Parsing](../docs/parsing.md) for more details.
 
 #### [TrueWindsTransform](../logger/transforms/true_winds_transform.py)
   ```
