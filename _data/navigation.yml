@@ -5,9 +5,11 @@ main:
     url: /quickstart/
   - title: "GUI Quickstart"
     url: /quickstart_gui/
-  - title: "Posts"
-    url: /posts/
-  - title: "Categories"
-    url: /categories/
-  - title: "Tags"
-    url: /tags/
+  - title: "All the Docs"
+    url: /docs/
+  #- title: "Posts"
+  #  url: /posts/
+  #- title: "Categories"
+  #  url: /categories/
+  #- title: "Tags"
+  #  url: /tags/
