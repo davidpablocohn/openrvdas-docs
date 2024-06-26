@@ -13,7 +13,7 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: OpenRVDAS Documentation
+title: Ocean Data Tools Documentation
 email:
 description: >- # this means to ignore newlines until "baseurl:"
     The Open Research Vessel Data Acquisition System (OpenRVDAS) is a
@@ -68,9 +68,11 @@ plugins:
   - jekyll-toc
 
 author:
-  name   : "First Lastname"
-  avatar : "/assets/images/bio-photo.jpg"
-  bio    : "My awesome biography constrained to a sentence or two goes here."
+  name   : "OpenRVDAS"
+  avatar : "/assets/images/shell.jpg"
+  bio    : "The Open Research Vessel Data Acquisition System (OpenRVDAS) is a
+    software framework used for building custom data acquisition systems
+    (DAS)."
   links:
     - label: "Website"
       icon: "fas fa-fw fa-link"
