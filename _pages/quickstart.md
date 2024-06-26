@@ -7,7 +7,6 @@ toc_label: "Contents"
 toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
-## Getting Started
 This page will familiarize you with OpenRVDAS and walk you through setting up and running a few simple loggers. These are _not_ the instructions to follow if you want to run it on a ship. If you actually want to set up a proper installation, please read and follow the instructions in [INSTALL.md](../INSTALL.md).
 
 ### Get the code
