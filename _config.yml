@@ -65,6 +65,7 @@ plugins:
   - jekyll-feed
   - jemoji
   - jekyll-include-cache
+  - jekyll-toc
 
 author:
   name   : "First Lastname"
@@ -115,6 +116,14 @@ defaults:
     values:
       layout: single
       author_profile: true
+
+toc:
+  min_level: 1
+  max_level: 6
+  no_toc_section_class: "no_toc_section"
+  list_class: "toc-list"
+  sublist_class: "toc-sublist"
+  item_class: "toc-list-item"
 
 category_archive:
   type: liquid

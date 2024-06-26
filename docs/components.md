@@ -11,6 +11,8 @@ This document enumerates and describes current OpenRVDAS Reader, Writer
 and Transform components. For background on using them, please see the
 [OpenRVDAS Introduction to Loggers](intro_to_loggers.md).
 
+{% toc %}
+
 ## Contents
 
 * [Introduction to Components](#introduction-to-components)
