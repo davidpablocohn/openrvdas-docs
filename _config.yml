@@ -28,8 +28,8 @@ description: >- # this means to ignore newlines until "baseurl:"
     OpenRVDAS is designed to be modular and extensible, relying on simple
     composition of Readers, Transforms and Writers to achieve the needed
     datalogging functionality.
-twitter_username: username
-github_username: username
+#twitter_username: username
+github_username: oceandatatools
 minimal_mistakes_skin: default
 search: true
 
@@ -69,7 +69,7 @@ plugins:
 
 author:
   name   : "OpenRVDAS"
-  avatar : "/assets/images/shell.jpg"
+  #avatar : "/assets/images/shell.jpg"
   bio    : "Open Research Vessel Data Acquisition System (OpenRVDAS) is a
     software framework used for building custom data acquisition systems."
   links:
