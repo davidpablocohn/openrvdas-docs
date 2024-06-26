@@ -1,3 +1,8 @@
+---
+permalink: /Components/
+title: "OpenRVDAS Components"
+layout: single
+---
 # OpenRVDAS Components
 Draft 2019-07-20
 © 2018 David Pablo Cohn

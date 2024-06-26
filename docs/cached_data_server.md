@@ -1,3 +1,8 @@
+---
+permalink: /Cached Data Server/
+title: "OpenRVDAS Cached Data Server"
+layout: single
+---
 # The OpenRVDAS Cached Data Server
 © 2019 David Pablo Cohn - DRAFT 2019-10-04
 
