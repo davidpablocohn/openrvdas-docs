@@ -6,18 +6,6 @@ toc_label: "Contents"
 toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
-# OpenRVDAS GUI Quickstart
-© 2018-2024 David Pablo Cohn - DRAFT 2024-05-16
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Installation and Quickstart](#installation-and-quickstart)
-- [Under the Hood](#under-the-hood)
-- [Displaying Logger Data](#displaying-logger-data)
-  - [InfluxDB/Grafana](#influxdb/grafana)
-  - [Highcharts + native](#highcharts-+-native)
-
 ## Overview
 This document describes basic installation of the full OpenRVDAS package and basic manipulation of its graphic user interface. A separate [OpenRVDAS Quickstart](quick_start.md) document describes how to configure simple OpenRVDAS loggers and run them from the command line.
 

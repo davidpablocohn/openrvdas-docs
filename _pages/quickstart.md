@@ -6,30 +6,9 @@ toc_label: "Contents"
 toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
-# OpenRVDAS Tutorial and Quickstart
-© 2018-2024 David Pablo Cohn - DRAFT 2024-05-016
-
-
-## Overview - needs and design philosophy
-
-One of the primary values a research vessel offers is the ability to gather accurate and timely scientific data wherever it travels. Most ships carry some combination of oceanographic, meteorological and other sensors. OpenRVDAS - the Open Research Vessel Data Acquisition System - provides a modular and extensible software architecture for gathering, processing, storing, distributing and displaying the data produced by such sensors.
-
-The OpenRVDAS code base has been written from a clean slate based on experience drawn from developing code on behalf of the US Antarctic Program and Antarctic Support Contract, and heavily informed by discussions and collaboration with members of the [RVTEC community](https://www.unols.org/committee/research-vessel-technical-enhancement-committee-rvtec). It is made available free of charge under the [MIT License](https://opensource.org/licenses/MIT).
-
-### Design Philosophy
-
-Every ship will have different requirements, so no single system can hope to accommodate everyone's needs. In addition, those requirements will change from mission to mission and year to year, so no fixed system will be optimal for any length of time.
-
-Because of this, instead of a system, we have focused on designing and building an architecture that allows easy assembly of small, modular components into whatever system is needed in a given situation.
-
-## Software Requirements
-
-OpenRVDAS loggers have been tested on most POSIX-compatible systems running Python 3.6 and above (Linux, MacOS, Windows). Web console monitoring and control are supported for MacOS and most Linux variants (Ubuntu, Red Hat, CentOS, Rocky, Raspbian) and may work on others. The Django-based web interface is designed to be compatible with most modern browsers.
-
-Please see [http://openrvdas.org](http://openrvdas.org) and [http://github.com/oceandatatools/openrvdas](http://github.com/oceandatatools/openrvdas) for the most recent code and documentation.
 
 ## Getting Started
-This section will familiarize you with OpenRVDAS and walk you through setting up and running a few simple loggers. These are _not_ the instructions to follow if you want to run it on a ship. If you actually want to set up a proper installation, please read and follow the instructions in [INSTALL.md](../INSTALL.md).
+This page will familiarize you with OpenRVDAS and walk you through setting up and running a few simple loggers. These are _not_ the instructions to follow if you want to run it on a ship. If you actually want to set up a proper installation, please read and follow the instructions in [INSTALL.md](../INSTALL.md).
 
 ### Get the code
 Download from the [OpenRVDAS GitHub repository](https://github.com/OceanDataTools/openrvdas). If you have `git` installed, you would do this by opening a terminal, changing to the directory where you want the code to live (it will create its own `openrvdas` subdirectory here) and running
@@ -38,13 +17,16 @@ Download from the [OpenRVDAS GitHub repository](https://github.com/OceanDataTool
 git clone https://github.com/OceanDataTools/openrvdas.git
 ```
 
-You can also download a ZIP file of the code from your browser at [https://github.com/OceanDataTools/openrvdas/archive/refs/heads/master.zip](https://github.com/OceanDataTools/openrvdas/archive/refs/heads/master.zip)
+You can also download a ZIP file of the code from your browser by [selecting this link](https://github.com/OceanDataTools/openrvdas/archive/refs/heads/master.zip).
 
 ### Your first logger
 The heart of OpenRVDAS is the __logger__. Loggers read data from some source (typically a sensor), optionally transform it in some or another way (timestamp, parse, perform QC), and then write it somewhere (file, database, network socket).
 
 In OpenRVDAS, these functions are implemented modularly, with __reader__, __transform__ and __writer__ components that can be connected in the desired order to perform the desired functions.
 
+ ![read, transform, writer dataflow](../assets/images/read_transform_write.png)
+
+To create and run a your first logger from the command line:
 1. Go to the top level OpenRVDAS directory:
 
 ```
