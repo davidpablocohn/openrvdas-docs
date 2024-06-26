@@ -1,6 +1,10 @@
 ---
 permalink: /quickstart/
 title: "Quick Start"
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
 ---
 # OpenRVDAS Tutorial and Quickstart
 © 2018-2024 David Pablo Cohn - DRAFT 2024-05-016
