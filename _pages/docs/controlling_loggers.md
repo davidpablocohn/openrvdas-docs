@@ -111,7 +111,7 @@ Perusing a complete cruise configuration file such as [test/NBP1406/NBP1406_crui
 
 * In the default installation, works with Django to provide a web console that provides logger status and the ability to switch cruise modes, start, stop or change logger configurations.
 
-![Logger Manager Web console](images/sample_cruise_edit_s330_small.png)
+![Logger Manager Web console](../assets/images/sample_cruise_edit_s330_small.png)
 
 By default, when the logger manager runs a logger, it will redirect
 stderr for that process to a file, by default at
@@ -187,7 +187,7 @@ running in another terminal for the logger manager to load and run it without co
 In addition to being stored, logger data may be displayed in real time via [display widgets](display_widgets.md). The most straightforward way to do this is by configuring loggers to echo their output to a [CachedDataServer](../logger/utils/cached_data_server.py). This may be done either via UDP (if the CachedDataServer has been initialized to listen on a UDP port) or via CachedDataWriter that will connect using a websocket. Widgets on display pages will then connect to the data server via a websocket and request data, as described in the [Display Widgets
 document](display_widgets.md).
 
-![Logger Manager with CachedDataServer](images/console_based_logger_manager.png)
+![Logger Manager with CachedDataServer](../assets/images/console_based_logger_manager.png)
 
 A CachedDataServer may be run as a standalone process, but it may also be invoked by the LoggerManager when handed a ``--start_data_server`` flag:
 
@@ -209,7 +209,7 @@ In addition to being controlled from a command line console, the
 logger manager may be controlled by a web console.
 
 ![Logger Manager with
- CachedDataServer](images/web_based_logger_manager.png)
+ CachedDataServer](../assets/images/web_based_logger_manager.png)
 
 If the system is installed using the default build scripts in the
 [utils directory](../utils), it will be configured to use the Django-based database (backed by SQLite) to maintain logger state and to serve a Django-based web console served by Nginx. The default installation will also configure a cached data server, which the web interface will rely on for real time status updates (the web interfaces will still be able to start/stop/select logger configurations without a cached data server; it will just not receive feedback on whether those loggers have been successfully started/stopped).

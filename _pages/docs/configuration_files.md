@@ -61,7 +61,7 @@ for readability.
 
 In this case, the configuration definition specifies the following workflow:
 
-![Dual output configuration](images/dual_writer.png)
+![Dual output configuration](../assets/images/dual_writer.png)
 
 The definition contains three essential keys: "readers",
 "transforms", and "writers" (optional keys "name", "interval" and
@@ -75,7 +75,7 @@ Recall that a Listener instance runs all its Readers in parallel, pipes
 their output to its Transforms in series, and dispatches their resulting
 output to all its Writers in parallel, as illustrated below:
 
-![Generic listener data flow](images/generic_listener.png)
+![Generic listener data flow](../assets/images/generic_listener.png)
 
 Each Reader, Transform and Writer is specified by a dict with two keys:
 ``class`` and ``kwargs``. Unsurprisingly, the ``class`` key specifies the

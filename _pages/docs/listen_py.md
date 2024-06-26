@@ -24,11 +24,11 @@ logger/listener/listen.py \
 ```
 implements the following data flow:
 
-![Dual writer dataflow](images/dual_writer.png)
+![Dual writer dataflow](../../assets/images/dual_writer.png)
 
 In general, the listen.py script runs all of the specified readers in parallel, feeds their output to the specified transforms in series, then feeds the output of the last transform to all the specified writers in parallel:
 
-![Generic listener dataflow](images/generic_listener.png)
+![Generic listener dataflow](../../assets/images/generic_listener.png)
 
 ### Specifying configurations on the command line
 

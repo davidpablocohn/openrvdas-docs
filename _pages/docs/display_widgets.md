@@ -30,7 +30,7 @@ This document discusses writing, configuring and feeding OpenRVDAS web
 displays and widgets. Please see the [Quickstart Document](../_pages/quickstart.md) for an introduction to the OpenRVDAS
 system.
 
-![OpenRVDAS Display Example](images/django_gui_static_widget.png)
+![OpenRVDAS Display Example](../assets/images/django_gui_static_widget.png)
 
 The active portions of a display are composed of widgets that retrieve
 and display data gathered by OpenRVDAS. The above diagram illustrates

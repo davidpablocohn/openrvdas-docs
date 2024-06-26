@@ -9,14 +9,14 @@ OpenRVDAS is designed to be modular and extensible, relying on simple compositio
 The project code repository is at [https://github.com/oceandatatools/openrvdas](https://github.com/oceandatatools/openrvdas).
 
 ## Where to start?
-* [OpenRVDAS Quickstart](../_pages/quickstart.md) if you want to just grab the code and poke around with basic loggers as quickly as possible.
-* [GUI Quickstart](../_pages/quickstart_gui.md) if you want to play with the web-based interface.
+* [OpenRVDAS Quickstart](../quickstart.md) if you want to just grab the code and poke around with basic loggers as quickly as possible.
+* [GUI Quickstart](../quickstart_gui.md) if you want to play with the web-based interface.
 
 Other relevant documents are:
 
 * [The Listener Script - listen.py](listen_py.md) - how to use OpenRVDAS's core utility script
 * [Configuration Files](configuration_files.md) - how to define configuration files to simplify running loggers with listen.py
-* [OpenRVDAS Components](../_pages/components.md) - what components exist and what they do
+* [OpenRVDAS Components](../components.md) - what components exist and what they do
 * [Simulating Live Data](simulating_live_data.md) - using the simulate_data.py script to simulate a live system using stored data for development and testing
 * [Grafana/InfluxDB-based Displays](grafana_displays.md) - an introduction to using InfluxDB and Grafana for displaying data
 * [Parsing](parsing.md) - how to work with the included RecordParser to turn raw text records into structured data fields

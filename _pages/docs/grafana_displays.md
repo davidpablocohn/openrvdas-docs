@@ -250,4 +250,4 @@ section.
 * Panels may be dragged around and resized. Don’t forget to hit “Save”
   (the floppy icon) prior to leaving your dashboard page.
 
-![Sample Grafana Dashboard](images/grafana_dashboard.png)
+![Sample Grafana Dashboard](../assets/images/grafana_dashboard.png)

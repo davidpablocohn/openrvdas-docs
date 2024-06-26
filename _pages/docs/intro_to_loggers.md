@@ -21,7 +21,7 @@ As described in the introduction and overview, we recognize that every ship will
 
 The core logger architecture is made up of three basic classes of components: Readers, Transforms, and Writers that can be "snapped together" to produce the necessary functionality. We have specified a simple API for these components and implemented a handful of the most useful ones in Python.
 
-![Reader, Transform and Writer](images/read_transform_write.png)
+![Reader, Transform and Writer](../assets/images/read_transform_write.png)
 
 ## Building and Running Loggers at the Code Level
 
@@ -43,7 +43,7 @@ def logger(port, instrument):
     network_writer.write(prefixed_record)
 ```
 
-![UDPWriter data flow](images/network_writer.png)
+![UDPWriter data flow](../assets/images/network_writer.png)
 
 The document [OpenRVDAS Components](../_pages/components.md) describes many of the currently-implemented Readers, Transforms and Writers, and you can examine the directories [logger/readers/](../logger/readers), [logger/transforms/](../logger/transforms) and [logger/writers/](../logger/writers) for the full set of standard, implemented components.
 
@@ -51,7 +51,7 @@ The document [OpenRVDAS Components](../_pages/components.md) describes many of t
 
 A ```Listener``` class further simplifies creation and running of loggers at the code level. It takes a list of Readers, Transforms and Writers and runs them in an "hourglass" pipeline:
 
-![Hourglass dataflow for listener class](images/generic_listener.png)
+![Hourglass dataflow for listener class](../assets/images/generic_listener.png)
 
 It runs all Readers in parallel, feeding their output to the Transforms, run in series, and feeding that output to the Writers, run in parallel, as below:
 
@@ -82,7 +82,7 @@ listen.py \
 ```
 implements the following data flow:
 
-![Dual writer dataflow](images/dual_writer.png)
+![Dual writer dataflow](../assets/images/dual_writer.png)
 
 The listen.py script and its (sometimes non-intuitive) command line options are described in greater detail in the [Listen.py Script](listen.py.md) document.
 

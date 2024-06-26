@@ -86,7 +86,7 @@ listener.run()
 ```
 implements the following dataflow:
 
-![Generic listener](../docs/images/generic_listener.png)
+![Generic listener](../assets/images/generic_listener.png)
  
 As with simple invocation of the listen.py script, all readers are called in parallel, via separate threads. The values they return are passed through each transform in series, then distributed to the writers, where they are written in parallel. But in this case we have greater control over the configurations of each component than the command line interface allows, including control over in which order transforms are applied.
 
@@ -108,15 +108,15 @@ Note that we've used one of the as-yet-unintroduced tricks of the architecture a
 
 A ComposedWriter is just a structural wrapper that connects a list of Transforms (again in series) with a set of Writers (again in parallel), and packages it up to look like a simple writer:
 
-![Composed Writer](../docs/images/composed_writer.png)
+![Composed Writer](../assets/images/composed_writer.png)
 
 By wrapping our PrefixTransform and NetworkWriter into a ComposedWriter, we achieve the desired dataflow:
 
-![Using a Composed Writer](../docs/images/using_a_composed_writer.png)
+![Using a Composed Writer](../assets/images/using_a_composed_writer.png)
 
 Unsurprisingly, there is also a ComposedReader that takes a list of one or more Readers (which it runs in parallel) and one or more Transforms (which it runs in series):
 
-![Composed Reader](../docs/images/composed_reader.png)
+![Composed Reader](../assets/images/composed_reader.png)
 
 ## Using Configuration Files
 

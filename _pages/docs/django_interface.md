@@ -28,19 +28,19 @@ assuming that is the name you gave the machine. You should see a page
 indicating that no configuration has been loaded and prompting you to
 log in.
 
-![Log in](images/log_in.png)
+![Log in](../assets/images/log_in.png)
 
 Log in using the username (rvdas) and password that you specified; you
 should now see a button that allows you to load a configuration.
 
-![No Configuration Loaded](images/no_configuration_loaded.png)
+![No Configuration Loaded](../assets/images/no_configuration_loaded.png)
 
 Select the "Load configuration file" button and browse to find
 [test/NBP1406/NBP1406_cruise.yaml](../test/NBP1406/NBP1406_cruise.yaml). Select
 "Load", and you should be looking at a loaded and ready-to-run cruise
 management page.
 
-![Sample Cruise Off](images/sample_cruise_off.png)
+![Sample Cruise Off](../assets/images/sample_cruise_off.png)
 
 The default cruise mode in the sample cruise definition is "off". It
 relies on data from simulated serial ports, so prior to running any of
@@ -82,15 +82,15 @@ the logger\_manager.py you have running in a terminal window will
 detect that a new mode has been selected and will start the logger
 configurations appropriate for that mode.
 
-![Sample Cruise Port](images/sample_cruise_port.png)
+![Sample Cruise Port](../assets/images/sample_cruise_port.png)
 
 You can also individually start, stop or modify the configuration of a logger by selecting the button indicating its current configuration.
 
-![Sample Cruise Edit s330](images/sample_cruise_edit_s330.png)
+![Sample Cruise Edit s330](../assets/images/sample_cruise_edit_s330.png)
 
 When a configuration is selected that is different from the default configuration for the mode, the main page will highlight it in yellow:
 
-![s330 yellow](images/s330_yellow.png)
+![s330 yellow](../assets/images/s330_yellow.png)
 
 
 ## Viewing Logger Output
