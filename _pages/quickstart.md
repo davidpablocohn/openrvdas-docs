@@ -9,24 +9,6 @@ toc_sticky: true  # Makes the TOC stick on scroll
 # OpenRVDAS Tutorial and Quickstart
 © 2018-2024 David Pablo Cohn - DRAFT 2024-05-016
 
-## Table of Contents
-
-- [Overview - needs and design philosophy](#overview---needs-and-design-philosophy)
-  - [Design Philosophy](#design-philosophy)
-- [Software Requirements](#software-requirements)
-- [Getting Started](#getting-started)
-  - [Get the code](#get-the-code)
-  - [Your first logger](#your-first-logger)
-  - [Your second logger](#your-second-logger)
-- [The listen.py script](#the-listen.py-script)
-- [Next things to look at](#next-things-to-look-at)
-  - [Writing/reading logfiles](#writing/reading-logfiles)
-  - [Parsing records](#parsing-records)
-  - [Writing to databases](#writing-to-databases)
-  - [Other modules](#other-modules)
-  - [Creating your own modules](#creating-your-own-modules)
-  - [Record types](#record-types)
-- [Next Steps](#next-steps)
 
 ## Overview - needs and design philosophy
 
