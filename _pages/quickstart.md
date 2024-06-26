@@ -1,4 +1,8 @@
- OpenRVDAS Tutorial and Quickstart
+---
+permalink: /quickstart/
+title: "Quick Start"
+---
+# OpenRVDAS Tutorial and Quickstart
 © 2018-2024 David Pablo Cohn - DRAFT 2024-05-016
 
 ## Table of Contents
@@ -177,14 +181,14 @@ logger/listener/listen.py \
     --transform_slice "2:" \
     --write_file -
 ```
-The script is very powerful, but also has some non-intuitive gotchas, such as dependencies in the ordering of command line parameters. Please see the dedicated [listen.py document](listen_py.md) for full details.
+The script is very powerful, but also has some non-intuitive gotchas, such as dependencies in the ordering of command line parameters. Please see the dedicated [listen.py document](../docs/listen_py.md) for full details.
 
 ## Next things to look at
 The full complement of OpenRVDAS __readers__, __transforms__ and __writers__ and their functionality can be perused in the repository itself under the `logger/` subdirectory or in the [auto-generated html module documentation](https://htmlpreview.github.io/?https://raw.githubusercontent.com/oceandatatools/openrvdas/master/docs/html/logger/index.html).
 
 To get a sense of a typical set of logger configurations, it is also instructive to look at the loggers defined in the sample cruise definition file for the NB Palmer, in the `configs:` section of [test/NBP1406/NBP1406_cruise.yaml](../test/NBP1406/NBP1406_cruise.yaml).
 
-Note that as a full cruise definition, the file contains multiple configurations for each logger, as well as "cruise modes" that specify which configuration each logger should run in which mode. To better understand cruise definition files, please see the [Controlling Loggers](controlling_loggers.md) document.
+Note that as a full cruise definition, the file contains multiple configurations for each logger, as well as "cruise modes" that specify which configuration each logger should run in which mode. To better understand cruise definition files, please see the [Controlling Loggers](../docs/controlling_loggers.md) document.
 
 ### Writing/reading logfiles
 While writing raw data to plain text files is a useful start, two modules, `LogfileWriter` and `LogfileReader` allow more refined handling for timestamped data.
@@ -241,13 +245,13 @@ or as part of an OpenRVDAS logger configuration:
         definition_path: test/NBP1406/devices/nbp_devices.yaml
 ```
 
-For detailed instructions on using the `ParseTransform`, please read the ["Record Parsing" document](parsing.md).
+For detailed instructions on using the `ParseTransform`, please read the ["Record Parsing" document](../docs/parsing.md).
 
 ### Writing to databases
 #### InfluxDB
 OpenRVDAS includes an `InfluxDBWriter` that, as one would expect, writes to the open source time-series database InfluxDB. InfluxDB and its associated graphing package Grafana can be installed and configured by running the script in `utils/install_influx.sh`.
 
-More information on using InfluxDB and Grafana with OpenRVDAS can be found on the [OpenRVDAS Grafana Displays](./grafana_displays.md) page, and on the [InfluxDB](https://www.influxdata.com/) and [Grafana](https://grafana.com/oss/grafana/) project pages.
+More information on using InfluxDB and Grafana with OpenRVDAS can be found on the [OpenRVDAS Grafana Displays](../docs/grafana_displays.md) page, and on the [InfluxDB](https://www.influxdata.com/) and [Grafana](https://grafana.com/oss/grafana/) project pages.
 
 #### Other databases
 OpenRVDAS includes a `DatabaseWriter` that can be configured to run with PostgreSQL, MySQL, MariaDB or MongoDB via a "database connector".

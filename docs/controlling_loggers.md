@@ -3,7 +3,7 @@
 
 ## Overview
 
-The [Quickstart](quickstart.md) document provides an introduction to the OpenRVDAS framework, and [Introduction to Loggers](intro_to_loggers.md) provides an introduction to the process of running *individual* loggers.
+The [Quickstart](../_pages/quickstart.md) document provides an introduction to the OpenRVDAS framework, and [Introduction to Loggers](intro_to_loggers.md) provides an introduction to the process of running *individual* loggers.
 
 This document describes operation of the [Logger Manager](../server/logger_manager.py), a multifaceted script that allows running, controlling and monitoring entire sets of loggers.
 
@@ -283,7 +283,7 @@ You will have noticed that many of the examples in this documentation make use o
   supervisor>
 ```
 
-Please see the [GUI Quickstart](quickstart_gui.md) document for detailed instructions on operating the web interface and the [server/README.md](../server/README.md) file and [logger_manager.py](../server/logger_manager.py) headers for the most up-to-date information on running logger\_manager.py.
+Please see the [GUI Quickstart](../_pages/quickstart_gui.md) document for detailed instructions on operating the web interface and the [server/README.md](../server/README.md) file and [logger_manager.py](../server/logger_manager.py) headers for the most up-to-date information on running logger\_manager.py.
 
 ### RESTful API
 

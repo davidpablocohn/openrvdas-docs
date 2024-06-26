@@ -27,7 +27,7 @@ expansion, we are __strongly__ recommending that users focus on InfluxDB/Grafana
 ## Overview
 
 This document discusses writing, configuring and feeding OpenRVDAS web
-displays and widgets. Please see the [Quickstart Document](quickstart.md) for an introduction to the OpenRVDAS
+displays and widgets. Please see the [Quickstart Document](../_pages/quickstart.md) for an introduction to the OpenRVDAS
 system.
 
 ![OpenRVDAS Display Example](images/django_gui_static_widget.png)
