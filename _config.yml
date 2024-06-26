@@ -70,20 +70,19 @@ plugins:
 author:
   name   : "OpenRVDAS"
   avatar : "/assets/images/shell.jpg"
-  bio    : "The Open Research Vessel Data Acquisition System (OpenRVDAS) is a
-    software framework used for building custom data acquisition systems
-    (DAS)."
+  bio    : "Open Research Vessel Data Acquisition System (OpenRVDAS) is a
+    software framework used for building custom data acquisition systems."
   links:
-    - label: "Website"
+    - label: "Ocean Data Tools Home"
       icon: "fas fa-fw fa-link"
       url: "https:/oceandata.tools/openrvdas"
-    - label: "GitHub"
+    - label: "GitHub Repository"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/OceanDataTools/openrvdas"
 
 footer:
   links:
-    - label: "GitHub"
+    - label: "GitHub Repository"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/OceanDataTools/openrvdas"
 
