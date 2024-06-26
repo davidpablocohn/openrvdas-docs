@@ -15,7 +15,7 @@ Centos 8 machine, either on actual hardware or as a virtual machine via a tool l
 (There is no reason why you _shouldn't_ run it on your personal laptop or other machine, but  if you do, you will need to
 pay greater attention to which scripts are configured to start on boot.) 
 
-_For the purposes of this introduction, we will assume that your have named the machine you will use `openrvdas` and that your OpenRVDAS user will be named __rvdas__; if you are using some other name then, obviously, use that name in place of `openrvdas`/`rvdas` below._
+_NOTE: For the purposes of this introduction, we will assume that your have named the machine you will use `openrvdas` and that your OpenRVDAS user will be named __rvdas__; if you are using some other name then, obviously, use that name in place of `openrvdas`/`rvdas` below._
 
 1. Install the code following the instructions in the [OpenRVDAS Installation Guide](../INSTALL.md). Use default answers when asked 
    * answer "yes" that OpenRVDAS should be started on boot
