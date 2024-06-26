@@ -1,0 +1,13 @@
+<!-- _includes/toc.html -->
+
+{% if page.toc %}
+<div id="toc">
+  <ol class="toc-list">
+    {% for heading in page.toc %}
+    <li class="toc-list-item">
+      <a href="#{{ heading.id }}">{{ heading.text }}</a>
+    </li>
+    {% endfor %}
+  </ol>
+</div>
+{% endif %}

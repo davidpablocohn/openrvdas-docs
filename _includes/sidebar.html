@@ -1,0 +1,13 @@
+<!-- _includes/sidebar.html -->
+
+<div class="sidebar">
+  <!-- Other sidebar content (e.g., navigation links) can go here -->
+
+  <!-- TOC -->
+  {% if page.toc %}
+    <nav class="sidebar-toc">
+      <h2>{{ page.toc_label | default: "Table of Contents" }}</h2>
+      {% include toc.html %}
+    </nav>
+  {% endif %}
+</div>
