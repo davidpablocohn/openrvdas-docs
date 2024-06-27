@@ -17,7 +17,7 @@ pay greater attention to which scripts are configured to start on boot.)
 
 _NOTE: For the purposes of this introduction, we will assume that your have named the machine you will use `openrvdas` and that your OpenRVDAS user will be named __rvdas__; if you are using some other name then, obviously, use that name in place of `openrvdas`/`rvdas` below._
 
-1. Install the code following the instructions in the [OpenRVDAS Installation Guide](../INSTALL.md). Use default answers when asked 
+1. Install the code following the instructions in the [OpenRVDAS Installation Guide](/install/). Use default answers when asked 
    * answer "yes" that OpenRVDAS should be started on boot
    * answer "yes" that the data simulator should be installed and started on boot
 
