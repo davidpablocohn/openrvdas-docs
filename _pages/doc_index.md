@@ -5,5 +5,5 @@ permalink: /docs/
 author_profile: true
 ---
 {% for doc in site.docs %}
-  - [{{ doc.title }}]({{ doc.permalink }})
+  - [{{ doc.title }}]({{ doc.permalink | relative_url }})
 {% endfor %}
