@@ -11,7 +11,7 @@ This document describes operation of the [Logger Manager](../server/logger_manag
 
 # The High-Order Bits
 
-The ``listen.py`` script, described in the [Introduction to listen.py doc](listen_py.md) will run a single logger defined either from command line parameters, or by loading a logger configuration file. 
+The ``listen.py`` script, described in the [Introduction to listen.py doc](/listen_py/) will run a single logger defined either from command line parameters, or by loading a logger configuration file. 
 
 The ``logger_manager.py`` script takes a more complicated file (called a "cruise definition file") that consists not only of a list of named configurations, but also of "modes" such as "off", "in port" and "underway", specifying which configurations should be running in which mode. It supports an API that lets one control and monitor it from the command line or via a web interface.
 
@@ -81,7 +81,7 @@ knud:
   - knud->net,
   - knud->file/net/db
 ```
-Perusing a complete cruise configuration file such as [test/NBP1406/NBP1406_cruise.yaml](../test/NBP1406/NBP1406_cruise.yaml) may be useful for newcomers to the system. _(For a deeper dive, please refer to [OpenRVDAS Configuration Files](configuration_files.md))._
+Perusing a complete cruise configuration file such as [test/NBP1406/NBP1406_cruise.yaml](../test/NBP1406/NBP1406_cruise.yaml) may be useful for newcomers to the system. _(For a deeper dive, please refer to [OpenRVDAS Configuration Files](/configuration_files/))._
 
 ## What the logger manager does
 
@@ -176,8 +176,8 @@ running in another terminal for the logger manager to load and run it without co
 
 ## Driving widget-based data display
 
-In addition to being stored, logger data may be displayed in real time via [display widgets](display_widgets.md). The most straightforward way to do this is by configuring loggers to echo their output to a [CachedDataServer](../logger/utils/cached_data_server.py). This may be done either via UDP (if the CachedDataServer has been initialized to listen on a UDP port) or via CachedDataWriter that will connect using a websocket. Widgets on display pages will then connect to the data server via a websocket and request data, as described in the [Display Widgets
-document](display_widgets.md).
+In addition to being stored, logger data may be displayed in real time via [display widgets](/display_widgets/) or [Grafana displays](/grafana_displays/). The most straightforward way to do this is by configuring loggers to echo their output to a [CachedDataServer](../cached_data_server/). This may be done either via UDP (if the CachedDataServer has been initialized to listen on a UDP port) or via CachedDataWriter that will connect using a websocket. Widgets on display pages will then connect to the data server via a websocket and request data, as described in the [Display Widgets
+document](/display_widgets/).
 
 ![Logger Manager with CachedDataServer](../assets/images/console_based_logger_manager.png)
 
@@ -275,14 +275,14 @@ You will have noticed that many of the examples in this documentation make use o
   supervisor>
 ```
 
-Please see the [GUI Quickstart](../_pages/quickstart_gui.md) document for detailed instructions on operating the web interface and the [server/README.md](../server/README.md) file and [logger_manager.py](../server/logger_manager.py) headers for the most up-to-date information on running logger\_manager.py.
+Please see the [GUI Quickstart](/quickstart_gui/) document for detailed instructions on operating the web interface and the [server/README.md](../server/README.md) file and [logger_manager.py](../server/logger_manager.py) headers for the most up-to-date information on running logger\_manager.py.
 
 # RESTful API
 
 In addition to the default Django-based GUI, as of April 2024, OpenRVDAS also provides HTTP/HTTPS access to a RESTful API.
 The full schema may be retrieved in YAML format by querying `http://openrvdas/api/schema` (or whatever your machine name is), but
 the currently-supported endpoints are:
-```buildoutcfg
+```
 api/cruise-configuration/
 api/select-cruise-mode/
 api/reload-current-configuration/

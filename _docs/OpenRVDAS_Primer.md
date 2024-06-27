@@ -22,7 +22,7 @@
     - zero or more **Transforms**. Transforms are applied in series.
     - one or more **Writers**. If more than one Writer, they will write parallel.
   - A simple logger configuration might be:
-    ```buildoutcfg
+    ```
     knud->net+file:
       readers:
       - class: SerialReader    # read a data string from serial port /dev/ttyr01
@@ -48,7 +48,7 @@
 **Mode / Cruise Mode**
   - Typically, a vessel will have sets of logger configurations that should all be run together: which should be running when in port, when underway, etc.
   - Modes include a list of logger configurations to run.
-  ```buildoutcfg
+  ```
     modes:
       'off':
         gyr1: gyr1->off

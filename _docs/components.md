@@ -9,7 +9,7 @@ toc_sticky: true  # Makes the TOC stick on scroll
 ---
 This document enumerates and describes current OpenRVDAS Reader, Writer
 and Transform components. For background on using them, please see the
-[OpenRVDAS Introduction to Loggers](intro_to_loggers.md).
+[OpenRVDAS Introduction to Loggers](/intro_to_loggers/).
   
 # Introduction to Components
 
@@ -43,7 +43,7 @@ The core of OpenRVDAS are three types of simple components designed to be
   udp_writer.write(prefixed_record)
   ```
 
-As described in [OpenRVDAS Introduction to Loggers](intro_to_loggers.md), we can combine these components to create simple and powerful loggers:
+As described in [OpenRVDAS Introduction to Loggers](/intro_to_loggers/), we can combine these components to create simple and powerful loggers:
 
 ```
 def logger(port, instrument):
@@ -165,7 +165,7 @@ or execute
 ```
 logger/listener/listen.py --config_file gyr1_config.yaml
 ```
-from the command line to read the file and assemble the components as specified. Please see [OpenRVDAS Configuration Files](configuration_files.md) for more information on the syntax and use of configuration files.
+from the command line to read the file and assemble the components as specified. Please see [OpenRVDAS Configuration Files](/configuration_files/) for more information on the syntax and use of configuration files.
 
 Note that not all implemented Reader, Transform and Writer components are recognized by ListenerFromLoggerConfig; please see the headers of [logger/listener/listen.py](../logger/listener/listen.py) for details.
 
@@ -299,7 +299,7 @@ Below, we list and briefly describe (most of) the currently-implemented Reader, 
   parser = RecordParser(definition_path='local/devices/*.yaml,/opt/openrvdas/local/devices/*.yaml')
   ```
 
-  If ```return_json=True```, output a JSON-encoded string for the dict; if ```return_das_record=True```, return a [DASRecord](../logger/utils/das_record.py) for it. See [Parsing](parsing.md) for more details.
+  If ```return_json=True```, output a JSON-encoded string for the dict; if ```return_das_record=True```, return a [DASRecord](../logger/utils/das_record.py) for it. See [Parsing](/parsing/) for more details.
 
 ### [TrueWindsTransform](../logger/transforms/true_winds_transform.py)
   ```
@@ -314,7 +314,7 @@ Below, we list and briefly describe (most of) the currently-implemented Reader, 
   ```
   Compute true winds from aggregated values of course, speed, heading wind direction and wind speed. Instantiated with arguments specifying which data fields provide values for those variables, then accepts DASRecords and trolls through them for the those fields. When it receives an update of one of the data fields listed in update\_on\_fields, it computes true winds using the most recent values it has for all the relevant variables. If output\_nmea=True, it outputs this record in an NMEA-like format, otherwise it output a DASRecord bearing the name specified in data\_id.
 
-  Please see [Derived Data Loggers](derived\_data.md) for more details on the general problem of creating derived data from loggers.
+  Please see [Derived Data Loggers](/derived_data/) for more details on the general problem of creating derived data from loggers.
 
 ## Future Components
 

@@ -12,7 +12,7 @@ This page will familiarize you with OpenRVDAS and walk you through setting up an
 ### Get the code
 Download from the [OpenRVDAS GitHub repository](https://github.com/OceanDataTools/openrvdas). If you have `git` installed, you would do this by opening a terminal, changing to the directory where you want the code to live (it will create its own `openrvdas` subdirectory here) and running
 
-```buildoutcfg
+```
 git clone https://github.com/OceanDataTools/openrvdas.git
 ```
 
@@ -34,7 +34,7 @@ cd openrvdas
 
 2. Create a simple logger configuration. Use the editor of your choice to create a text file named `read_license.yaml` containing the following lines:
 
-```buildoutcfg
+```
 # Read the LICENSE file as plain text
 readers:
 - class: TextFileReader
@@ -59,7 +59,7 @@ The lines define a logger in YAML format, specifying that we are to read lines o
 
 3. Let's run the logger:
 
-```buildoutcfg
+```
 > logger/listener/listen.py --config_file read_license.yaml
 license: 2024-05-07T02:35:06.723269Z MIT License
 license: 2024-05-07T02:35:07.133440Z Copyright (c) 2017 David Pablo Cohn
@@ -72,7 +72,7 @@ license: 2024-05-07T02:35:07.948601Z in the Software without restriction, includ
 
 4. Loggers can read from more than one place, by having more than one __reader__, and can write to more than one place, by having more than one __writer__. The following variation reads from the `LICENSE` file as before and echos it to stdout. But it adds a second writer that also writes it via UDP to the local network on port 6221:
 
-```buildoutcfg
+```
 # Read the LICENSE file as plain text
 readers:
 - class: TextFileReader
@@ -99,7 +99,7 @@ writers:
 
 Before we run this logger again, let's create a _second_ logger that reads the UDP records. Open a second terminal, go to the `openrvdas` directory and create a second file called `read_udp.yaml`:
 
-```buildoutcfg
+```
 readers:
 - class: UDPReader  # read UDP records from port 6221
   kwargs:
@@ -117,12 +117,13 @@ This logger reads records from UDP port 6221, strips out the first two whitespac
 
 5. Run this second logger in your second terminal window:
 
-```buildoutcfg
+```
 > logger/listener/listen.py --config_file read_udp.yaml
 ```
+
 6. Initially, nothing should happen, until you actually write something to port 6221 for it to read, by re-running the now-modified first logger in your first terminal window:
 
-```buildoutcfg
+```
 > logger/listener/listen.py --config_file read_license.yaml
 ```
 At this point you should see the annotated license file data scrolling through the first window, and the second window should begin displaying those same lines with the prefix and timestamp stripped off.
@@ -132,7 +133,7 @@ Congratulations - you've now created and run a couple of OpenRVDAS loggers!
 ## The listen.py script
 The `listen.py` script is a sort of jack-of-all-trades for OpenRVDAS. In addition to loading and running logger configurations from file, it can invoke and run many of the most frequently used modules from the command line. For example, our second logger could have been defined and run from the command line as
 
-```buildoutcfg
+```
 logger/listener/listen.py \
     --file LICENSE \
     --transform_timestamp \
@@ -142,7 +143,7 @@ logger/listener/listen.py \
 ```
 and our UDP-reading logger as
 
-```buildoutcfg
+```
 logger/listener/listen.py \
     --udp 6221 \
     --transform_slice "2:" \
@@ -194,10 +195,9 @@ into structured data fields like these:
   'fields': {'SeapCourseTrue': 213.66, 'SeapMode': 'A', 'SeapSpeedKt': 9.4},
   'timestamp': 1406851200.931}]
 ```
-
 The basic specification of the `ParseTransform` requires only telling it where to look for the appropriate device definition files. This can be done with both the command line interface:
 
-```buildoutcfg
+```
 logger/listener/listen.py \
     --udp 6224 \
     --parse_definition_path "local/devices/*.yaml,/opt/openrvdas/local/devices/*.yaml" \
@@ -206,7 +206,7 @@ logger/listener/listen.py \
 ```
 or as part of an OpenRVDAS logger configuration:
 
-```buildoutcfg
+```
     - class: ParseTransform
       kwargs:
         definition_path: test/NBP1406/devices/nbp_devices.yaml
@@ -228,7 +228,7 @@ To configure the `DatabaseWriter`, you will need to run the appropriate setup sc
 ### Other modules
 In addition to the standard OpenRVDAS modules under the `logger/` directory, your installation may include additional modules in the `local` and `contrib` directories. They may be used by specifying a module location in the logger configuration:
 
-```buildoutcfg
+```
 - class: BME280Reader
   module: contrib.raspberrypi.readers.bme280_reader
   kwargs:

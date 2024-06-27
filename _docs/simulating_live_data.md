@@ -1,5 +1,5 @@
 ---
-permalink: /simulating_data/
+permalink: /simulating_live_data/
 title: "Simulating Live Data"
 layout: single
 toc: true

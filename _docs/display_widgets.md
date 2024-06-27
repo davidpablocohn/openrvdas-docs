@@ -10,16 +10,15 @@ toc_sticky: true  # Makes the TOC stick on scroll
 
 # CAVEAT
 
-Much of this document is deprecated. The sections following this one
+_Much of this document is deprecated. The sections following this one
 all refer to OpenRVDAS-native displays, enabled on the browser side by
 either D3 or HighCharts-based widgets. For maintainability and future
-expansion, we are __strongly__ recommending that users focus on InfluxDB/Grafana-based displays, as described in the document [Grafana/InfluxDB-based Displays with OpenRVDAS](grafana_displays.md).
-
+expansion, we recommend that users focus on InfluxDB/Grafana-based displays, as described in the document [Grafana/InfluxDB-based Displays with OpenRVDAS](/grafana_displays/)._
 
 # Overview
 
 This document discusses writing, configuring and feeding OpenRVDAS web
-displays and widgets. Please see the [Quickstart Document](../_pages/quickstart.md) for an introduction to the OpenRVDAS
+displays and widgets. Please see the [Quickstart Document](/quickstart/) for an introduction to the OpenRVDAS
 system.
 
 ![OpenRVDAS Display Example](../assets/images/django_gui_static_widget.png)
@@ -328,7 +327,7 @@ convention, the WidgetServer looks for a definition of
 
 If you are using the default OpenRVDAS installation, you will have a
 CachedDataServer running and servicing websocket connections on port
-8766. Please see the [Cached Data Server](cached_data_server.md)
+8766. Please see the [Cached Data Server](/cached_data_server/)
 document for information on configuring and using Cached Data Servers.
 
 If you are running a data server and displaying widgets that are not
@@ -358,7 +357,7 @@ JavaScript display widgets. Three things are required of a widget:
 
    The format of the data dictionary is the same as that delivered by
    the CachedDataServer (described in the [Cached Data
-   Server](cached_data_server.md) document):
+   Server](/cached_data_server/) document):
    
    ```
    {

@@ -59,17 +59,18 @@ ports have names/locations like `/tmp/tty_s330` (where we will, for example, fin
     Configurations can be as simple as writing the
  received data to a file or UDP port, or as complicated as parsing it, performing mathematical transformations on the values
  it contains, or even using those values to change the state of the logger or other loggers.`Off` means, as you would expect, that
- it should do nothing. 
+ it should do nothing.
 
 
-    ![NBP Sample Cruise, Mode off](images/nbp_mode_off.png)
+    ![NBP Sample Cruise, Mode off](../assets/images/nbp_mode_off.png)
 
 
 8. If you select one of the buttons with a labeled logger configuration on it, such as `gyr1->off`, a dialog box will pop up
  with a dropdown menu allowing you to select one of the other configurations defined for that logger. It will also give you
  that logger's recent stderr output and, at the bottom of the box, the actual definition of the configuration in question.
 
-   ![NBP Sample Cruise, Select Gyro](../assets/images/sample_cruise_select_logger_config.png)
+
+    ![NBP Sample Cruise, Select Gyro](../assets/images/sample_cruise_select_logger_config.png)
 
 
 9. Cruise modes are sets of logger configurations, a mapping from each logger to the configuration it should be in when the
@@ -80,18 +81,19 @@ ports have names/locations like `/tmp/tty_s330` (where we will, for example, fin
 
 10. Select the cruise mode "off" button, and it will open a window that allows you to select a different cruise mode, as well as see the logger manager's stderr in greater detail.
 
-   ![NBP Sample Cruise, Change Mode](../assets/images/nbp_change_mode.png)
+
+    ![NBP Sample Cruise, Change Mode](../assets/images/nbp_change_mode.png)
 
 
 11. Select `no_write` from the pull-down menu and press "Change mode." After a few seconds of startup, the loggers should turn green and switch to "net" configuration, indicating that they are reading from their
  respective ports and writing UDP to the network (in this case, to port 6224), but not writing data to file.
 
-    ![NBP Sample Cruise, no_write mode](../assets/images/nbp_running.png)
+     ![NBP Sample Cruise, no_write mode](../assets/images/nbp_running.png)
 
      Selecting the `write` cruise mode will set the loggers to write their data both to UDP and to log files in 
  `/var/tmp/log/`. The two additional cruise modes - `no_write+influx` and `write+influx` - perform the same functions as `no_write` and `write`, but also send the parsed values to an InfluxDB database (if installed), where they can be
  read and displayed in Grafana graphs. InfluxDB and Grafana can be installed using the `utils/install_influxdb.sh`
-script, as described on the [Grafana/InfluxDB](../docs/grafana_displays.md) page.
+script, as described on the [Grafana/InfluxDB](/grafana_displays/) page.
 
 
 12. To verify that data are getting read and parsed, open a second browser window and direct it to [http://openrvdas/display/nbp_dashboard.html](http://openrvdas/display/nbp_dashboard.html) (again, assuming you named your openrvdas machine 'openrvdas'). You should see a set of dials, line charts and tables. If the system is in "monitor" mode, they should be updating.
@@ -114,7 +116,7 @@ Rather than talking to the logger manager directly, we use the Django-based GUI 
 Please see [Controlling Loggers](../docs/controlling_loggers.md) for information on running logger\_runner.py and logger\_manager.py.
 
 A command-line interface, `servers/lmcmd.py`, allows another way of connecting to the Django database to issue commands and get status updates.
-```buildoutcfg
+```
 /opt/openrvdas$ server/lmcmd.py
 command? help
 Valid commands:
@@ -138,14 +140,14 @@ Valid commands:
 
 # Displaying Logger Data
 
-## InfluxDB/Grafana
+## InfluxDB/Grafana displays
 The preferred way to display live and historical OpenRVDAS data is to use the suite of InfluxDB and Grafana
 tools that are installed and configured using the utils/install_influxdb.sh script, Please see the
 [Grafana/InfluxDB](../docs/grafana_displays.md) page for information on using these tools.
 
 ![Grafana Dashboard Example](../assets/images/grafana_dashboard.png)
 
-## Highcharts + native
+## Highcharts + native displays
 OpenRVDAS does still ship with its own Highcharts-based widgets for displaying live and historical data using Javascript-based web widgets. A set of sample web displays created with these widgets is available at [http://openrvdas/display](http://openrvdas/display); the
 source files for these displays are under the project's
 [display](../display) directory. If you are using the
@@ -153,6 +155,6 @@ source files for these displays are under the project's
 [http://openrvdas/display/nbp_dashboard.html](http://openrvdas/display/nbp_dashboard.html)
 page for an example of what the displays can do.
 
-Please see the [Displays and Widgets](../docs/display_widgets.md) page for a discussion of the construction and operation of display pages. Note that these widgets are by and large deprecated, and may cease working without notice in future updates.
+Please see the [Displays and Widgets](/display_widgets/) page for a discussion of the construction and operation of display pages. Note that these widgets are by and large deprecated, and may cease working without notice in future updates.
 
 ![Django GUI Static Widget Example](../assets/images/django_gui_static_widget.png)

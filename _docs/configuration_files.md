@@ -10,7 +10,7 @@ toc_sticky: true  # Makes the TOC stick on scroll
 
 ## Overview
 
-Please see the [OpenRVDAS Introduction to Loggers](intro_to_loggers.md)
+Please see the [OpenRVDAS Introduction to Loggers](/intro_to_loggers/)
 for a general introduction to loggers.
 
 The workhorse utility of the OpenRVDAS system is the Listener class,
@@ -107,7 +107,7 @@ diagnostic messages. Its format is the same as that for the normal
 
 Machine-extracted documentation on which Reader, Transform and Writer components
 are available, along with their arguments, is available in HTML format in the
-[doc/html](../_pages/docs/html) directory of this project. The [README.md](../_pages/docs/html/README.md) file
+[doc/html](../_pages/docs/html) directory of this project. The [README.md](/_pages/docs/html/README.md) file
 in that directory explains how the documentation is generated.
 
 ### Including Your Own Components

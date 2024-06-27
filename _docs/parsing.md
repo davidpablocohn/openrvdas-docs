@@ -1,5 +1,5 @@
 ---
-permalink: /record_parsing/
+permalink: /parsing/
 title: "Record Parsing"
 layout: single
 toc: true
