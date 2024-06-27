@@ -129,7 +129,8 @@ Run simulate:simulate_nbp on boot? (no)
 Users may optionally decide to **not** install the default web console if they wish to operate OpenRVDAS from the
 command line. First-timers are encouraged to go with the default and install the web console.
 
-```#####################################################################
+```
+#####################################################################
 The full OpenRVDAS installation includes a web-based console for loading
 and controlling loggers, but a slimmed-down version of the code may be
 installed and run without it if desired for portability or computational
@@ -227,7 +228,9 @@ under, or some of the Python packages they depend on may not be available.
 
 The OpenRVDAS virtual environment may be activated for a shell by running
 
-```source venv/bin/activate```
+```
+source venv/bin/activate
+```
 
 from the OpenRVDAS home directory. The primary effect of this activation is to modify the default path searched for binaries
 so that invoking ``python`` uses the version at ``venv/bin/python`` rather than the default system path. Once activated,

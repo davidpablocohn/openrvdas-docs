@@ -107,7 +107,7 @@ diagnostic messages. Its format is the same as that for the normal
 
 Machine-extracted documentation on which Reader, Transform and Writer components
 are available, along with their arguments, is available in HTML format in the
-[doc/html](../_pages/docs/html) directory of this project. The [README.md](/_pages/docs/html/README.md) file
+[doc/html](https://htmlpreview.github.io/?https://github.com/oceandatatools/openrvdas/blob/master/docs/html/index.html) directory of this project. The [README.md](https://github.com/OceanDataTools/openrvdas/blob/master/docs/html/README.md) file
 in that directory explains how the documentation is generated.
 
 ### Including Your Own Components
@@ -133,7 +133,7 @@ writers:
 ## Cruise Definitions
 
 A full cruise definition file (such as
-[NBP1406_cruise.yaml](../test/NBP1406/NBP1406_cruise.yaml)) may define
+[NBP1406_cruise.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml)) may define
 many logger configurations. They will be contained in a "configs" dict
 that maps from configuration names to the configuration definitions
 themselves.

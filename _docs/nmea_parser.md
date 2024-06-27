@@ -6,7 +6,7 @@ DRAFT 2019-07-20
 
 This document provides some introductory background on the NMEAParser of the OpenRVDAS architecture. For a more general introduction to the architecture, please refer to the [OpenRVDAS Introduction to Loggers](/intro_to_loggers/).
 
-NMNEAParser ([logger/utils/nmea\_parser.py](../logger/utils/nmea_parser.py)), the class that takes text NMEA records and parses them into structured records with named fields and timestamps, is the messiest and - at present - most fragile part of the logger system. The better part of this is due to the fact that there are so many different NMEA formats, and some instruments that nominally produce the same type of message do so with different formats.
+NMNEAParser ([logger/utils/nmea\_parser.py](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/nmea_parser.py)), the class that takes text NMEA records and parses them into structured records with named fields and timestamps, is the messiest and - at present - most fragile part of the logger system. The better part of this is due to the fact that there are so many different NMEA formats, and some instruments that nominally produce the same type of message do so with different formats.
 
 ## Table of Contents
 
@@ -50,7 +50,7 @@ After stripping those off, we are left with the NMEA message itself. To parse th
 
 ## Sensor definitions
 
-Sensor definitions, like the other definitions we'll cover below, are basically YAML or JSON-encoded Python dictionaries. The sensor definition for 'knud' is as follows (found in [local/sensor/knud.yaml](../local/sensor/knud.yaml)):
+Sensor definitions, like the other definitions we'll cover below, are basically YAML or JSON-encoded Python dictionaries. The sensor definition for 'knud' is as follows (found in [local/sensor/knud.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/local/sensor/knud.yaml)):
 
 ```
     # data_id
@@ -77,7 +77,7 @@ We'll get back to the  fields definitions soon, but for now, we consider the mod
 
 ## Sensor model definitions
 
-The information we need to know about a Knudsen is encoded in the file [local/sensor\_model/Knudsen.yaml](../local/sensor_model/Knudsen.yaml):
+The information we need to know about a Knudsen is encoded in the file [local/sensor\_model/Knudsen.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/local/sensor_model/Knudsen.yaml):
 
 ```
   {
@@ -116,7 +116,7 @@ Standard NMEA formatting specifies that fields are separated by a comma, but som
     }
 }
 ```
-Once it has a sensor model's fields and optional delimiter, the parser splits the message into its component values and assigns the values to the defined field names. It then returns to the sensor definition, and maps the field values to the name that they should bear when coming from the specific sensor (from [local/sensor/knud.yaml](../local/sensor/knud.yaml)):
+Once it has a sensor model's fields and optional delimiter, the parser splits the message into its component values and assigns the values to the defined field names. It then returns to the sensor definition, and maps the field values to the name that they should bear when coming from the specific sensor (from [local/sensor/knud.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/local/sensor/knud.yaml)):
 
 ```
               "LFInUse": "KnudLFInUse",
@@ -169,7 +169,7 @@ To handle multiple message types, we encapsulate them in a "messages" definition
 
 ## Message definitions
 
-We can allow ourselves one more level of abstraction: the $GPVTG message is output by many different GPS models. Instead of explicitly including it in every individual definition, we can place it in a separate "message" file (e.g. [local/message/gpvtg.yaml](../local/message/gpvtg.yaml)):
+We can allow ourselves one more level of abstraction: the $GPVTG message is output by many different GPS models. Instead of explicitly including it in every individual definition, we can place it in a separate "message" file (e.g. [local/message/gpvtg.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/local/message/gpvtg.yaml)):
 
 ```
 {
@@ -211,7 +211,7 @@ p = NMEAParser(message_path=DEFAULT_MESSAGE_PATH,
                sensor_path=DEFAULT_SENSOR_PATH,
                sensor_model_path=DEFAULT_SENSOR_MODEL_PATH)
 ```
-where message\_path, sensor\_path and sensor\_model_path are wildcarded paths to the relevant files. The default values for each, encoded in [logger/utils/nmea\_parser.py](../logger/utils/nmea_parser.py) are
+where message\_path, sensor\_path and sensor\_model_path are wildcarded paths to the relevant files. The default values for each, encoded in [logger/utils/nmea\_parser.py](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/nmea_parser.py) are
 
 ```
 DEFAULT_MESSAGE_PATH = 'local/message/*.yaml'

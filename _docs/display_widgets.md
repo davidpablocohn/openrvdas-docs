@@ -13,7 +13,7 @@ toc_sticky: true  # Makes the TOC stick on scroll
 _Much of this document is deprecated. The sections following this one
 all refer to OpenRVDAS-native displays, enabled on the browser side by
 either D3 or HighCharts-based widgets. For maintainability and future
-expansion, we recommend that users focus on InfluxDB/Grafana-based displays, as described in the document [Grafana/InfluxDB-based Displays with OpenRVDAS](/grafana_displays/)._
+expansion, we recommend that users focus on InfluxDB/Grafana-based displays, as described in [Grafana/InfluxDB-based Displays](/grafana_displays/)._
 
 # Overview
 
@@ -175,7 +175,7 @@ A simple display page might be constructed as follows
 ```
 
 The best way to get started coding up widgets for a new display is to
-look at existing displays in [display/html](../display/html). But the
+look at existing displays in [display/html](https://github.com/OceanDataTools/openrvdas/blob/master/display/html). But the
 basic recipe is that you create a `<div>` or a `<span>` for each
 widget on a page and give it an id that is unique to the page.
 
@@ -223,7 +223,7 @@ The types of static widgets that are currently supported are
   below), and in what color to draw the line (via "color:"). Users
   proficient with Highcharts may specify additional Highcharts
   timeline widget options to override the defaults defined in
-  [display/js/widgets/highcharts_widget.js](../display/js/widgets/highcharts_widget.js).
+  [display/js/widgets/highcharts_widget.js](https://github.com/OceanDataTools/openrvdas/blob/master/display/js/widgets/highcharts_widget.js).
 
 * ``DialWidget(container, field_dict, [widget_options])``
   Produces a dial gauge with as many dial hands as fields provided.
@@ -232,7 +232,7 @@ The types of static widgets that are currently supported are
   what color to draw the line (via "color:"). Users proficient with
   Highcharts may specify additional Highcharts dial widget options to
   override the defaults defined in
-  [display/js/widgets/highcharts_widget.js](../display/js/widgets/highcharts_widget.js).
+  [display/js/widgets/highcharts_widget.js](https://github.com/OceanDataTools/openrvdas/blob/master/display/js/widgets/highcharts_widget.js).
 
 * ``TextWidget(container, field_dict)`` Inserts the text value of the
   fields in question. Field dict may specify a "separator: <str>"
@@ -264,10 +264,10 @@ The types of static widgets that are currently supported are
   value next arrives.
   
   Defined in
-  [display/js/widgets/text_widget.js](../display/js/widgets/highcharts_widget.js).
+  [display/js/widgets/text_widget.js](https://github.com/OceanDataTools/openrvdas/blob/master/display/js/widgets/highcharts_widget.js).
   
 Again, we recommend looking at the sample pages in
-[display/html/](../display/html/) to better understand widget
+[display/html/](https://github.com/OceanDataTools/openrvdas/blob/master/display/html/) to better understand widget
 construction and available options.
 
 
@@ -368,5 +368,5 @@ JavaScript display widgets. Three things are required of a widget:
    ```
 
 We recommend you examine the widgets defined in
-[display/js/widgets/](../display/js/widgets) for insight and
+[display/js/widgets/](https://github.com/OceanDataTools/openrvdas/blob/master/display/js/widgets) for insight and
 inspiration on the construction of new widget types.

@@ -7,7 +7,7 @@ toc_label: "Contents"
 toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
-The [listen.py](../logger/listener/listen.py) script incorporates the most common Readers, Transforms and Writers, providing much of the functionality that one might want in a logger straight from the command line. For example, the invocation:
+The [listen.py](https://github.com/OceanDataTools/openrvdas/blob/master/logger/listener/listen.py) script incorporates the most common Readers, Transforms and Writers, providing much of the functionality that one might want in a logger straight from the command line. For example, the invocation:
 
 ```
 logger/listener/listen.py \
@@ -314,9 +314,9 @@ This functionality has proven useful for debugging a logger that is dying myster
 
 Please see [OpenRVDAS Configuration Files](/configuration_files/) for
 a more complete description of the configuration file model, and
-[simple_logger.py](../test/configs/simple_logger.yaml),
-[composed_logger.py](../test/configs/composed_logger.yaml) and
-[parallel_logger.py](../test/configs/parallel_logger.yaml) in the
-project's [test/configs](../test/configs) directory for examples.
+[simple_logger.py](https://github.com/OceanDataTools/openrvdas/blob/master/test/configs/simple_logger.yaml),
+[composed_logger.py](https://github.com/OceanDataTools/openrvdas/blob/master/test/configs/composed_logger.yaml) and
+[parallel_logger.py](https://github.com/OceanDataTools/openrvdas/blob/master/test/configs/parallel_logger.yaml) in the
+project's [test/configs](https://github.com/OceanDataTools/openrvdas/blob/master/test/configs) directory for examples.
 
 [^1]: YAML is a strict superset of JSON, modulo the restriction that it may not use tabs as whitespace.

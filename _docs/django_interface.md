@@ -34,7 +34,7 @@ should now see a button that allows you to load a configuration.
 ![No Configuration Loaded](../assets/images/no_configuration_loaded.png)
 
 Select the "Load configuration file" button and browse to find
-[test/NBP1406/NBP1406_cruise.yaml](../test/NBP1406/NBP1406_cruise.yaml). Select
+[test/NBP1406/NBP1406_cruise.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml). Select
 "Load", and you should be looking at a loaded and ready-to-run cruise
 management page.
 

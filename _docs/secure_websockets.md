@@ -15,7 +15,7 @@ While on-server websocket communication is conducted (insecurely) on port
 8766, in some environments security may dictate restricting off-server access
 to that port. For this reason, NGINX is configured to also make the cached
 data server available on the default web console port at path `/cds-ws`. 
-The [OpenRVDAS installation script](../utils/install_openrvdas.sh) allows
+The [OpenRVDAS installation script](https://github.com/OceanDataTools/openrvdas/blob/master/utils/install_openrvdas.sh) allows
 configuring NGINX to require secure websockets (`wss://`) for off-server
 access along this path.
 

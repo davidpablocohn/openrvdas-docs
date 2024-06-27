@@ -9,7 +9,7 @@ toc_sticky: true  # Makes the TOC stick on scroll
 ---
 
 This document describes configuration, operation and use of the
-[CachedDataServer](../server/cached_data_server.py) code that is used
+[CachedDataServer code](https://github.com/OceanDataTools/openrvdas/blob/master/server/cached_data_server.py) that is used
 to feed display widgets and provide intermediate caching for derived
 data transforms and others.
 
@@ -234,7 +234,7 @@ by websocket clients:
   ```
 
   Submit new data to the cache. This is the mechanism that the
-  [CachedDataWriter](../logger/writers/cached_data_writer.py)
+  [CachedDataWriter component](https://github.com/OceanDataTools/openrvdas/blob/master/logger/writers/cached_data_writer.py)
   component uses to send data to the server.
 
 # Feeding the CachedDataServer
@@ -244,7 +244,7 @@ data to cache.
 
 1. A process that has instantiated a CachedDataServer object can
    directly call its ``cache_record()`` method. See [the code
-   itself](../server/cached_data_server.py) or [the pdoc-extracted
+   itself](https://github.com/OceanDataTools/openrvdas/blob/master/server/cached_data_server.py) or [the pdoc-extracted
    code documentation
    page](https://htmlpreview.github.io/?https://raw.githubusercontent.com/oceandatatools/openrvdas/master/docs/html/server/cached_data_server.html)
    for details.
@@ -260,7 +260,9 @@ data to cache.
    *not* listen to a UDP port; this can be changed by uncommenting the
    line in ``scripts/start_openrvdas.sh`` that reads:
 
-   ``#DATA_SERVER_LISTEN_ON_UDP='--udp $DATA_SERVER_UDP_PORT'``
+   ```
+   #DATA_SERVER_LISTEN_ON_UDP='--udp $DATA_SERVER_UDP_PORT'
+   ```
 
 # Input Data Formats
 
