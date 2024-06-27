@@ -1,5 +1,12 @@
-# Geofencing and Automatic Logger Control
-
+---
+permalink: /geofencing/
+title: "Geofencing and Automatic Logger Control"
+layout: single
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
+---
 One of the routine and error-prone tasks that the operator of a shipboard data acquisition system may have to manage is that of
 changing logger configurations depending on a ship's location: starting to log from certain instruments as a ship leaves port,
 and turning others on or off as it enters or leaves EEZs, or areas of special interests.
@@ -7,7 +14,7 @@ and turning others on or off as it enters or leaves EEZs, or areas of special in
 Much of this functionality can automated by combining the appropriate OpenRVDAS readers, transforms and writers to implement
 geofencing and other data-dependent logger control.
 
-## Geofencing
+# Geofencing
 
 The [GeofenceTransform](../logger/transforms/geofence_transform.py) listens to a stream of parsed `DASRecord` records or dictionaries of name:value pairs looking for
 fields that contain latitude/longitude pairs. When found, it compares them to a geofence boundary loaded at initialization
@@ -56,7 +63,7 @@ writers:
   if they are allowable, issues them as commands to the LoggerManager, switching the cruise mode between `eez_mode` and
   `underway_mode` and back, as appropriate.
 
-### Additional GeofenceTransform parameters
+## Additional GeofenceTransform parameters
 
 Additional optional `GeofenceTransform` parameters allow offsetting the switchover point from the boundary to provide a
 buffer, and limiting the lat/lon check to no more than once every N seconds, to decrease computational overhead.   
@@ -86,7 +93,7 @@ location, recomputing it for each point and switching when lat/lon moved to a ne
 projection area, possibly resulting in discontinuities. For now, requiring offsets to be expressed in terms of degrees is
 simpler and less error-prone.)
 
-### Additional LoggerManagerWriter parameters
+## Additional LoggerManagerWriter parameters
 
 The `LoggerManagerWriter` needs to know how to communicate with the LoggerManager in question. This can be done by using
 the `database` parameter to tell it whether to try to connect to the Django-based, SQLite-based or in-memory LoggerManager.
@@ -113,7 +120,7 @@ one: `sleep N` is recognized, which will pause the writer N seconds before
 writing the subsequent command. This allows time, if needed, for the effects
 of prior commands to settle.
 
-## Other Data-Based Logger Control
+# Other Data-Based Logger Control
 
 There are ways to implement data-based control of loggers, beyond the lat/lon-specific GeofenceTransform. The
 [QCFilterTransform](../logger/transforms/qc_filter_transform.py) provides a more limited, but still powerful way to
@@ -158,12 +165,12 @@ Note that if you also wanted the system to switch out of underway mode when the 
 would need to create a second logger (or use a [ComposedWriter](../logger/writers/composed_writer.py)) using a bounds line like `s330SpeedKt:0.5:100` and an appropriate
 message to switch to the desired mode.
 
-## Example of using boundary_dir_name
+# Example of using boundary_dir_name
 In this scenario we will use the `boundary_dir_name` kwarg to build a geofence based on the combination of multiple gml files located within a directory.  In this scenario we want to be able to easily update the gml files applied to the geofence with minimal distruption to logging operations.
 
 This scenario assumes the complete `logger_config.yaml` file includes 2 configs for the geofence logger: `geofence->off` (does nothing) and `geofence->on` which is based on the example config described above.
 
-#### Updated transform definition
+### Updated transform definition
 Location of all gml files the vessel ***may*** want to apply to the transform:
 ```
 /home/rvdas/available_gml_files
@@ -187,7 +194,7 @@ transforms:
       entering_boundary_message: set_active_mode eez_mode
 ```
 
-#### Adding an gml to use with the transform:
+### Adding an gml to use with the transform:
 1. Download the new gml file to `/home/rvdas/available_gml_files` via:
 ```
 curl -o /home/rvdas/available_gml_files/<country_name>.gml "<url from marineregions.org>"
@@ -198,13 +205,13 @@ ln -s /home/rvdas/available_gml_files/<country_name>.gml /home/rvdas/enabled_gml
 ```
 3. Cycle the "geofence" logger in OpenRVDAS WebUI to `geofence->off` (wait for the change to take affect) and back to `geofence->on`
 
-#### If you need to remove an eez from the list:
+### If you need to remove an eez from the list
 1. Delete the file from `/home/rvdas/enabled_gml_files` via:
 ```
 rm /home/rvdas/enabled_gml_files/<country_name>.gml
 ```
 2. Cycle the "geofence" logger in OpenRVDAS WebUI to `geofence->off` (wait for the change to take affect) and back to `geofence->on`
 
-## Conclusion
+# Conclusion
 Obviously, there is ample room for more powerful, or custom Transforms to allow more elaborate and/or precise control of logger
 states. We gratefully welcome any code contributed to OpenRVDAS toward that end.

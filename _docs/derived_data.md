@@ -1,5 +1,12 @@
-# Derived Data Loggers
-
+---
+permalink: /derived_data/
+title: "Derived Data Loggers"
+layout: single
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
+---
 A typical logger will receive its raw data via a serial port, or a network attached sensor. But many ships rely on derived values as well, e.g. combining relative wind speed and direction with vessel heading, course and speed to compute a true wind speed and direction.
 
 The recommended way of achieving this with OpenRVDAS is with derived data loggers. Typically, a derived data logger will take values from, say, a cached data server, compute new values, and output them back to the same cached data server. To implement the true wind example above, we retrieve the desired values and feed them into a [TrueWindsTransform](../logger/transforms/true_winds_transform.py), a subclass of the generic [DerivedDataTransform](../logger/transforms/derived_data_transform.py):

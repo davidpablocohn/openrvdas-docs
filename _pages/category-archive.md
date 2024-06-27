@@ -1,6 +1,6 @@
 ---
-title: "Posts by Category"
+title: "All OpenRVDAS X Documentation"
 layout: categories
-permalink: /categories/
+permalink: /disabled-docs/
 author_profile: true
 ---

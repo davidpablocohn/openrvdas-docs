@@ -1,6 +1,12 @@
-# OpenRVDAS Security
-© 2019 David Pablo Cohn - DRAFT 2019-09-15
-
+---
+permalink: /security/
+title: "Security"
+layout: single
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
+---
 At present, OpenRVDAS makes very broad security assumptions, most of
 which should be tightened up:
 
@@ -35,4 +41,3 @@ which should be tightened up:
     (as their names suggest), this would in theory allow a user to
     read and/or overwriter any server file that user rvdas has access
     to. This is a major security flaw described in Issue #145.
-  

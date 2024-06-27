@@ -1,7 +1,12 @@
-# Record Parsing
-© David Pablo Cohn - (david.cohn@gmail)
-DRAFT 2020-05-31
-
+---
+permalink: /record_parsing/
+title: "Record Parsing"
+layout: single
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
+---
 Perhaps the second most crucial task that a data acquisition system
 must accomplish (after reliably storing incoming data records) is to
 be able to parse those records into meaningful values that can be
@@ -66,7 +71,7 @@ Output:
 * [Parser format strings](#parser-format-strings)
    * [Additional parser formats](#additional-parser-formats)
 
-## Basic Operation
+# Basic Operation
 
 The basic operation of the parser is as follows
 
@@ -135,7 +140,7 @@ After stripping the data\_id and timestamp off, we are left with the
 field string itself. To parse that, we need to look up information about
 the device that produced it, in this case, 'knud'.
 
-### ParseTransform
+## ParseTransform
 
 The record parser is encapulated for logger use within the thin
 wrapper of the
@@ -170,7 +175,7 @@ command line **before** ```--transform_parse``` argument):
       --write_file -
   ```
 
-## Devices and device types
+# Devices and device types
 
 The RecordParser works with the abstraction of "device types" and
 "devices." A device type might be something like a SeaPath 330 GPS, or
@@ -178,7 +183,7 @@ a Bell Aerospace BGM-3 Gravimeter. A device would be a specific
 instance of some device type, like the SeaPath 330 GPS with serial
 number #S330-415-AX019G installed on the bridge of the N. B. Palmer.
 
-### Device type definitions
+## Device type definitions
 
 Every device we wish to parse data from must have an associated device
 type definition. The device type definition encodes what type of
@@ -234,7 +239,7 @@ When handed a message that it believes to come from a SeaPath 330, the
 parser will try the formats in the order listed and apply the first
 one that matches.
 
-### Device definitions
+## Device definitions
 
 In addition to device type definitions, we need to be able to specify
 which physical devices we have in our system map to which device
@@ -268,7 +273,7 @@ The location of device and device type definitions a RecordParser is
 to use may be specified when it is instantiated, using a string
 containing a comma-separated list of paths:
 
-### Device and device type definition files
+## Device and device type definition files
 
 Definitions should be encoded in a YAML file:
 
@@ -341,7 +346,7 @@ If no ``definition_path`` is specified, the RecordParser will look for
 definitions in ```DEFAULT_DEFINITION_PATH```, defined as
 ```local/devices/*.yaml```.
 
-## Parser output format
+# Parser output format
 
 By default, a RecordParser will output a dict with three top-level fields:
 
@@ -361,7 +366,7 @@ If invoked with ```return_das_record=True``` it will return [DASRecord
 objects](../logger/utils/das_record.py), and if invoked with
 ```return_json=True``` it will return the dict in JSON-encoded format.
 
-## Parser format strings
+# Parser format strings
 
 The format RecordParser relies on the [PyPi parse
 module](https://pypi.org/project/parse/). In brief, the format
@@ -382,7 +387,7 @@ and more elaborate formats:
 
 Please consult the documentation at [https://pypi.org/project/parse/](https://pypi.org/project/parse/) for the full list.
 
-### Additional parser formats
+## Additional parser formats
 
 For all the power encoded into PyPi's parse module, the available
 formats have a few limitations. Most notably, it is difficult to cope

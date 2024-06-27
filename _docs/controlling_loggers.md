@@ -1,23 +1,15 @@
-# OpenRVDAS Controlling Loggers
-© 2018-2020 David Pablo Cohn - DRAFT 2020-02-14
-
-## Overview
-
-The [Quickstart](../_pages/quickstart.md) document provides an introduction to the OpenRVDAS framework, and [Introduction to Loggers](intro_to_loggers.md) provides an introduction to the process of running *individual* loggers.
-
+---
+permalink: /controlling_loggers/
+title: "Controlling Loggers with the Logger Manager"
+layout: single
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
+---
 This document describes operation of the [Logger Manager](../server/logger_manager.py), a multifaceted script that allows running, controlling and monitoring entire sets of loggers.
 
-## Table of Contents
-- [The High-Order Bits](#the-high-order-bits)
-  - [Cruises, modes and configurations](#cruises,-modes-and-configurations)
-  - [What the logger manager does](#what-the-logger-manager-does)
-- [Running and Controlling the LoggerManager](#running-and-controlling-the-loggermanager)
-  - [Running from the command line](#running-from-the-command-line)
-  - [Driving widget-based data display](#driving-widget-based-data-display)
-  - [Web-based control of the logger manager](#web-based-control-of-the-logger-manager)
-  - [RESTful API](#restful-api)
-
-## The High-Order Bits
+# The High-Order Bits
 
 The ``listen.py`` script, described in the [Introduction to listen.py doc](listen_py.md) will run a single logger defined either from command line parameters, or by loading a logger configuration file. 
 
@@ -27,7 +19,7 @@ The ``logger_manager.py`` script takes a more complicated file (called a "cruise
 
 Below, we go into greater detail on these points.
 
-### Cruises, modes and configurations
+## Cruises, modes and configurations
 
 Before we dive into the use of ``logger_manager.py``, it's worth pausing for a moment to introduce some concepts that underlie the structure of the logger manager.
 
@@ -91,7 +83,7 @@ knud:
 ```
 Perusing a complete cruise configuration file such as [test/NBP1406/NBP1406_cruise.yaml](../test/NBP1406/NBP1406_cruise.yaml) may be useful for newcomers to the system. _(For a deeper dive, please refer to [OpenRVDAS Configuration Files](configuration_files.md))._
 
-### What the logger manager does
+## What the logger manager does
 
 * It spawns a command line console interface to a database/backing store where it will store/retrieve information on which logger configurations should be running and which are. By default, this database will be an in-memory, transient store, unless overridden with the ``--database`` flag to select ``django`` or ``sqlite``). When run as a service, the console may be disabled by using the ``--no-console`` flag:
 
@@ -122,8 +114,8 @@ specifying the ``--stderr_file_pattern`` flag when invoking
 relevant logger, e.g. ``/var/tmp/openrvdas/gyr1.stderr``, when each
 process is started up.
 
-## Running and Controlling the LoggerManager
-### Running from the command line
+# Running and Controlling the LoggerManager
+## Running from the command line
 
 As indicated above, the logger\_manager.py script can be run with no arguments and will default to using an in-memory data store:
 
@@ -182,7 +174,7 @@ As with sample script for logger\_runner.py, the sample cruise configuration fil
 running in another terminal for the logger manager to load and run it without complaining.
 
 
-### Driving widget-based data display
+## Driving widget-based data display
 
 In addition to being stored, logger data may be displayed in real time via [display widgets](display_widgets.md). The most straightforward way to do this is by configuring loggers to echo their output to a [CachedDataServer](../logger/utils/cached_data_server.py). This may be done either via UDP (if the CachedDataServer has been initialized to listen on a UDP port) or via CachedDataWriter that will connect using a websocket. Widgets on display pages will then connect to the data server via a websocket and request data, as described in the [Display Widgets
 document](display_widgets.md).
@@ -203,7 +195,7 @@ When the logger manager has been invoked with a data server websocket address, i
 available are ``status:cruise_definition`` for the list of logger
 names, configurations and active configuration, and ``status:logger_status`` for actual running state of each logger.
 
-### Web-based control of the logger manager
+## Web-based control of the logger manager
 
 In addition to being controlled from a command line console, the
 logger manager may be controlled by a web console.
@@ -285,7 +277,7 @@ You will have noticed that many of the examples in this documentation make use o
 
 Please see the [GUI Quickstart](../_pages/quickstart_gui.md) document for detailed instructions on operating the web interface and the [server/README.md](../server/README.md) file and [logger_manager.py](../server/logger_manager.py) headers for the most up-to-date information on running logger\_manager.py.
 
-### RESTful API
+# RESTful API
 
 In addition to the default Django-based GUI, as of April 2024, OpenRVDAS also provides HTTP/HTTPS access to a RESTful API.
 The full schema may be retrieved in YAML format by querying `http://openrvdas/api/schema` (or whatever your machine name is), but

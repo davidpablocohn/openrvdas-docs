@@ -1,10 +1,12 @@
-# Simulating Live Data
-© 2019 David Pablo Cohn
-
-
-See [OpenRVDAS Introduction to Loggers](intro_to_loggers.md) for system
-overview.
-
+---
+permalink: /simulating_data/
+title: "Simulating Live Data"
+layout: single
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
+---
 It can be very useful, during development or testing, to run using
 saved log files as synthetic input, and some sample synthetic data are
 included in the test/ subdirectory for that purpose. We provide a

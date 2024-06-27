@@ -1,22 +1,12 @@
 ---
-permalink: /Cached Data Server/
-title: "OpenRVDAS Cached Data Server"
+permalink: /cached_data_server/
+title: "Cached Data Server"
 layout: single
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
 ---
-# The OpenRVDAS Cached Data Server
-© 2019 David Pablo Cohn - DRAFT 2019-10-04
-
-## Table of Contents
-
-* [Table of Contents](#table-of-contents)
-* [Overview](#overview)
-* [Websocket Request Types](#websocket-request-types)
-* [Feeding the CachedDataServer](#feeding-the-cacheddataserver)
-* [Input Data Formats](#input-data-formats)
-* [Contributing](#contributing)
-* [License](#license)
-
-## Overview
 
 This document describes configuration, operation and use of the
 [CachedDataServer](../server/cached_data_server.py) code that is used
@@ -121,19 +111,19 @@ simulate_nbp                     RUNNING   pid 5817, uptime 1:24:02
 supervisor> exit
 ```
 
-## Websocket Request Types
+# Websocket Request Types
 
 The data server knows how to respond to a set of requests sent to it
 by websocket clients:
 
-### {"type":"fields"}
+## {"type":"fields"}
   ```
   {"type":"fields"}
   ```
 
    Return a list of fields for which cache has data.
 
-### {"type":"describe"}
+## {"type":"describe"}
   ```
   {'type':'describe',
     'fields':['field_1', 'field_2', 'field_3']}
@@ -142,7 +132,7 @@ by websocket clients:
   Return a dict of metadata descriptions for each specified field. If
   'fields' is omitted, return a dict of metadata for *all* fields.
 
-### {"type":"subscribe"}
+## {"type":"subscribe"}
   ```
   {"type":"subscribe",
     "fields":{"field_1":{"seconds":50},
@@ -228,7 +218,7 @@ by websocket clients:
   }
   ```
 
-### {"type":"ready"}
+## {"type":"ready"}
   ```
   {"type":"ready"}
   ```
@@ -236,7 +226,7 @@ by websocket clients:
   Indicate that client is ready to receive the next set of updates
   for subscribed fields.
 
-### {"type": "publish"}
+## {"type": "publish"}
   ```
   {"type":"publish", "data":{"timestamp":1555468528.452,
                               "fields":{"field_1":"value_1",
@@ -247,7 +237,7 @@ by websocket clients:
   [CachedDataWriter](../logger/writers/cached_data_writer.py)
   component uses to send data to the server.
 
-## Feeding the CachedDataServer
+# Feeding the CachedDataServer
 
 As indicated above, there are several ways of feeding the server with
 data to cache.
@@ -272,7 +262,7 @@ data to cache.
 
    ``#DATA_SERVER_LISTEN_ON_UDP='--udp $DATA_SERVER_UDP_PORT'``
 
-## Input Data Formats
+# Input Data Formats
 
 Whether by UDP or websocket, the CachedDataServer expects to be
 passed records in the format of a dict encoding optionally a
@@ -336,34 +326,3 @@ cache of metadata about the fields:
 This metadata field will be generated sent at intervals by a
 RecordParser (and its enclosing ParseTransform) if the parser's
 ``metadata_interval`` value is not None.
-
-## Contributing
-
-Please contact David Pablo Cohn (*david dot cohn at gmail dot com*) - to discuss
-opportunities for participating in code development.
-
-## License
-
-This code is made available under the MIT license:
-
-Copyright (c) 2017-2019 David Pablo Cohn
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-## Additional Licenses

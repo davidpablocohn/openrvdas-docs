@@ -1,16 +1,12 @@
-# OpenRVDAS Configuration Files
-© 2018-2019 David Pablo Cohn - DRAFT 2019-09-05
-
-
-## Table of Contents
-
-* [Overview](#overview)
-* [Logger Configurations](#logger-configurations)
-  * [Redirecting Standard Error](#redirecting-standard-error)
-  * [Reader, Transform and Writer Documentation](#reader-transform-and-writer-documentation)
-  * [Including Your Own Components](#including-your-own-components)
-* [Cruise Definitions](#cruise-definitions)
-  * [Modes](#modes)
+---
+permalink: /configuration_files/
+title: "Configuration Files"
+layout: single
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
+---
 
 ## Overview
 
@@ -111,7 +107,7 @@ diagnostic messages. Its format is the same as that for the normal
 
 Machine-extracted documentation on which Reader, Transform and Writer components
 are available, along with their arguments, is available in HTML format in the
-[doc/html](html) directory of this project. The [README.md](html/README.md) file
+[doc/html](../_pages/docs/html) directory of this project. The [README.md](../_pages/docs/html/README.md) file
 in that directory explains how the documentation is generated.
 
 ### Including Your Own Components

@@ -1,30 +1,22 @@
-# OpenRVDAS Displays and Widgets
-© 2018-2019 David Pablo Cohn - DRAFT 2019-09-15
+---
+permalink: /display_widgets/
+title: "Displays and Widgets"
+layout: single
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
+---
 
-## Table of Contents
-
-* [CAVEAT](#caveat)
-* [Overview](#overview)
-* [Viewing Display Pages](#viewing-display-pages)
-* [Creating New Display Pages](#creating-new-display-pages)
-   * [Coding with Display Widgets](#coding-with-display-widgets)
-   * [Supported Widget Types](#supported-widget-types)
-   * [Widget Transforms](#widget-transforms)
-   * [Debugging Widgets](#debugging-widgets)
-   * [Connecting Widgets to Data Servers](#connecting-widgets-to-data-servers)
-* [Creating New Widgets](#creating-new-widgets)
-* [Contributing](#contributing)
-* [License](#license)
-* [Additional Licenses](#additional-licenses)
-
-## CAVEAT
+# CAVEAT
 
 Much of this document is deprecated. The sections following this one
 all refer to OpenRVDAS-native displays, enabled on the browser side by
 either D3 or HighCharts-based widgets. For maintainability and future
 expansion, we are __strongly__ recommending that users focus on InfluxDB/Grafana-based displays, as described in the document [Grafana/InfluxDB-based Displays with OpenRVDAS](grafana_displays.md).
 
-## Overview
+
+# Overview
 
 This document discusses writing, configuring and feeding OpenRVDAS web
 displays and widgets. Please see the [Quickstart Document](../_pages/quickstart.md) for an introduction to the OpenRVDAS
@@ -39,7 +31,8 @@ also a MapWidget, and users can create their own widget types, as long
 as they adhere to the API for communicating with the OpenRVDAS
 WidgetServer code.
 
-## Viewing Display Pages
+
+# Viewing Display Pages
 
 By default, display pages are located in the OpenRVDAS display/html
 directory. From there they may be opened directly from the browser as
@@ -74,7 +67,8 @@ The files in ``display/html`` are served by Django using the path
 http://openrvdas/display/nbp_basic.html
 ```
 
-## Creating New Display Pages
+
+# Creating New Display Pages
 
 There is one wrinkle in simply coding up a new display page and adding
 it to the ``display/html`` directory:
@@ -99,7 +93,8 @@ argument says to clear out/refresh all old links. (The advantage of
 using ``--link`` is that there is no need to re-collect after making
 changes to an existing display page).
 
-### Coding with Display Widgets
+
+## Coding with Display Widgets
 
 The active, useful part of these display pages are made up of display
 widgets, coded in JavaScript and located in the `display/js/widgets`
@@ -216,7 +211,8 @@ Note the use of variable `WEBSOCKET_DATA_SERVER`, which is defined in
 the `display/js/widgets/settings.js` file we described earlier.
 
 
-### Supported Widget Types
+
+## Supported Widget Types
 
 The types of static widgets that are currently supported are
 
@@ -275,7 +271,8 @@ Again, we recommend looking at the sample pages in
 [display/html/](../display/html/) to better understand widget
 construction and available options.
 
-### Widget Transforms
+
+## Widget Transforms
 
 Sometimes an available value may not be in the form in which we would
 like to display it. The desired transformation may be a question of
@@ -304,7 +301,8 @@ For example:
                                   }}));
 ```
 
-### Debugging Widgets
+
+## Debugging Widgets
 
 By far, the easiest way to debug misbehaving widgets is by opening
 your browser's developer console. On a Mac, using Chrome, pressing
@@ -312,7 +310,8 @@ Command-Option-J will do this. From there you will be able to see
 whether you have syntax errors in your JavaScript and whether the
 WidgetServer is successfully connecting to its intended data server.
 
-### Connecting Widgets to Data Servers
+
+## Connecting Widgets to Data Servers
 
 The WidgetServer instantiated with a page is what feeds display data
 to that page's widgets. The WidgetServer does this by opening a
@@ -337,7 +336,8 @@ updating, a good first step is to open a Javascript console on the
 browser page displaying the widget to check that the widget is
 attempting to connect to the data server you think is should be.
 
-## Creating New Widgets
+
+# Creating New Widgets
 
 OpenRVDAS is designed to support easy creation of new types of
 JavaScript display widgets. Three things are required of a widget:
@@ -371,34 +371,3 @@ JavaScript display widgets. Three things are required of a widget:
 We recommend you examine the widgets defined in
 [display/js/widgets/](../display/js/widgets) for insight and
 inspiration on the construction of new widget types.
-
-## Contributing
-
-Please contact David Pablo Cohn (*david dot cohn at gmail dot com*) -
-to discuss opportunities for participating in code development.
-
-## License
-
-This code is made available under the MIT license:
-
-Copyright (c) 2017-2019 David Pablo Cohn
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-## Additional Licenses

@@ -1,7 +1,12 @@
-# Using Secure Websockets with OpenRVDAS
-© 2020 David Pablo Cohn - DRAFT 2020-12-11
-
-## Overview
+---
+permalink: /secure_websockets/
+title: "Secure Websockets"
+layout: single
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
+---
 
 OpenRVDAS uses websockets to relay logger data and status information to
 the [CachedDataServer](cached_data_server.md), which then support
@@ -19,7 +24,7 @@ be used, they will be prompted to either specify the location of a `.crt`
 and `.key` certificate files, or will be coached through creation of those
 files via a self-signed certificate.
 
-## Getting browsers to accept your self-signed certificate
+# Getting browsers to accept your self-signed certificate
 
 If the server already has a valid certificate, nothing more needs to be done.
 If the user follows the prompts to create a self-signed certificate, most browsers

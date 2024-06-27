@@ -1,17 +1,12 @@
-# The Listener Script - listen.py
-© 2018-2019 David Pablo Cohn
- DRAFT 2019-07-20
-
-## Table of Contents
-
-* [Introduction to listen.py](#introduction-to-listenpy)
-   * [Specifying configurations on the command line](#specifying-configurations-on-the-command-line)
-   * [Examples using the listen.py script](#examples-using-the-listenpy-script)
-* [Listener chaining](#listener-chaining)
-* [Running more complicated loggers with configuration files](#running-more-complicated-loggers-with-configuration-files)
-
-## Introduction to listen.py
-
+---
+permalink: /listen/
+title: "The Listener Script"
+layout: single
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
+---
 The [listen.py](../logger/listener/listen.py) script incorporates the most common Readers, Transforms and Writers, providing much of the functionality that one might want in a logger straight from the command line. For example, the invocation:
 
 ```
@@ -24,13 +19,13 @@ logger/listener/listen.py \
 ```
 implements the following data flow:
 
-![Dual writer dataflow](../../assets/images/dual_writer.png)
+![Dual writer dataflow](../assets/images/dual_writer.png)
 
 In general, the listen.py script runs all of the specified readers in parallel, feeds their output to the specified transforms in series, then feeds the output of the last transform to all the specified writers in parallel:
 
-![Generic listener dataflow](../../assets/images/generic_listener.png)
+![Generic listener dataflow](../assets/images/generic_listener.png)
 
-### Specifying configurations on the command line
+# Specifying configurations on the command line
 
 When readers, transforms and writers are specified on the command line, much of the flexibility of listen.py (and therefore much of the opportunity for screwing up) is due to its non-standard convention for parsing those arguments. **Specifically, listen.py parses arguments sequentially in the order in which they appear on the command line.**
 
@@ -76,7 +71,7 @@ logger/listener/listen.py --udp 6224 \
 ```
 will use the default separator (a comma), because the `--slice_separator` argument comes after the `--transform_slice` argument that it is (presumably) supposed to act upon.
 
-### Examples using the listen.py script
+## Examples using the listen.py script
 
 For all its limitations, the listen.py script has a lot of tricks up its sleeve. Here's a simple invocation to read from a serial port and write to a "normal" file:
 
@@ -241,7 +236,7 @@ Note that we've left off the `--logfile_use_timestamps` flag, so the LogfileRead
 
 If you append `-v -v` to the above call to place the listener in debug mode, you'll get to see all the inner workings as the LogfileReader instantiates an inner TextFileReader, fetches records from it, slices off the first field, adds a new timestamp and writes it to a date-stamped logfile.
 
-## Listener chaining
+# Listener chaining
 
 While the previous section illustrates the flexibility of the listen.py script, there are still limitations. When running from the command line, **all** transforms are applied to **all** records from **all** readers, before being sent out to **all** writers. In our original custom logger, records sent to the UDPWriter were prefixed with the instrument name ('gyr1'), while records that were written to the gyr1 logfile (where the prefix would be redundant) were not.
 
@@ -262,7 +257,7 @@ logger/listener/listen.py \
 ```
 The first of these scripts timestamps records as they come in and saves them in a log file. The second one reads that logfile, adds the desired prefix, and broadcasts it to the network via UDP. Surprisingly complex workflows can be achieved with chaining.
 
-## Running more complicated loggers with configuration files
+# Running more complicated loggers with configuration files
 
 For logger workflows of non-trivial complexity, we recommend that users forgo specifying Readers, Transforms and Writers on the command line in favor of using configuration files.
 

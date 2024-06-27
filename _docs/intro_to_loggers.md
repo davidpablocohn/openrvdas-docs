@@ -1,21 +1,19 @@
-# OpenRVDAS Introduction to Loggers
-© 2018 David Pablo Cohn - DRAFT 2018-12-15
+---
+permalink: /intro_to_loggers/
+title: "Introduction to Loggers"
+layout: single
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
+---
 
-One of the primary values a research vessel offers is the ability to gather accurate and timely scientific data wherever it travels. Most ships carry some combination of oceanographic, meteorological and other sensors and operate a system - a Research Vessel Data Acquisition System, or RVDAS - for storing, processing, analyzing and displaying the data they produce.
 
-The basic unit of an RVDAS is a "logger" - a process or set of processes that read from a sensor and store the data, optionally processing it for display, analysis or combination with other acquired data.
+The basic unit of a OpenRVDAS is a "logger" - a process or set of processes that read from a sensor and store the data, optionally processing it for display, analysis or combination with other acquired data.
 
 This document describes the construction and operation of individual OpenRVDAS loggers. Please see [Controlling Loggers](controlling_loggers.md) for information on running/controlling multiple loggers, and see the [Quickstart Document](../_pages/quickstart.md) quick introduction.
 
-## Table of Contents
-
-* [Logger Architecture](#logger-architecture)
-* [Building and Running Loggers at the Code Level](#building-and-running-loggers-at-the-code-level)
-* [Using the Listener Class](#using-the-listener-class)
-* [Using the Listen Script](#using-the-listen-script)
-* [Logger Configuration Files](#logger-configuration-files)
-
-## Logger Architecture
+# Logger Architecture
 
 As described in the introduction and overview, we recognize that every ship will have different requirements, so we have focused on designing and building an architecture that allows easy assembly of small, modular components into whatever system is needed in a given situation.
 
@@ -23,7 +21,7 @@ The core logger architecture is made up of three basic classes of components: Re
 
 ![Reader, Transform and Writer](../assets/images/read_transform_write.png)
 
-## Building and Running Loggers at the Code Level
+# Building and Running Loggers at the Code Level
 
 If we want to work down at the code level, we can combine Reader, Transform and Writer components in a very few lines of Python to build a full-fledged logger that reads an instrument serial port, timestamps and stores the record to file, and forwards it via UDP for displays or other waiting processes:
 
@@ -47,7 +45,7 @@ def logger(port, instrument):
 
 The document [OpenRVDAS Components](../_pages/components.md) describes many of the currently-implemented Readers, Transforms and Writers, and you can examine the directories [logger/readers/](../logger/readers), [logger/transforms/](../logger/transforms) and [logger/writers/](../logger/writers) for the full set of standard, implemented components.
 
-## Using the Listener Class
+# Using the Listener Class
 
 A ```Listener``` class further simplifies creation and running of loggers at the code level. It takes a list of Readers, Transforms and Writers and runs them in an "hourglass" pipeline:
 
@@ -68,7 +66,7 @@ It runs all Readers in parallel, feeding their output to the Transforms, run in 
 
 Please see the code in [logger/listener/listener.py](../logger/listener/listener.py) for more information about using the Listener class.
 
-## Using the Listen Script
+# Using the Listen Script
 
 The [logger/listener/listen.py](../logger/listener/listen.py) script is a convenient wrapper around the Listener class, and allows combining and running the most commonly-used Reader, Transform and Writer components from the command line. For example, the invocation:
 
@@ -86,7 +84,7 @@ implements the following data flow:
 
 The listen.py script and its (sometimes non-intuitive) command line options are described in greater detail in the [Listen.py Script](listen.py.md) document.
 
-## Logger Configuration Files
+# Logger Configuration Files
 
 For logger workflows of non-trivial complexity, we recommend that users forgo specifying Readers, Transforms and Writers on the command line in favor of using configuration files.
 

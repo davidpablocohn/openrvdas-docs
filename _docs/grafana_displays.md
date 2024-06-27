@@ -1,17 +1,12 @@
-# Grafana/InfluxDB-based Displays with OpenRVDAS
-© 2020 David Pablo Cohn - DRAFT 2020-12-01
-
-## Table of Contents
-
-* [Overview](#overview)
-* [Installation](#installation)
-* [Running](#running)
-* [Configuing Grafana](#configuring-grafana)
-* [Writing data to InfluxDB](#writing-data-to-influxdb)
-* [Creating Grafana Dashboards](#creating-grafana-dashboards)
-
-## Overview
-
+---
+permalink: /grafana_displays/
+title: "Grafana/InfluxDB-based Displays"
+layout: single
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
+---
 InfluxDB is a widely-used open source time series database. Grafana is
 an open source visualization package. Used together, the two allow
 drag-and-drop creation of sophisticated data displays that meet and
@@ -27,7 +22,8 @@ create displays that make use of the resulting data.
 These instructions describe the process for InfluxDB 2.0, Grafana 7.1
 and Telegraf 1.15.
 
-## Installation
+
+# Installation
 
 There is now an installation script ``utils/install_influxdb.sh`` that
 will walk you through the installation and configuration of InfluxDB,
@@ -54,7 +50,8 @@ Catalina, the system will balk when the script first tries to run
 Then re-run the installation script, and it should pick up where it
 left off.
 
-## Running
+
+# Running
 
 You shouldn't need to, but after the installation script has
 completed, you can run InfluxDB, Grafana and Telegraf from the command
@@ -123,7 +120,8 @@ If anything is going wrong with one of the scripts run by
 `supervisord`, you can examine its stderr in
 `/var/log/openrvdas/[influxdb,grafana,telegraf].stderr`.
 
-## Configuring Grafana
+
+# Configuring Grafana
 
 Once the packages are loaded and running, you will need to connect Grafana to InfluxDB.
 
@@ -154,7 +152,8 @@ NOTE: If you reinstall InfluxDB, e.g. by re-running the OpenRVDAS
 installation script, the InfluxDB AUTH_TOKEN will change, and you will
 need to supply the new one to Grafana and Telegraf.
 
-## Writing data to InfluxDB
+
+# Writing data to InfluxDB
 
 To write to InfluxDB, OpenRVAS needs to have the AUTH_TOKEN of an
 authorized InfluxDB user. If all went well, the installation script
@@ -211,7 +210,7 @@ place in ``database/settings.py``. You may also need to copy the new
 token back into Grafana, as described in rest of the steps of that
 section.
 
-## Creating Grafana Dashboards
+# Creating Grafana Dashboards
 
 * To start a new dashboard, select the “+” at the left menu, then
   select “Dashboards.” Select the “Add new panel” button (widgets are

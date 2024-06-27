@@ -1,20 +1,18 @@
-# OpenRVDAS Django Web Interface
-© David Pablo Cohn - DRAFT 2019-10-04
-
-## Table of Contents
-
-* [Overview](#overview)
-* [Installation](#installation-and-running)
-* [Viewing Logger Output](#viewing-logger-output)
-* [Display Pages](#display-pages)
-
-## Overview
+---
+permalink: /django_interface/
+title: "Django Web Interface"
+layout: single
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
+---
 
 The object of the OpenRVDAS project is the construction of modular, extensible open source data acquisition systems, systems that support the capture, storage, processing and analysis of  data from a vessel's oceanographic, meteorological and other sensors. Please see  [OpenRVDAS Introduction to Loggers](intro_to_loggers.md) for a more complete introduction to the system as a whole.
 
 While most of the system's core functionality can be accessed via individual command line scripts, a simple web-based graphical user interface is also available. This document describes that interface in its present form.
 
-## Installation and Running
+# Installation and Running
 
 The code repository currently lives at [https://github.com/oceandatatools/openrvdas](https://github.com/oceandatatools/openrvdas), with installation instructions that can be found on the project's [INSTALL.md](../INSTALL.md) page. This document assumes that you have installed OpenRVDAS using one of the standard installation scripts described on that page.
 
@@ -93,7 +91,7 @@ When a configuration is selected that is different from the default configuratio
 ![s330 yellow](../assets/images/s330_yellow.png)
 
 
-## Viewing Logger Output
+# Viewing Logger Output
 
 The sample cruise configuration defines loggers that output to one or
 more of 1) logfile 2) network, and 3) database.  If a logger
