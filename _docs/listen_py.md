@@ -191,7 +191,7 @@ logger/listener/listen.py \
 ```
 It's worth taking a moment to discuss how listen.py and its FileReaders and LogfileReaders select and read through the files that are specified as their inputs.
 
-A FileReader takes a wildcarded filename and open the matching files in alphanumeric order, going on to the next when it reaches EOF of the previous file. Note that FileReaders also accept a `--tail` argument that says not to return EOF on reaching the end of the last file, but to continue checking for more input, as well as a `--refresh_file_spec` flag that further instructs it to check whether any new files matching the specification have appeared in the meantime.[^2]
+A FileReader takes a wildcarded filename and open the matching files in alphanumeric order, going on to the next when it reaches EOF of the previous file. Note that FileReaders also accept a `--tail` argument that says not to return EOF on reaching the end of the last file, but to continue checking for more input, as well as a `--refresh_file_spec` flag that further instructs it to check whether any new files matching the specification have appeared in the meantime.
 
 So the invocation
 
@@ -203,7 +203,7 @@ logger/listener/listen.py \
 ```
 will create a single FileReader that will sequentially read through and deliver the records of all logfiles in the test directory, then wait to see if any more matching files ever show up. In contrast, each **comma-separated** value is used to instantiate a separate reader, as above.
 
-A LogfileReader is effectively a FileReader that understands and makes approximate use of the R2R naming conventions for logfiles,[^3] specifically that records for each instrument are logged in a file appended by the date of those records. So records for a gyroscope run the first three days of November might be stored as
+A LogfileReader is effectively a FileReader that understands and makes approximate use of the R2R naming conventions for logfiles, specifically that records for each instrument are logged in a file appended by the date of those records. So records for a gyroscope run the first three days of November might be stored as
 
 ```
 NBP1700_gyr1-2017-11-01

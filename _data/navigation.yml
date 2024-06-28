@@ -23,8 +23,9 @@ navdocs:
         url: /quickstart_gui/
       - title: "Installation"
         url: /install/
-      - title: "Introduction to Loggers"
-        url: /intro_to_loggers/
+
+      - title: "The Listener Script"
+        url: /listen_py/
       - title: "Controlling Loggers"
         url: /controlling_loggers/
 
@@ -42,11 +43,15 @@ navdocs:
       - title: "Grafana Displays"
         url: /grafana_displays/
 
-#  - title: Content
-#    children:
-#      - title: "Working with Posts"
-#        url: /docs/posts/
-#      - title: "Working with Pages"
+  - title: Links
+    children:
+      - title: "Ocean Data Tools Home"
+        icon: "fas fa-fw fa-link"
+        url: "https:/oceandata.tools"
+      - title: "GitHub Repository"
+        icon: "fab fa-fw fa-github"
+        url: "https://github.com/OceanDataTools/openrvdas"
+      - #      - title: "Working with Pages"
 #        url: /docs/pages/
 #      - title: "Working with Collections"
 #        url: /docs/collections/
