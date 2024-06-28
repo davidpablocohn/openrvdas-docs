@@ -47,7 +47,7 @@ navdocs:
     children:
       - title: "Ocean Data Tools Home"
         icon: "fas fa-fw fa-link"
-        url: "https:/oceandata.tools"
+        url: "https://oceandata.tools"
       - title: "GitHub Repository"
         icon: "fab fa-fw fa-github"
         url: "https://github.com/OceanDataTools/openrvdas"
