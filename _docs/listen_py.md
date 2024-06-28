@@ -34,7 +34,7 @@ The command
 ```
 logger/listener/listen.py \
     --serial port=/dev/ttyr15,baudrate=9600 \
-    --transform_timestamp
+    --transform_timestamp \
     --transform_prefix gyr1 \
     --write_logfile /log/current/gyr1
 ```
