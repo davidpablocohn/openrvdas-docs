@@ -7,7 +7,7 @@ toc_label: "Contents"
 toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
-This page describes basic installation of the *full* OpenRVDAS package and basic manipulation of its graphic user interface. A [separate quickstart guide](/quickstart/) describes how to configure simple OpenRVDAS loggers and run them from the command line.
+This page describes basic installation of the *full* OpenRVDAS package and basic manipulation of its graphic user interface. A [separate quickstart guide]({{ "/quickstart/" | relative_url }}) describes how to configure simple OpenRVDAS loggers and run them from the command line.
 
 # Installation and Quickstart
 The simplest way to get started with OpenRVDAS is to bring up a clean dedicated Ubuntu 23 or
@@ -17,7 +17,7 @@ pay greater attention to which scripts are configured to start on boot.)
 
 _NOTE: For the purposes of this introduction, we will assume that your have named the machine you will use `openrvdas` and that your OpenRVDAS user will be named __rvdas__; if you are using some other name then, obviously, use that name in place of `openrvdas`/`rvdas` below._
 
-1. Install the code following the instructions in the [OpenRVDAS Installation Guide](/install/). Use default answers when asked 
+1. Install the code following the instructions in the [OpenRVDAS Installation Guide]({{ "/install/" | relative_url }}). Use default answers when asked 
    * answer "yes" that OpenRVDAS should be started on boot
    * answer "yes" that the data simulator should be installed and started on boot
 
@@ -93,7 +93,7 @@ ports have names/locations like `/tmp/tty_s330` (where we will, for example, fin
      Selecting the `write` cruise mode will set the loggers to write their data both to UDP and to log files in 
  `/var/tmp/log/`. The two additional cruise modes - `no_write+influx` and `write+influx` - perform the same functions as `no_write` and `write`, but also send the parsed values to an InfluxDB database (if installed), where they can be
  read and displayed in Grafana graphs. InfluxDB and Grafana can be installed using the `utils/install_influxdb.sh`
-script, as described on the [Grafana/InfluxDB](/grafana_displays/) page.
+script, as described on the [Grafana/InfluxDB]({{ "/grafana_displays/" | relative_url }}) page.
 
 
 12. To verify that data are getting read and parsed, open a second browser window and direct it to [http://openrvdas/display/nbp_dashboard.html](http://openrvdas/display/nbp_dashboard.html) (again, assuming you named your openrvdas machine 'openrvdas'). You should see a set of dials, line charts and tables. If the system is in "monitor" mode, they should be updating.
@@ -143,7 +143,7 @@ Valid commands:
 ## InfluxDB/Grafana displays
 The preferred way to display live and historical OpenRVDAS data is to use the suite of InfluxDB and Grafana
 tools that are installed and configured using the utils/install_influxdb.sh script, Please see the
-[Grafana/InfluxDB](/grafana_displays/) page for information on using these tools.
+[Grafana/InfluxDB]({{ "/grafana_displays/" | relative_url }}) page for information on using these tools.
 
 ![Grafana Dashboard Example](../assets/images/grafana_dashboard.png)
 
@@ -155,6 +155,6 @@ source files for these displays are under the project's
 [http://openrvdas/display/nbp_dashboard.html](http://openrvdas/display/nbp_dashboard.html)
 page for an example of what the displays can do.
 
-Please see the [Displays and Widgets](/display_widgets/) page for a discussion of the construction and operation of display pages. Note that these widgets are by and large deprecated, and may cease working without notice in future updates.
+Please see the [Displays and Widgets]({{ "/display_widgets/" | relative_url }}) page for a discussion of the construction and operation of display pages. Note that these widgets are by and large deprecated, and may cease working without notice in future updates.
 
 ![Django GUI Static Widget Example](../assets/images/django_gui_static_widget.png)

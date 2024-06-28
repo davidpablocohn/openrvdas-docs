@@ -11,7 +11,7 @@ This page describes operation of the [Logger Manager](https://github.com/OceanDa
 
 # The High-Order Bits
 
-The ``listen.py`` script, described on the page _[The Listener Script](/listen_py/)_ will run a single logger defined either from command line parameters, or by loading a logger configuration file. 
+The ``listen.py`` script, described on the page _[The Listener Script]({{ "/listen_py/" | relative_url }})_ will run a single logger defined either from command line parameters, or by loading a logger configuration file. 
 
 The ``logger_manager.py`` script takes a more complicated file (called a "cruise definition file") that consists not only of a list of named configurations, but also of "modes" such as `off`, `in port` and `underway`, specifying which configurations should be running in which mode. It supports an API that lets one control and monitor it from the command line or via a web interface.
 
@@ -79,7 +79,7 @@ knud:
   - knud-net,
   - knud-file/net/db
 ```
-Perusing a complete cruise configuration file such as [test/NBP1406/NBP1406\_cruise.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml) may be useful for newcomers to the system. _(For a deeper dive, please refer to [OpenRVDAS Configuration Files](/configuration_files/))._
+Perusing a complete cruise configuration file such as [test/NBP1406/NBP1406\_cruise.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml) may be useful for newcomers to the system. _(For a deeper dive, please refer to [OpenRVDAS Configuration Files]({{ "/configuration_files/" | relative_url }}))._
 
 ## What the logger manager does
 
@@ -174,8 +174,8 @@ running in another terminal for the logger manager to load and run it without co
 
 ## Driving widget-based data display
 
-In addition to being stored, logger data may be displayed in real time via [display widgets](/display_widgets/) or [Grafana displays](/grafana_displays/). The most straightforward way to do this is by configuring loggers to echo their output to a [CachedDataServer](/cached_data_server/). This may be done either via UDP (if the CachedDataServer has been initialized to listen on a UDP port) or via CachedDataWriter that will connect using a websocket. Widgets on display pages will then connect to the data server via a websocket and request data, as described in the [Display Widgets
-document](/display_widgets/).
+In addition to being stored, logger data may be displayed in real time via [display widgets]({{ "/display_widgets/" | relative_url }}) or [Grafana displays]({{ "/grafana_displays/" | relative_url }}). The most straightforward way to do this is by configuring loggers to echo their output to a [CachedDataServer]({{ "/cached_data_server/" | relative_url }}). This may be done either via UDP (if the CachedDataServer has been initialized to listen on a UDP port) or via CachedDataWriter that will connect using a websocket. Widgets on display pages will then connect to the data server via a websocket and request data, as described in the [Display Widgets
+document]({{ "/display_widgets/" | relative_url }}).
 
 ![Logger Manager with CachedDataServer](../assets/images/console_based_logger_manager.png)
 
@@ -273,7 +273,7 @@ You will have noticed that many of the examples in this documentation make use o
   supervisor>
 ```
 
-Please see the [GUI Quickstart](/quickstart_gui/) document for detailed instructions on operating the web interface and the [server/README.md](https://github.com/OceanDataTools/openrvdas/blob/master/server/README.md) file and [logger_manager.py](https://github.com/OceanDataTools/openrvdas/blob/master/server/logger_manager.py) headers for the most up-to-date information on running logger\_manager.py.
+Please see the [GUI Quickstart]({{ "/quickstart_gui/" | relative_url }}) document for detailed instructions on operating the web interface and the [server/README.md](https://github.com/OceanDataTools/openrvdas/blob/master/server/README.md) file and [logger_manager.py](https://github.com/OceanDataTools/openrvdas/blob/master/server/logger_manager.py) headers for the most up-to-date information on running logger\_manager.py.
 
 # RESTful API
 

@@ -7,9 +7,9 @@ toc_label: "Contents"
 toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
-_Note: this page has not been updated to reflect the current NMEAParser code. Please refer to [the code itself](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/nmea_parser.py){:target="_blank"} or alternatively, to [the page on parsing](/parsing/) that supercedes this one and the module described here._
+_Note: this page has not been updated to reflect the current NMEAParser code. Please refer to [the code itself](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/nmea_parser.py){:target="_blank"} or alternatively, to [the page on parsing]({{ "/parsing/" | relative_url }}) that supercedes this one and the module described here._
 
-This page provides some introductory background on the NMEAParser of the OpenRVDAS architecture. For a more general introduction to the architecture, please refer to the [OpenRVDAS Introduction to Loggers](/intro_to_loggers/).
+This page provides some introductory background on the NMEAParser of the OpenRVDAS architecture. For a more general introduction to the architecture, please refer to the [OpenRVDAS Introduction to Loggers]({{ "/intro_to_loggers/" | relative_url }}).
 
 NMNEAParser ([logger/utils/nmea\_parser.py](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/nmea_parser.py){:target="_blank"}), the class that takes text NMEA records and parses them into structured records with named fields and timestamps, is the messiest and - at present - most fragile part of the logger system. The better part of this is due to the fact that there are so many different NMEA formats, and some instruments that nominally produce the same type of message do so with different formats.
 

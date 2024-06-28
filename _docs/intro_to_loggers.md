@@ -9,7 +9,7 @@ toc_sticky: true  # Makes the TOC stick on scroll
 ---
 The basic unit of a OpenRVDAS is a "logger" - a process or set of processes that read from a sensor and store the data, optionally processing it for display, analysis or combination with other acquired data.
 
-This document describes the construction and operation of individual OpenRVDAS loggers. Please see [Controlling Loggers](/controlling_loggers/) for information on running/controlling multiple loggers, and see the [Quickstart Document](/quickstart/) quick introduction.
+This document describes the construction and operation of individual OpenRVDAS loggers. Please see [Controlling Loggers]({{ "/controlling_loggers/" | relative_url }}) for information on running/controlling multiple loggers, and see the [Quickstart Document]({{ "/quickstart/" | relative_url }}) quick introduction.
 
 # Logger Architecture
 
@@ -41,7 +41,7 @@ def logger(port, instrument):
 
 ![UDPWriter data flow](../assets/images/network_writer.png)
 
-The document [OpenRVDAS Components](/components/) describes many of the currently-implemented Readers, Transforms and Writers, and you can examine the directories [logger/readers/](https://github.com/OceanDataTools/openrvdas/blob/master/logger/readers), [logger/transforms/](https://github.com/OceanDataTools/openrvdas/blob/master/logger/transforms) and [logger/writers/](https://github.com/OceanDataTools/openrvdas/blob/master/logger/writers) for the full set of standard, implemented components.
+The document [OpenRVDAS Components]({{ "/components/" | relative_url }}) describes many of the currently-implemented Readers, Transforms and Writers, and you can examine the directories [logger/readers/](https://github.com/OceanDataTools/openrvdas/blob/master/logger/readers), [logger/transforms/](https://github.com/OceanDataTools/openrvdas/blob/master/logger/transforms) and [logger/writers/](https://github.com/OceanDataTools/openrvdas/blob/master/logger/writers) for the full set of standard, implemented components.
 
 # Using the Listener Class
 
@@ -80,7 +80,7 @@ implements the following data flow:
 
 ![Dual writer dataflow](../assets/images/dual_writer.png)
 
-The listen.py script and its (sometimes non-intuitive) command line options are described in greater detail in the [Listen.py Script](/listen_py/) document.
+The listen.py script and its (sometimes non-intuitive) command line options are described in greater detail in the [Listen.py Script]({{ "/listen_py/" | relative_url }}) document.
 
 # Logger Configuration Files
 
@@ -123,8 +123,8 @@ logger/listener/listen.py --config_file test/NBP1406/NBP1406_cruise.yaml:"gyr1->
 
 This functionality is especially handy when trying to debug new logger configurations.
 
-Again, use of listen.py script with and without configuration files is described in [The Listener Script](/listen_py/), and  configuration files are described in detail in [OpenRVDAS Configuration Files](/configuration_files/).
+Again, use of listen.py script with and without configuration files is described in [The Listener Script]({{ "/listen_py/" | relative_url }}), and configuration files are described in detail in [OpenRVDAS Configuration Files]({{ "/configuration_files/" | relative_url }}).
 
-Multiple loggers may be run together and controlled from the command line, via an API or a web interface using the logger\_manager.py and logger_runner.py scripts described in the [Controlling Loggers](/controlling_loggers/) document.
+Multiple loggers may be run together and controlled from the command line, via an API or a web interface using the logger\_manager.py and logger_runner.py scripts described in the [Controlling Loggers]({{ "/controlling_loggers/" | relative_url }}) document.
 
-Data produced by loggers may be visualized via display widgets, as described in the [Display Widgets](/display_widgets/) document.
+Data produced by loggers may be visualized via display widgets, as described in the [Display Widgets]({{ "/display_widgets/" | relative_url }}) document.

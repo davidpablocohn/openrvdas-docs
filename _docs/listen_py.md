@@ -80,7 +80,7 @@ logger/listener/listen.py \
     --serial port=/dev/ttyr15 \
     --write_file my_file
 ```
-If your machine doesn't have any serial ports sending actual data, you can create virtual serial ports, as described in [Simulating Live Data](/simulating_live_data/), by running
+If your machine doesn't have any serial ports sending actual data, you can create virtual serial ports, as described in [Simulating Live Data]({{ "/simulating_live_data/" | relative_url }}), by running
 
 ```
 logger/utils/simulate_data.py \
@@ -312,7 +312,7 @@ You may also load a single configuration from a complete cruise definition file 
 ```
 This functionality has proven useful for debugging a logger that is dying mysteriously.
 
-Please see [OpenRVDAS Configuration Files](/configuration_files/) for
+Please see [OpenRVDAS Configuration Files]({{ "/configuration_files/" | relative_url }}) for
 a more complete description of the configuration file model, and
 [simple_logger.py](https://github.com/OceanDataTools/openrvdas/blob/master/test/configs/simple_logger.yaml),
 [composed_logger.py](https://github.com/OceanDataTools/openrvdas/blob/master/test/configs/composed_logger.yaml) and

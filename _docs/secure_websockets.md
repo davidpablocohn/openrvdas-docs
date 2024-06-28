@@ -9,7 +9,7 @@ toc_sticky: true  # Makes the TOC stick on scroll
 ---
 
 OpenRVDAS uses websockets to relay logger data and status information to
-the [CachedDataServer](/cached_data_server/), which then support
+the [CachedDataServer]({{ "/cached_data_server/" | relative_url }}), which then support
 display of near-realtime updates to the web console and display widgets.
 While on-server websocket communication is conducted (insecurely) on port
 8766, in some environments security may dictate restricting off-server access

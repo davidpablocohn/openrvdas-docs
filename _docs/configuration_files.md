@@ -10,7 +10,7 @@ toc_sticky: true  # Makes the TOC stick on scroll
 
 ## Overview
 
-Please see the [OpenRVDAS Introduction to Loggers](/intro_to_loggers/)
+Please see the [OpenRVDAS Introduction to Loggers]({{ "/intro_to_loggers/" | relative_url }})
 for a general introduction to loggers.
 
 The workhorse utility of the OpenRVDAS system is the Listener class,

@@ -171,11 +171,11 @@ supervisorctl restart django:*
 
 If you wish to use InfluxDB and Grafana to create dashboards and display data, you
 will need to run the installation script in `utils/install_influxdb.sh`. Please
-see and follow the instructions in [Grafana/InfluxDB-based Displays](/grafana_displays/).
+see and follow the instructions in [Grafana/InfluxDB-based Displays]({{ "/grafana_displays/" | relative_url }}).
 
 ## Starting and Stopping Servers
 
-In addition to the NGINX webserver (and its Python helper interface UWSGI), OpenRVDAS relies on two servers: ``logger_manager.py`` and ``cached_data_server.py`` (see [Controlling Loggers](/controlling_loggers/) for details). 
+In addition to the NGINX webserver (and its Python helper interface UWSGI), OpenRVDAS relies on two servers: ``logger_manager.py`` and ``cached_data_server.py`` (see [Controlling Loggers]({{ "/controlling_loggers/" | relative_url }}) for details). 
 
 The easiest way to manage these servers is via the supervisord package that is installed by the installation script. If you answered 'yes' when asked whether OpenRVDAS should start automatically on boot up, supervisord will start them for you; if you answered 'no', the supervisord configurations will have still be created, but you will need to manually tell supervisord to start/stop them.
 
