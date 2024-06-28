@@ -261,7 +261,7 @@ The first of these scripts timestamps records as they come in and saves them in 
 
 For logger workflows of non-trivial complexity, we recommend that users forgo specifying Readers, Transforms and Writers on the command line in favor of using configuration files.
 
-A configuration file is a YAML or JSON specification[^4] of components along with their parameters. It may be invoked using the `--config_file` argument:
+A configuration file is a YAML or JSON specification of components along with their parameters. It may be invoked using the `--config_file` argument:
 
 ```
 logger/listener/listen.py --config_file gyr_logger.yaml
@@ -318,5 +318,3 @@ a more complete description of the configuration file model, and
 [composed_logger.py](https://github.com/OceanDataTools/openrvdas/blob/master/test/configs/composed_logger.yaml) and
 [parallel_logger.py](https://github.com/OceanDataTools/openrvdas/blob/master/test/configs/parallel_logger.yaml) in the
 project's [test/configs](https://github.com/OceanDataTools/openrvdas/blob/master/test/configs) directory for examples.
-
-[^1]: YAML is a strict superset of JSON, modulo the restriction that it may not use tabs as whitespace.
