@@ -16,12 +16,12 @@ geofencing and other data-dependent logger control.
 
 # Geofencing
 
-The [GeofenceTransform](../logger/transforms/geofence_transform.py) listens to a stream of parsed `DASRecord` records or dictionaries of name:value pairs looking for
+The [GeofenceTransform](https://github.com/OceanDataTools/openrvdas/blob/master/logger/transforms/geofence_transform.py) listens to a stream of parsed `DASRecord` records or dictionaries of name:value pairs looking for
 fields that contain latitude/longitude pairs. When found, it compares them to a geofence boundary loaded at initialization
 time. If the lat/lon has crossed over the boundary since the last record, it emits a predefined 'leaving_boundary_message'
 or 'entering_boundary_message' as appropriate.
 
-Pairing this with the [LoggerManagerWriter](../logger/writers/logger_manager_writer.py) provides a simple mechanism for changing cruise modes when the
+Pairing this with the [LoggerManagerWriter](https://github.com/OceanDataTools/openrvdas/blob/master/logger/writers/logger_manager_writer.py) provides a simple mechanism for changing cruise modes when the
 boundary in question is crossed. The simple logger definition below illustrates this:
 ```
 # Read parsed DASRecords from UDP
@@ -123,7 +123,7 @@ of prior commands to settle.
 # Other Data-Based Logger Control
 
 There are ways to implement data-based control of loggers, beyond the lat/lon-specific GeofenceTransform. The
-[QCFilterTransform](../logger/transforms/qc_filter_transform.py) provides a more limited, but still powerful way to
+[QCFilterTransform](https://github.com/OceanDataTools/openrvdas/blob/master/logger/transforms/qc_filter_transform.py) provides a more limited, but still powerful way to
 change logger state depending on the value of a specific data field:
 ```
 # Read parsed DASRecords from UDP
@@ -162,7 +162,7 @@ writers:
 This message gets passed on to the LoggerManagerWriter which, as before, will interpret it as a command and set the system into underway mode.
 
 Note that if you also wanted the system to switch out of underway mode when the ship's speed slowed back down below a certain value, you
-would need to create a second logger (or use a [ComposedWriter](../logger/writers/composed_writer.py)) using a bounds line like `s330SpeedKt:0.5:100` and an appropriate
+would need to create a second logger (or use a [ComposedWriter](https://github.com/OceanDataTools/openrvdas/blob/master/logger/writers/composed_writer.py)) using a bounds line like `s330SpeedKt:0.5:100` and an appropriate
 message to switch to the desired mode.
 
 # Example of using boundary_dir_name

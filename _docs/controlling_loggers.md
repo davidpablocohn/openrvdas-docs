@@ -7,7 +7,7 @@ toc_label: "Contents"
 toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
-This document describes operation of the [Logger Manager](../server/logger_manager.py), a multifaceted script that allows running, controlling and monitoring entire sets of loggers.
+This document describes operation of the [Logger Manager](https://github.com/OceanDataTools/openrvdas/blob/master/server/logger_manager.py), a multifaceted script that allows running, controlling and monitoring entire sets of loggers.
 
 # The High-Order Bits
 
@@ -70,9 +70,9 @@ Before we dive into the use of ``logger_manager.py``, it's worth pausing for a m
       knud: knud->file/net/db 
       rtmp: rtmp->file/net/db
 ```
--   **Cruise configuration** - (or just "configuration" when we're being sloppy). This is the file/JSON/YAML structure that contains everything the logger manager needs to know about running a cruise. In addition to containing cruise metadata (cruise id, provisional start and ending dates), a cruise configuration file (such as in [test/NBP1406/NBP1406\_cruise.yaml](../test/NBP1406/NBP1406_cruise.yaml)), contains a dict of all the logger configurations that are to be run on a particular vessel deployment, along with definitions for all the modes into which those logger configurations are grouped.
+-   **Cruise configuration** - (or just "configuration" when we're being sloppy). This is the file/JSON/YAML structure that contains everything the logger manager needs to know about running a cruise. In addition to containing cruise metadata (cruise id, provisional start and ending dates), a cruise configuration file (such as in [test/NBP1406/NBP1406\_cruise.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml)), contains a dict of all the logger configurations that are to be run on a particular vessel deployment, along with definitions for all the modes into which those logger configurations are grouped.
   
-It is worth noting that strictly speaking, a "logger" does not exist as a separate entity in OpenRVDAS. It is just a convenient way of thinking about a set of configurations that are responsible for a given data stream, e.g. Knudsen data, or a GPS feed. This is evident when looking at the [sample cruise definition file](../test/NBP1406/NBP1406_cruise.yaml), as the logger definition ("knud") is just a list of the configurations that are responsible for handling the data that comes in from a particular serial port.
+It is worth noting that strictly speaking, a "logger" does not exist as a separate entity in OpenRVDAS. It is just a convenient way of thinking about a set of configurations that are responsible for a given data stream, e.g. Knudsen data, or a GPS feed. This is evident when looking at the [sample cruise definition file](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml), as the logger definition ("knud") is just a list of the configurations that are responsible for handling the data that comes in from a particular serial port.
 
 ```
 knud:
@@ -81,7 +81,7 @@ knud:
   - knud->net,
   - knud->file/net/db
 ```
-Perusing a complete cruise configuration file such as [test/NBP1406/NBP1406_cruise.yaml](../test/NBP1406/NBP1406_cruise.yaml) may be useful for newcomers to the system. _(For a deeper dive, please refer to [OpenRVDAS Configuration Files](/configuration_files/))._
+Perusing a complete cruise configuration file such as [test/NBP1406/NBP1406_cruise.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml) may be useful for newcomers to the system. _(For a deeper dive, please refer to [OpenRVDAS Configuration Files](/configuration_files/))._
 
 ## What the logger manager does
 
@@ -164,7 +164,7 @@ Configs for gyr1: gyr1->off, gyr1->net, gyr1->file/net/db
 command? set_active_logger_config gyr1 gyr1->file/net/db
 command? quit
 ```
-As with sample script for logger\_runner.py, the sample cruise configuration file [test/NBP1406/NBP1406\_cruise.yaml](../test/NBP1406/NBP1406\_cruise.yaml) attempts to read from virtual serial ports, so you'll need to create those simulated serial ports by having the command
+As with sample script for logger\_runner.py, the sample cruise configuration file [test/NBP1406/NBP1406\_cruise.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406\_cruise.yaml) attempts to read from virtual serial ports, so you'll need to create those simulated serial ports by having the command
 
 ```
   logger/utils/simulate_data.py \
@@ -176,7 +176,7 @@ running in another terminal for the logger manager to load and run it without co
 
 ## Driving widget-based data display
 
-In addition to being stored, logger data may be displayed in real time via [display widgets](/display_widgets/) or [Grafana displays](/grafana_displays/). The most straightforward way to do this is by configuring loggers to echo their output to a [CachedDataServer](../cached_data_server/). This may be done either via UDP (if the CachedDataServer has been initialized to listen on a UDP port) or via CachedDataWriter that will connect using a websocket. Widgets on display pages will then connect to the data server via a websocket and request data, as described in the [Display Widgets
+In addition to being stored, logger data may be displayed in real time via [display widgets](/display_widgets/) or [Grafana displays](/grafana_displays/). The most straightforward way to do this is by configuring loggers to echo their output to a [CachedDataServer](/cached_data_server/). This may be done either via UDP (if the CachedDataServer has been initialized to listen on a UDP port) or via CachedDataWriter that will connect using a websocket. Widgets on display pages will then connect to the data server via a websocket and request data, as described in the [Display Widgets
 document](/display_widgets/).
 
 ![Logger Manager with CachedDataServer](../assets/images/console_based_logger_manager.png)
@@ -204,7 +204,7 @@ logger manager may be controlled by a web console.
  CachedDataServer](../assets/images/web_based_logger_manager.png)
 
 If the system is installed using the default build scripts in the
-[utils directory](../utils), it will be configured to use the Django-based database (backed by SQLite) to maintain logger state and to serve a Django-based web console served by Nginx. The default installation will also configure a cached data server, which the web interface will rely on for real time status updates (the web interfaces will still be able to start/stop/select logger configurations without a cached data server; it will just not receive feedback on whether those loggers have been successfully started/stopped).
+[utils directory](https://github.com/OceanDataTools/openrvdas/blob/master/utils), it will be configured to use the Django-based database (backed by SQLite) to maintain logger state and to serve a Django-based web console served by Nginx. The default installation will also configure a cached data server, which the web interface will rely on for real time status updates (the web interfaces will still be able to start/stop/select logger configurations without a cached data server; it will just not receive feedback on whether those loggers have been successfully started/stopped).
 
 In the default installation, the Linux ``supervisord`` daemon is configured to be able to run and monitor both the logger manager and cached data server on demand. Its configuration file is in ``/etc/supervisor/conf.d/openrvdas`` on Ubuntu and ``/etc/supervisord/openrvdas.ini`` on CentOS/RedHat:
 
@@ -275,7 +275,7 @@ You will have noticed that many of the examples in this documentation make use o
   supervisor>
 ```
 
-Please see the [GUI Quickstart](/quickstart_gui/) document for detailed instructions on operating the web interface and the [server/README.md](../server/README.md) file and [logger_manager.py](../server/logger_manager.py) headers for the most up-to-date information on running logger\_manager.py.
+Please see the [GUI Quickstart](/quickstart_gui/) document for detailed instructions on operating the web interface and the [server/README.md](https://github.com/OceanDataTools/openrvdas/blob/master/server/README.md) file and [logger_manager.py](https://github.com/OceanDataTools/openrvdas/blob/master/server/logger_manager.py) headers for the most up-to-date information on running logger\_manager.py.
 
 # RESTful API
 

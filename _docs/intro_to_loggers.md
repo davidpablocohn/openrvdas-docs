@@ -41,7 +41,7 @@ def logger(port, instrument):
 
 ![UDPWriter data flow](../assets/images/network_writer.png)
 
-The document [OpenRVDAS Components](/components/) describes many of the currently-implemented Readers, Transforms and Writers, and you can examine the directories [logger/readers/](../logger/readers), [logger/transforms/](../logger/transforms) and [logger/writers/](../logger/writers) for the full set of standard, implemented components.
+The document [OpenRVDAS Components](/components/) describes many of the currently-implemented Readers, Transforms and Writers, and you can examine the directories [logger/readers/](https://github.com/OceanDataTools/openrvdas/blob/master/logger/readers), [logger/transforms/](https://github.com/OceanDataTools/openrvdas/blob/master/logger/transforms) and [logger/writers/](https://github.com/OceanDataTools/openrvdas/blob/master/logger/writers) for the full set of standard, implemented components.
 
 # Using the Listener Class
 
@@ -62,11 +62,11 @@ It runs all Readers in parallel, feeding their output to the Transforms, run in 
     listener.run()
 ```
 
-Please see the code in [logger/listener/listener.py](../logger/listener/listener.py) for more information about using the Listener class.
+Please see the code in [logger/listener/listener.py](https://github.com/OceanDataTools/openrvdas/blob/master/logger/listener/listener.py) for more information about using the Listener class.
 
 # Using the Listen Script
 
-The [logger/listener/listen.py](../logger/listener/listen.py) script is a convenient wrapper around the Listener class, and allows combining and running the most commonly-used Reader, Transform and Writer components from the command line. For example, the invocation:
+The [logger/listener/listen.py](https://github.com/OceanDataTools/openrvdas/blob/master/logger/listener/listen.py) script is a convenient wrapper around the Listener class, and allows combining and running the most commonly-used Reader, Transform and Writer components from the command line. For example, the invocation:
 
 ```
 listen.py \

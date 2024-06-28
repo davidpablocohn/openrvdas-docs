@@ -113,7 +113,7 @@ Rather than talking to the logger manager directly, we use the Django-based GUI 
 
 ![Logger Manager Diagram](../assets/images/logger_manager_diagram.png)
 
-Please see [Controlling Loggers](../docs/controlling_loggers.md) for information on running logger\_runner.py and logger\_manager.py.
+Please see [Controlling Loggers](../controlling_loggers/) for information on running logger\_runner.py and logger\_manager.py.
 
 A command-line interface, `servers/lmcmd.py`, allows another way of connecting to the Django database to issue commands and get status updates.
 ```
@@ -143,14 +143,14 @@ Valid commands:
 ## InfluxDB/Grafana displays
 The preferred way to display live and historical OpenRVDAS data is to use the suite of InfluxDB and Grafana
 tools that are installed and configured using the utils/install_influxdb.sh script, Please see the
-[Grafana/InfluxDB](../docs/grafana_displays.md) page for information on using these tools.
+[Grafana/InfluxDB](/grafana_displays/) page for information on using these tools.
 
 ![Grafana Dashboard Example](../assets/images/grafana_dashboard.png)
 
 ## Highcharts + native displays
 OpenRVDAS does still ship with its own Highcharts-based widgets for displaying live and historical data using Javascript-based web widgets. A set of sample web displays created with these widgets is available at [http://openrvdas/display](http://openrvdas/display); the
 source files for these displays are under the project's
-[display](../display) directory. If you are using the
+[display directory](https://github.com/OceanDataTools/openrvdas/tree/master/display/html) . If you are using the
 ``NBP1406_cruise.yaml`` cruise definition, have a look at the
 [http://openrvdas/display/nbp_dashboard.html](http://openrvdas/display/nbp_dashboard.html)
 page for an example of what the displays can do.

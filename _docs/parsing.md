@@ -11,18 +11,18 @@ Perhaps the second most crucial task that a data acquisition system
 must accomplish (after reliably storing incoming data records) is to
 be able to parse those records into meaningful values that can be
 displayed and manipulated to provide insight. The
-[RecordParser](../logger/utils/record_parser.py) class in
-([logger/utils/record\_parser.py](../logger/utils/record_parser.py)
+[RecordParser](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/record_parser.py) class in
+([logger/utils/record\_parser.py](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/record_parser.py)
 and its associated transform in
-[logger/transforms/parse\_transform.py](../logger/transforms/parse_transform.py)
+[logger/transforms/parse\_transform.py](https://github.com/OceanDataTools/openrvdas/blob/master/logger/transforms/parse_transform.py)
 provide a tool for accomplishing this.
 
 (Note that there is also an earlier and now-deprecated module, the
-[NMEAParser](../logger/utils/nmea_parser.py), whose functionality has
+[NMEAParser](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/nmea_parser.py), whose functionality has
 mostly been superceded by the RecordParser. A section at the end of
 this document describes its use.)
 
-The [RecordParser](../logger/utils/record_parser.py) class takes text
+The [RecordParser](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/record_parser.py) class takes text
 records and parses them into structured data with named fields
 and timestamps.
 
@@ -133,7 +133,7 @@ format, by default beginning with a data\_id identifying the physical
 or virtual sensor that created the record and an ISO 8601-compliant
 timestamp followed by the body of the message (This default is defined
 as ```DEFAULT_RECORD_FORMAT``` in
-[logger/utils/record_parser.py](../logger/utils/record_parser.py) and
+[logger/utils/record_parser.py](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/record_parser.py) and
 can be overridden during creation of the RecordParser instance).
 
 After stripping the data\_id and timestamp off, we are left with the
@@ -144,7 +144,7 @@ the device that produced it, in this case, 'knud'.
 
 The record parser is encapulated for logger use within the thin
 wrapper of the
-[ParseTransform](../logger/transforms/parse_transform.py) and takes
+[ParseTransform](https://github.com/OceanDataTools/openrvdas/blob/master/logger/transforms/parse_transform.py) and takes
 the same optional arguments as the bare RecordParser:
 
   ```
@@ -363,7 +363,7 @@ argument is non-zero, it will be attached to records at intervals of
 that many seconds.
 
 If invoked with ```return_das_record=True``` it will return [DASRecord
-objects](../logger/utils/das_record.py), and if invoked with
+objects](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/das_record.py), and if invoked with
 ```return_json=True``` it will return the dict in JSON-encoded format.
 
 # Parser format strings
