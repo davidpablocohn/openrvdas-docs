@@ -11,9 +11,9 @@ This page describes operation of the [Logger Manager](https://github.com/OceanDa
 
 # The High-Order Bits
 
-The ``listen.py`` script, described in the [Introduction to listen.py doc](/listen_py/) will run a single logger defined either from command line parameters, or by loading a logger configuration file. 
+The ``listen.py`` script, described on the page _[The Listener Script](/listen_py/)_ will run a single logger defined either from command line parameters, or by loading a logger configuration file. 
 
-The ``logger_manager.py`` script takes a more complicated file (called a "cruise definition file") that consists not only of a list of named configurations, but also of "modes" such as "off", "in port" and "underway", specifying which configurations should be running in which mode. It supports an API that lets one control and monitor it from the command line or via a web interface.
+The ``logger_manager.py`` script takes a more complicated file (called a "cruise definition file") that consists not only of a list of named configurations, but also of "modes" such as `off`, `in port` and `underway`, specifying which configurations should be running in which mode. It supports an API that lets one control and monitor it from the command line or via a web interface.
 
   In the default installation, a logger manager and its companion, the cached data server, are run by the system's ``supervisor`` daemon.
 
@@ -23,12 +23,10 @@ Below, we go into greater detail on these points.
 
 Before we dive into the use of ``logger_manager.py``, it's worth pausing for a moment to introduce some concepts that underlie the structure of the logger manager.
 
--   **Logger configuration** - This is a definition for a set of Readers, Transforms and Writers feeding into each other, such as would be read using the `--config` argument of the listen.py script. In OpenRVDAS, each logger configuration that is active runs as its own daemon process.  The sample logger configuration below ("knud-\>net") reads NMEA data from the Knudsen serial port, timestamps and labels the record, then broadcasts it via UDP:
+-   **Logger configuration** - This is a definition for a set of Readers, Transforms and Writers feeding into each other, such as would be read using the `--config` argument of the listen.py script. In OpenRVDAS, each logger configuration that is active runs as its own daemon process.  The sample logger configuration below (`knud-net`) reads NMEA data from the Knudsen serial port, timestamps and labels the record, then broadcasts it via UDP:
 
 ```
-  knud->net: 
-    host_id: knud.host
-    name: knud->net
+  knud-net: 
     readers: 
       class: SerialReader
       kwargs: 
@@ -44,42 +42,42 @@ Before we dive into the use of ``logger_manager.py``, it's worth pausing for a m
       kwargs: 
         port: 6224
 ```
--   **Cruise mode (or just "mode")** - Logger configurations can be grouped into logical collections that will be active at any given time. Certain logger configurations will be running when a vessel is in port; another set may be running while the vessel is at sea, but within territorial waters; yet another when it is fully underway. The mode definition below indicates that when "port" mode is active, the configurations "gyr1-\>net", "mwx1-\>net", "s330-\>net" and "eng1-\>net" should be running:
+-   **Cruise mode (or just "mode")** - Logger configurations can be grouped into logical collections that will be active at any given time. Certain logger configurations will be running when a vessel is in port; another set may be running while the vessel is at sea, but within territorial waters; yet another when it is fully underway. The mode definition below indicates that when `port` mode is active, the configurations `gyr1-net`, `mwx1-net`, `s330-net` and `eng1-net` should be running:
 
 ```
   modes:  
     off:  
-      gyr1: gyr1->off 
-      mwx1: mwx1->off 
-      s330: s330->off 
-      eng1: eng1->off 
-      knud: knud->off 
-      rtmp: rtmp->off 
+      gyr1: gyr1-off 
+      mwx1: mwx1-off 
+      s330: s330-off 
+      eng1: eng1-off 
+      knud: knud-off 
+      rtmp: rtmp-off 
     port:  
-      gyr1: gyr1->net 
-      mwx1: mwx1->net 
-      s330: s330->net 
-      eng1: eng1->net 
-      knud: knud->off 
-      rtmp: rtmp->off 
+      gyr1: gyr1-net 
+      mwx1: mwx1-net 
+      s330: s330-net 
+      eng1: eng1-net 
+      knud: knud-off 
+      rtmp: rtmp-off 
     underway:
-      gyr1: gyr1->file/net/db 
-      mwx1: mwx1->file/net/db 
-      s330: s330->file/net/db 
-      eng1: eng1->file/net/db 
-      knud: knud->file/net/db 
-      rtmp: rtmp->file/net/db
+      gyr1: gyr1-file/net/db 
+      mwx1: mwx1-file/net/db 
+      s330: s330-file/net/db 
+      eng1: eng1-file/net/db 
+      knud: knud-file/net/db 
+      rtmp: rtmp-file/net/db
 ```
 -   **Cruise configuration** - (or just "configuration" when we're being sloppy). This is the file/JSON/YAML structure that contains everything the logger manager needs to know about running a cruise. In addition to containing cruise metadata (cruise id, provisional start and ending dates), a cruise configuration file (such as in [test/NBP1406/NBP1406\_cruise.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml)), contains a dict of all the logger configurations that are to be run on a particular vessel deployment, along with definitions for all the modes into which those logger configurations are grouped.
   
-It is worth noting that strictly speaking, a "logger" does not exist as a separate entity in OpenRVDAS. It is just a convenient way of thinking about a set of configurations that are responsible for a given data stream, e.g. Knudsen data, or a GPS feed. This is evident when looking at the [sample cruise definition file](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml), as the logger definition ("knud") is just a list of the configurations that are responsible for handling the data that comes in from a particular serial port.
+It is worth noting that strictly speaking, a "logger" does not exist as a separate entity in OpenRVDAS. It is just a convenient way of thinking about a set of configurations that are responsible for a given data stream, e.g. Knudsen data, or a GPS feed. This is evident when looking at the [sample cruise definition file](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml), as the logger definition (`knud`) is just a list of the configurations that are responsible for handling the data that comes in from a particular serial port.
 
 ```
 knud:
   configs:
-  - knud->off,
-  - knud->net,
-  - knud->file/net/db
+  - knud-off,
+  - knud-net,
+  - knud-file/net/db
 ```
 Perusing a complete cruise configuration file such as [test/NBP1406/NBP1406\_cruise.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml) may be useful for newcomers to the system. _(For a deeper dive, please refer to [OpenRVDAS Configuration Files](/configuration_files/))._
 
@@ -160,8 +158,8 @@ command?
 
 ```
 command? get_logger_configs gyr1
-Configs for gyr1: gyr1->off, gyr1->net, gyr1->file/net/db
-command? set_active_logger_config gyr1 gyr1->file/net/db
+Configs for gyr1: gyr1-off, gyr1-net, gyr1-file/net/db
+command? set_active_logger_config gyr1 gyr1-file/net/db
 command? quit
 ```
 As with sample script for logger\_runner.py, the sample cruise configuration file [test/NBP1406/NBP1406\_cruise.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406\_cruise.yaml) attempts to read from virtual serial ports, so you'll need to create those simulated serial ports by having the command

@@ -73,7 +73,7 @@ plugins:
 author:
   #name   : "OpenRVDAS"
   #avatar : "/assets/images/shell.jpg"
-  bio    : "OpenRVDAS (Open Research Vessel Data Acquisition System) is a
+  bio    : "OpenRVDAS (Open Research Vessel Data Acquisition System) is an open source
     software framework used for building custom data acquisition systems."
   #links:
     #- label: "Ocean Data Tools Home"
@@ -88,6 +88,9 @@ footer:
     - label: "GitHub Repository"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/OceanDataTools/openrvdas"
+    - label: "MIT Open Source License"
+      icon: "fas fa-file-alt"
+      url: "https://opensource.org/license/mit"
 
 ############################
 defaults:
