@@ -7,7 +7,7 @@ toc_label: "Contents"
 toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
-This page describes basic installation of the full OpenRVDAS package and basic manipulation of its graphic user interface. A separate [OpenRVDAS Quickstart](quick_start.md) document describes how to configure simple OpenRVDAS loggers and run them from the command line.
+This page describes basic installation of the *full* OpenRVDAS package and basic manipulation of its graphic user interface. A [separate quickstart guide](/quickstart/) describes how to configure simple OpenRVDAS loggers and run them from the command line.
 
 # Installation and Quickstart
 The simplest way to get started with OpenRVDAS is to bring up a clean dedicated Ubuntu 23 or

@@ -46,6 +46,7 @@ timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 include:
   - _pages
+  - _docs
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
@@ -88,6 +89,7 @@ footer:
       icon: "fab fa-fw fa-github"
       url: "https://github.com/OceanDataTools/openrvdas"
 
+############################
 defaults:
   # _posts
   #- scope:
@@ -101,12 +103,22 @@ defaults:
   #    share: true
   #    related: true
 
+  # _docs
+  - scope:
+      path: ""
+      type: docs
+    values:
+      sidebar:
+        nav: "navdocs"
+
   - scope:
       path: ""
       type: pages
     values:
       layout: home
       author_profile: true
+      sidebar:
+        nav: "navdocs"
 
   # _pages
   #- scope:
@@ -129,6 +141,7 @@ toc_label: "Table of Contents"
 toc_icon: "cog"  # Choose an icon from FontAwesome (optional)
 toc_levels: "1..3"  # Define which heading levels to include in the TOC
 
+############################
 category_archive:
   type: liquid
   path: /categories/

@@ -13,3 +13,50 @@ main:
   #  url: /categories/
   #- title: "Tags"
   #  url: /tags/
+
+navdocs:
+  - title: Getting Started
+    children:
+      - title: "Quick-Start Guide"
+        url: /quickstart/
+      - title: "GUI Quick-Start"
+        url: /quickstart_gui/
+      - title: "Installation"
+        url: /install/
+      - title: "Introduction to Loggers"
+        url: /intro_to_loggers/
+      - title: "Controlling Loggers"
+        url: /controlling_loggers/
+
+  - title: Customization
+    children:
+      - title: "Configuration"
+        url: /docs/configuration/
+      - title: "Navigation"
+        url: /docs/navigation/
+      - title: "UI Text"
+        url: /docs/ui-text/
+      - title: "Authors"
+        url: /docs/authors/
+      - title: "Layouts"
+        url: /docs/layouts/
+
+  - title: Content
+    children:
+      - title: "Working with Posts"
+        url: /docs/posts/
+      - title: "Working with Pages"
+        url: /docs/pages/
+      - title: "Working with Collections"
+        url: /docs/collections/
+      - title: "Helpers"
+        url: /docs/helpers/
+      - title: "Utility Classes"
+        url: /docs/utility-classes/
+
+  - title: Extras
+    children:
+      - title: "Stylesheets"
+        url: /docs/stylesheets/
+      - title: "JavaScript"
+        url: /docs/javascript/
