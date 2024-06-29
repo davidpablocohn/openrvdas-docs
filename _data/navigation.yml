@@ -43,6 +43,22 @@ navdocs:
       - title: "Grafana Displays"
         url: /grafana_displays/
 
+  - title: More Advanced Topics
+    children:
+      - title: "Adding a Sensor"
+        url: /adding_a_sensor/
+      - title: "Geofencing"
+        url: /geofencing/
+      - title: "Derived Data"
+        url: /derived_data/
+
+  - title: Reference
+    children:
+      - title: "Glossary"
+        url: /glossary/
+      - title: "Security Assumptions"
+        url: /security/
+
   - title: Links
     children:
       - title: "Ocean Data Tools Home"

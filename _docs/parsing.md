@@ -18,7 +18,7 @@ and its associated transform in
 provide a tool for accomplishing this.
 
 (Note that there is also an earlier and now-deprecated module, the
-[NMEAParser](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/nmea_parser.py), whose functionality has
+[NMEAParser]({{ "/nmea_parsing/" | relative_url }}), whose functionality has
 mostly been superceded by the RecordParser. A section at the end of
 this document describes its use.)
 
