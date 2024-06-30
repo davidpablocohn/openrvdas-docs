@@ -13,20 +13,31 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: MM
-email:
+title: OpenRVDAS Documentation
+email: info@openrvdas.org
 description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
-twitter_username: username
-github_username: username
+    The Open Research Vessel Data Acquisition System (OpenRVDAS) is a
+    software framework used for building custom data acquisition systems
+    (DAS).  OpenRVDAS target audiences are oceanographic research vessel
+    operators and operators of other science-related platforms that have
+    the need to record streaming data.  OpenRVDAS is capable of reading
+    data records from serial ports and network-aware sensors, optionally
+    modifying those data records and streaming either the result to one or
+    more destinations, including logfiles, network ports, databases, etc.
+
+    OpenRVDAS is designed to be modular and extensible, relying on simple
+    composition of Readers, Transforms and Writers to achieve the needed
+    datalogging functionality.
+#twitter_username: username
+github_username: oceandatatools
 minimal_mistakes_skin: default
 search: true
 
 # Build settings
 markdown: kramdown
 remote_theme: mmistakes/minimal-mistakes
+#theme: minimal-mistakes-jekyll
+
 # Outputting
 permalink: /:categories/:title/
 paginate: 5 # amount of posts to show
@@ -35,6 +46,7 @@ timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 include:
   - _pages
+  - _docs
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
@@ -56,60 +68,91 @@ plugins:
   - jekyll-feed
   - jemoji
   - jekyll-include-cache
+  - jekyll-toc
 
 author:
-  name   : "First Lastname"
-  avatar : "/assets/images/bio-photo.jpg"
-  bio    : "My awesome biography constrained to a sentence or two goes here."
-  links:
-    - label: "Website"
-      icon: "fas fa-fw fa-link"
-      url: "https://"
-    - label: "Twitter"
-      icon: "fab fa-fw fa-twitter-square"
-      url: "https://twitter.com/"
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github"
-      url: "https://github.com/"
-    - label: "Instagram"
-      icon: "fab fa-fw fa-instagram"
-      url: "https://instagram.com/"
+  #name   : "OpenRVDAS"
+  #avatar : "/assets/images/shell.jpg"
+  bio    : "OpenRVDAS (Open Research Vessel Data Acquisition System) is an open source
+    software framework used for building custom data acquisition systems."
+  #links:
+    #- label: "Ocean Data Tools Home"
+    #  icon: "fas fa-fw fa-link"
+    #  url: "https:/oceandata.tools"
+    #- label: "GitHub Repository"
+    #  icon: "fab fa-fw fa-github"
+    #  url: "https://github.com/OceanDataTools/openrvdas"
 
 footer:
   links:
-    - label: "Twitter"
-      icon: "fab fa-fw fa-twitter-square"
-      url: "https://twitter.com/"
-    - label: "GitHub"
+    - label: "GitHub Repository"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/"
-    - label: "Instagram"
-      icon: "fab fa-fw fa-instagram"
-      url: "https://instagram.com/"
+      url: "https://github.com/OceanDataTools/openrvdas"
+    - label: "MIT Open Source License"
+      icon: "fas fa-file-alt"
+      url: "https://opensource.org/license/mit"
 
+############################
 defaults:
   # _posts
+  #- scope:
+  #    path: ""
+  #    type: posts
+  #  values:
+  #    layout: single
+  #    author_profile: true
+  #    read_time: true
+  #    comments: true
+  #    share: true
+  #    related: true
+
+  # _docs
   - scope:
       path: ""
-      type: posts
+      type: docs
     values:
-      layout: single
-      author_profile: true
-      read_time: true
-      comments: true
-      share: true
-      related: true
-  # _pages
+      sidebar:
+        nav: "navdocs"
+
   - scope:
-      path: "_pages"
+      path: ""
       type: pages
     values:
-      layout: single
+      layout: home
       author_profile: true
+      sidebar:
+        nav: "navdocs"
 
+  # _pages
+  #- scope:
+  #    path: "_pages"
+  #    type: pages
+  #  values:
+  #    layout: single
+  #    author_profile: true
+
+#toc:
+#  min_level: 1
+#  max_level: 6
+#  no_toc_section_class: "no_toc_section"
+#  list_class: "toc-list"
+#  sublist_class: "toc-sublist"
+#  item_class: "toc-list-item"
+
+toc: true
+toc_label: "Table of Contents"
+toc_icon: "cog"  # Choose an icon from FontAwesome (optional)
+toc_levels: "1..4"  # Define which heading levels to include in the TOC
+
+############################
 category_archive:
   type: liquid
   path: /categories/
 tag_archive:
   type: liquid
   path: /tags/
+
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name

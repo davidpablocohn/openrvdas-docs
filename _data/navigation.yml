@@ -1,9 +1,84 @@
 main:
-  - title: "Posts"
-    url: /posts/
-  - title: "Categories"
-    url: /categories/
-  - title: "Tags"
-    url: /tags/
   - title: "About"
     url: /about/
+  - title: "Quickstart"
+    url: /quickstart/
+  - title: "GUI Quickstart"
+    url: /quickstart_gui/
+  - title: "All the Docs"
+    url: /docs/
+  #- title: "Posts"
+  #  url: /posts/
+  #- title: "Categories"
+  #  url: /categories/
+  #- title: "Tags"
+  #  url: /tags/
+
+navdocs:
+  - title: Getting Started
+    children:
+      - title: "Quick-Start Guide"
+        url: /quickstart/
+      - title: "GUI Quick-Start"
+        url: /quickstart_gui/
+      - title: "Installation"
+        url: /install/
+
+      - title: "The Listener Script"
+        url: /listen_py/
+      - title: "Controlling Loggers"
+        url: /controlling_loggers/
+
+  - title: Data Parsing
+    children:
+      - title: "General Record Parsing"
+        url: /parsing/
+      - title: "NMEA Record Parsing"
+        url: /nmea_parsing/
+
+  - title: Graphs and Displays
+    children:
+      - title: "Display Widgets"
+        url: /display_widgets/
+      - title: "Grafana Displays"
+        url: /grafana_displays/
+
+  - title: More Advanced Topics
+    children:
+      - title: "Adding a Sensor"
+        url: /adding_a_sensor/
+      - title: "Geofencing"
+        url: /geofencing/
+      - title: "Derived Data"
+        url: /derived_data/
+
+  - title: Reference
+    children:
+      - title: "Glossary"
+        url: /glossary/
+      - title: "Security Assumptions"
+        url: /security/
+
+  - title: Links
+    children:
+      - title: "Ocean Data Tools Home"
+        icon: "fas fa-fw fa-link"
+        url: "https://oceandata.tools"
+      - title: "GitHub Repository"
+        icon: "fab fa-fw fa-github"
+        url: "https://github.com/OceanDataTools/openrvdas"
+      - #      - title: "Working with Pages"
+#        url: /docs/pages/
+#      - title: "Working with Collections"
+#        url: /docs/collections/
+#      - title: "Helpers"
+#        url: /docs/helpers/
+#      - title: "Utility Classes"
+#        url: /docs/utility-classes/
+#
+#  - title: Extras
+#    children:
+#      - title: "Stylesheets"
+#        url: /docs/stylesheets/
+#      - title: "JavaScript"
+#        url: /docs/javascript/

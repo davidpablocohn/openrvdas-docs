@@ -14,4 +14,8 @@ group :jekyll_plugins do
   gem "jemoji"
   gem "jekyll-include-cache"
   gem "jekyll-algolia"
+  gem "jekyll-sass-converter"
+  gem 'webrick'
+
+  gem "minimal-mistakes-jekyll"
 end
