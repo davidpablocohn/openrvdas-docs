@@ -149,7 +149,7 @@ logger/listener/listen.py \
     --transform_slice "2:" \
     --write_file -
 ```
-The script is very powerful, but also has some non-intuitive gotchas, such as dependencies in the ordering of command line parameters. Please see the dedicated [listen.py document](../docs/listen_py.md) for full details.
+The script is very powerful, but also has some non-intuitive gotchas, such as dependencies in the ordering of command line parameters. Please see the dedicated [listen.py document]({{ "/listen_py/" | relative_url }}) for full details.
 
 ## Next things to look at
 The full complement of OpenRVDAS __readers__, __transforms__ and __writers__ and their functionality can be perused in the repository itself under the `logger/` subdirectory or in the [auto-generated html module documentation](https://htmlpreview.github.io/?https://raw.githubusercontent.com/oceandatatools/openrvdas/master/docs/html/logger/index.html).
