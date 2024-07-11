@@ -85,6 +85,9 @@ author:
 
 footer:
   links:
+    - label: "info@openrvdas.org"
+      icon: "fa-solid fa-envelope"
+      url: "mailto:info@openrvdas.org"
     - label: "GitHub Repository"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/OceanDataTools/openrvdas"
