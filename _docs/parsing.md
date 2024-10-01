@@ -362,7 +362,7 @@ argument or in the device definitions) and the metadata_interval
 argument is non-zero, it will be attached to records at intervals of
 that many seconds.
 
-If invoked with ```return_das_record=True``` it will return [DASRecord
+If invoked with the flag ```return_das_record=True``` it will return [DASRecord
 objects](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/das_record.py), and if invoked with
 ```return_json=True``` it will return the dict in JSON-encoded format.
 
