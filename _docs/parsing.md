@@ -344,7 +344,7 @@ parser = RecordParser(definition_path='local/devices/*.yaml,/opt/openrvdas/local
 
 If no ``definition_path`` is specified, the RecordParser will look for
 definitions in ```DEFAULT_DEFINITION_PATH```, defined as
-```local/devices/*.yaml```.
+`local/devices/*.yaml`.
 
 # Parser output format
 
