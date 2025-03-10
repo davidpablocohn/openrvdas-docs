@@ -372,7 +372,7 @@ includes:
 
 #### Modes
 
-The `modes` section - at present, remains unchanged and relatively verbose, with one important difference. If no `modes` key is found, the system will try to infer one. It will create a single default mode such that every logger is running the first configuration defined for it (in the case of `serial_logger_template`, this would be `off`).
+The `modes` section - at present - remains unchanged and relatively verbose, with one important difference. If no `modes` key is found, the system will try to infer one. It will create a single default mode such that every logger is running the first configuration defined for it (in the case of `serial_logger_template`, this would be `off`).
 
 This simplication allows institutions who have only one operating mode (and rely on the system to simply 'come up logging') to define loggers with only one configuration and simply omit creating a 'modes' section.
 
