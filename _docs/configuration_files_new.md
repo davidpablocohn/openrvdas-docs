@@ -361,6 +361,15 @@ includes:
 ```
 Note that filepaths specified in the `includes` block may include wildcards such as `*`, and the files may themselves have an `includes` section. All logger templates are merged into the top-level dict, with later keys overwriting earlier ones.
 
+Non-fully-specified paths will use the base installation directory (typically `/opt/openrvdas`), but this may be overridden by means of a top-level `includes_base_dir` key:
+
+```buildoutcfg
+###########################################################
+includes_base_dir: /opt/local/logger_templates
+includes:
+  - *_logger_template.yaml
+```
+
 #### Modes
 
 The `modes` section - at present, remains unchanged and relatively verbose, with one important difference. If no `modes` key is found, the system will try to infer one. It will create a single default mode such that every logger is running the first configuration defined for it (in the case of `serial_logger_template`, this would be `off`).
