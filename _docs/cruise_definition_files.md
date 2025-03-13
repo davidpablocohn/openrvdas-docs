@@ -370,6 +370,34 @@ includes:
   - *_logger_template.yaml
 ```
 
+#### One-Off Inline Loggers
+
+Loggers that are one-off, that is, specialized enough that there is no advantage to creating a template for them, may be included inline. That is, the configs for the logger may be defined when the logger is:
+
+```buildoutcfg
+loggers:
+  # Templatized logger
+  PCOD:
+    logger_template: serial_logger_template
+    variables:
+      serial_port: /tmp/tty_PCOD
+      baud_rate: 4800
+
+  # One-off, inline logger for geofencing
+  geo_fencing:
+    configs:
+      off: {}
+      on:
+      readers: {class: UDPReader, kwargs: {port: 7221}}
+      transforms:
+        - class: ParseTransform
+      ....
+```
+
+#### Mixing and Matching - under the hood
+
+As illustrated above, these approaches can be mixed and matched in the same cruise definition. In fact, while it's not recommended for clarity's sake, templatized and inline logger definitions can also be mixed with the traditional logger style of definition. This is because internally, before passing them on to the Logger Manager, the system begins by looking for logger templates and expands them into inline definitions. It then propagates the inline definitions into the separate top leve `configs` key. Loggers that already have inline definitions or configurations defined in the top-level `configs` key will be unaffected, unless overwritten by conflicting templatized loggers. 
+
 #### Modes
 
 The `modes` section - at present - remains unchanged and relatively verbose, with one important difference. If no `modes` key is found, the system will try to infer one. It will create a single default mode such that every logger is running the first configuration defined for it (in the case of `serial_logger_template`, this would be `off`).
