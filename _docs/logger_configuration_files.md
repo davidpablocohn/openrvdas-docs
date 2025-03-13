@@ -133,4 +133,4 @@ Please see the [Introduction to OpenRVDAS Components]({{ "/components/" | relati
 
 ## Managing Multiple Loggers and Configurations
 
-A typical vessel installation will necessitate running multiple loggers at once, each running a configuration specific to a particular sensor, and possibly also to a specific phase of a cruise. This set of loggers and configurations can be defined and managed via a [Cruise Definition File]({{ "/cruise_definition_files/" | relative_url }}) Cruise Definition File, which is described in an accompanying document.
+A typical vessel installation will necessitate running multiple loggers at once, each running a configuration specific to a particular sensor, and possibly also to a specific phase of a cruise. This set of loggers and configurations can be defined and managed via a [Cruise Definition File]({{ "/cruise_definition_files/" | relative_url }}), which is described in an accompanying document.

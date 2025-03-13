@@ -1,6 +1,6 @@
 ---
 permalink: /cruise_definition_files/
-title: "Cruise Definition"
+title: "Cruise Definition Files"
 layout: single
 toc: true
 toc_label: "Contents"
