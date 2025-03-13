@@ -1,6 +1,6 @@
 ---
 permalink: /cruise_definition_files/
-title: "Configuration Files"
+title: "Cruise Definition"
 layout: single
 toc: true
 toc_label: "Contents"
