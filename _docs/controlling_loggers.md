@@ -79,7 +79,7 @@ knud:
   - knud-net,
   - knud-file/net/db
 ```
-Perusing a complete cruise configuration file such as [test/NBP1406/NBP1406\_cruise.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml) may be useful for newcomers to the system. _(For a deeper dive, please refer to [OpenRVDAS Configuration Files]({{ "/configuration_files/" | relative_url }}))._
+Perusing a complete cruise configuration file such as [test/NBP1406/NBP1406\_cruise.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml) may be useful for newcomers to the system. _(For a deeper dive, please refer to [OpenRVDAS Configuration Files]({{ "/logger_configuration_files/" | relative_url }}))._
 
 ## What the logger manager does
 
