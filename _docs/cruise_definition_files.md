@@ -305,7 +305,10 @@ loggers:
       baud_rate: 19200
 ```
 
-The logger templates may either be included directly in the cruise definition file under the `logger_templates:` key, as above, or included by reference from an `includes:` section:
+
+### Included Files
+
+The logger templates may either be included directly in the cruise definition file under the top-level `logger_templates:` key, as above, or included by reference from an `includes:` section:
 ```buildoutcfg
 ###########################################################
 includes:
