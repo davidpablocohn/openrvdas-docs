@@ -213,7 +213,7 @@ This form of logger definition can be mixed and matched with the traditional for
 ### Variables
 
 OpenRVDAS now supports a simple use of variables in a cruise definition file. If defined as a dict under a top-level `variables` key, the loading script will look for instances of the variables enclosed in `<<double_angle_brackets>>` and perform text substitutions.
-```buildoutcfg
+```
 ###########################################################
 # Global variables - can be overridden by individual loggers
 variables:
@@ -235,7 +235,7 @@ cruise:
 What makes variable substitution most powerful is the implementation of logger templates, defined under the top-level `logger_templates` key. Many loggers in a typical installation will be almost identical, varying only by a few fields, such as ports, or prefixes to be attached.
 
 The [serial_logger_template](https://github.com/OceanDataTools/openrvdas/blob/master/local/logger_templates/serial_logger_template.yaml) encodes a typical set of logger configurations for a serial-port-based instrument:
-```buildoutcfg
+```
 ###################
 logger_templates:
   #################
@@ -290,7 +290,7 @@ logger_templates:
 
 A logger, rather than declaring or defining its configurations, may simply refer to a template, and provide its own local variables to extend or overwrite the global variables defined in the top-level `variables` section:
 
-```buildoutcfg
+```
 ###########################################################
 loggers:
   PCOD:
@@ -309,7 +309,7 @@ loggers:
 ### Included Files
 
 The logger templates may either be included directly in the cruise definition file under the top-level `logger_templates:` key, as above, or included by reference from an `includes:` section:
-```buildoutcfg
+```
 ###########################################################
 includes:
   - local/logger_templates/serial_logger_template.yaml
@@ -321,7 +321,7 @@ Note that filepaths specified in the `includes` block may include wildcards such
 
 Non-fully-specified paths will use the base installation directory (typically `/opt/openrvdas`), but this may be overridden by means of a top-level `includes_base_dir` key:
 
-```buildoutcfg
+```
 ###########################################################
 includes_base_dir: /opt/local/logger_templates
 includes:
