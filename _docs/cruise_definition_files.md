@@ -165,7 +165,7 @@ modes:
   underway: [eng1-net+file, gyr1-net+file, knud-net+file, mwx1-net+file,
              rtmp-net+file, s330-net+file]
 ```
-Note that if no `modes` key is present, the system will infer and create a default mode by selecting the first config declared for each logger.
+_Note that if no `modes` key is present, the system will infer and create a default mode by selecting the first config declared for each logger._
 
 ### Default Mode
 
@@ -178,7 +178,7 @@ default_mode: 'off'  # Quoted because 'off' is a YAML keyword
 As indicated above, a sample full cruise definition file may be viewed at
 [NBP1406_cruise_full.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise_full.yaml).
 
-## Templated Cruise Definition Files
+## Cruise Definition Simplifications
 
 The traditional way of specifying a cruise definition file is...verbose. The full sample NBP1406 cruise definition file is over 1500 lines and difficult to maintain or modify. To date, different institutions have coped with this by generating these files mechanically, either from customized scripts or databases.
 
@@ -304,7 +304,6 @@ loggers:
       serial_port: /tmp/tty_cwnc
       baud_rate: 19200
 ```
-
 
 ### Included Files
 
