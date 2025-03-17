@@ -1,13 +1,14 @@
 ---
 permalink: /controlling_loggers/
-title: "Controlling Loggers with the Logger Manager"
+title: "Controlling Loggers"
 layout: single
 toc: true
 toc_label: "Contents"
 toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
-This page describes operation of the [Logger Manager](https://github.com/OceanDataTools/openrvdas/blob/master/server/logger_manager.py), a multifaceted script that allows running, controlling and monitoring entire sets of loggers.
+This page describes 1) operation of the [Logger Manager](https://github.com/OceanDataTools/openrvdas/blob/master/server/logger_manager.py), a multifaceted script that allows running, controlling and monitoring entire sets of loggers, 2) the standard GUI and command line interfaces for controlling the Logger Manager and
+3) Alternative methods for controlling the Logger Manager .
 
 # The High-Order Bits
 
@@ -68,7 +69,7 @@ Before we dive into the use of ``logger_manager.py``, it's worth pausing for a m
       knud: knud-file/net/db 
       rtmp: rtmp-file/net/db
 ```
--   **Cruise configuration** - (or just "configuration" when we're being sloppy). This is the file/JSON/YAML structure that contains everything the logger manager needs to know about running a cruise. In addition to containing cruise metadata (cruise id, provisional start and ending dates), a cruise configuration file (such as in [test/NBP1406/NBP1406\_cruise.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml)), contains a dict of all the logger configurations that are to be run on a particular vessel deployment, along with definitions for all the modes into which those logger configurations are grouped.
+-   **Cruise definition** - (or occasionally "cruise configuration" if we're being sloppy). This is the file/JSON/YAML structure that contains everything the logger manager needs to know about running a cruise. It typically contains a dict of cruise metadata (cruise id, provisional start and ending dates), a dict of all the logger configurations that are to be run on a particular vessel deployment, along with definitions for all the modes into which those logger configurations are grouped. See the [Cruise Definition Files]({{ "/cruise_definition_files/" | relative_url }}) document for a detailed description of the structure of cruise definitions. 
   
 It is worth noting that strictly speaking, a "logger" does not exist as a separate entity in OpenRVDAS. It is just a convenient way of thinking about a set of configurations that are responsible for a given data stream, e.g. Knudsen data, or a GPS feed. This is evident when looking at the [sample cruise definition file](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml), as the logger definition (`knud`) is just a list of the configurations that are responsible for handling the data that comes in from a particular serial port.
 
@@ -79,7 +80,7 @@ knud:
   - knud-net,
   - knud-file/net/db
 ```
-Perusing a complete cruise configuration file such as [test/NBP1406/NBP1406\_cruise.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml) may be useful for newcomers to the system. _(For a deeper dive, please refer to [OpenRVDAS Configuration Files]({{ "/logger_configuration_files/" | relative_url }}))._
+Perusing a complete cruise configuration file such as [test/NBP1406/NBP1406\_cruise.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/test/NBP1406/NBP1406_cruise.yaml) may be useful for newcomers to the system. _(For a deeper dive, please refer to [Cruise Definition Files]({{ "/cruise_definition_files/" | relative_url }}))._
 
 ## What the logger manager does
 
