@@ -280,13 +280,13 @@ Please see the [GUI Quickstart]({{ "/quickstart_gui/" | relative_url }}) documen
 
 In addition to the default Django-based GUI, OpenRVDAS provides mechanisms for alternative front ends. Several experimental alternatives have been implemented, and support is built in for anyone who wants to create their own.
 
-## SQLite Front End
+## SQLite front end
 
 Code and documentation for a Django-free, SQLite-based GUI created by Kevin Pedigo is available at https://github.com/OceanDataTools/sqlite_gui. HTML pages in `sqlite_gui/html` trigger python CGI scripts (in `sqlite_gui/cgi-bin`) that write to a backing SQLite database. Javascript loaded by the HTML pages subscribes to and retrieves data from the Cached Data Server that it uses to populate the page with logger statuses.
 
 ![NIWA front end](../assets/images/sqlite_gui.png)
 
-## React-based Front End
+## React-based front end
 
 Another set of front ends, at https://github.com/yoLewshi/DAS-UI, were created by Lewis Wilke of NIWA using _React_ for the the displays and calling Django endpoints. Please see [the project's README.md file](https://github.com/yoLewshi/DAS-UI?tab=readme-ov-file#readme) for details.
 
@@ -295,7 +295,7 @@ Another set of front ends, at https://github.com/yoLewshi/DAS-UI, were created b
 
 ![REACT logger](../assets/images/niwa_loggers.png)
 
-## Creating Your Own Front End
+## Creating your own front end
 
 Django provides HTTP/HTTPS access to a RESTful API. The full schema may be retrieved in YAML format by querying `http://openrvdas/api/schema` (or whatever your machine name is), but the currently-supported endpoints are:
 ```
