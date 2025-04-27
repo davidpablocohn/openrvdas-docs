@@ -1,3 +1,12 @@
+---
+permalink: /grafana_feed_status_dashboard/
+title: "OpenRVDAS Feed Status Dashboard"
+layout: single
+toc: true
+toc_label: "Contents"
+toc_icon: "list"
+toc_sticky: true  # Makes the TOC stick on scroll
+---
 # OpenRVDAS Feed Status Dashboard
 
 ![Grafana sensor feed status dashboard](../../assets/images/grafana_sensor_feed_dashboard.png)
