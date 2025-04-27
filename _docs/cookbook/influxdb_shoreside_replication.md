@@ -95,6 +95,8 @@ Here are the restricted and non-restricted versions of the net_reader-on+influx 
 2. Create the non_retricted task:
 This tasks runs every second, querying all data where tag: `restricted == 'no'`.  The numberical parts of the retrieved data are averaged over 1s.  For the non-numerical data (boolean, strings) the last value is used. The processed data is saved to the `non_restricted` bucket.
 
+## Test 1
+
 ```
 import "types"
 import "influxdata/influxdb/tasks"
@@ -135,6 +137,7 @@ union(tables: [numeric, nonNumeric])
 
 This parts assumes the remote InfluxDB server is installed, running and accessible from the shipboard server. And, of course, assumes that you use your own access tokens instead of the sample ones provided below.
 
+## Test 2
 #### Local Server Information (161.35.96.48)
  - InfluxDB Access Token: `hvOVhxzaOVYBosyjBEAi4xK9uSwsudM9e-OXipBgiyAYIxlE8uSlwStFzrDqWIp_CKBBD7Cz2wFxgAG8hU9yA==`
  - Org ID: `484128927fd28af7`
