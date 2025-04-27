@@ -14,9 +14,9 @@ This document describes how to setup OpenRVDAS and InfluxDB to support replicate
 
 Once setup the exact same Grafana dashboards can be used on board and ashore.  Restricting shore-side access to individual sensors can be achieved simply by changing OpenRVDAS's mode. In this example access to the Seapath 330 (s330) and Gyro (gyr1) will periodically need to be restricted.
 
-## OpenRVDAS Setup:
+## OpenRVDAS Setup
 
-### Mode setup:
+### Mode setup
 Need to add a `no_write+influx_restricted` mode that is identical to the unrestricted version with the exception of using a restricted version of the `net_reader-on+influx` logger config.
 
 ```
@@ -135,13 +135,13 @@ union(tables: [numeric, nonNumeric])
 
 This parts assumes the remote InfluxDB server is installed, running and accessible from the shipboard server. And, of course, assumes that you use your own access tokens instead of the sample ones provided below.
 
-#### Local Server Information (161.35.96.48):
+#### Local Server Information (161.35.96.48)
  - InfluxDB Access Token: hvOVhxzaOVYBosyjBEAi4xK9uSwsudM9e-OXipBgiyAYIxlE8uSlwStFzrDqWIp_CKBBD7Cz2wFxgAG8hU9yA==
  - Org ID: 484128927fd28af7
  - Bucket ID for openrvdas : 293a647bad0b5a7c
  - Bucket ID for non_restricted: 40bd5db8108cc867
 
-#### Remote Server Information (162.243.201.175):
+#### Remote Server Information (162.243.201.175)
  - InfluxDB Access Token: Ygukgz1pBo6A8vFtdQ5-n7Wj-vHUB1a90m_Ybxzv6UXQDdPoK6e_4wAfAEx_p6RkriVo2vOtKPbYH2e8mAcPww==
  - Org ID: 6f2573a909dc163c
  - Target Bucket Name: openrvdas
