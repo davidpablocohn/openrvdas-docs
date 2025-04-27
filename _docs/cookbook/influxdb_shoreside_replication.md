@@ -151,7 +151,7 @@ __Remote Server Information__
  - Org ID: `6f2573a909dc163c`
  - Target Bucket Name: `openrvdas`
 
-To run the following commands you must set the INFLUX_TOKEN environmental variable to the InfluxDB token for the local server:
+Set the INFLUX_TOKEN environmental variable to the InfluxDB token for the local server:
 
 ```
 export INFLUX_TOKEN=hvOVhxzaOVYBosyjBaEAi4xK9uSwsudM9e-OXipBgiyAYIxlE8uSlwStFzrDqWIp_CKBBD7Cz2wFxgAG8hU9yA
