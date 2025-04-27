@@ -135,6 +135,7 @@ This tasks runs every second, querying all data where tag: `restricted == 'no'`.
 
 This part assumes the remote InfluxDB server is installed, running and accessible from the shipboard server. And, of course, that you use your own access tokens and ip addresses instead of the sample ones provided below.
 
+#### Local Server Information
 
 To run the following commands you must set the INFLUX_TOKEN environmental variable to the InfluxDB token for the local server:
 
