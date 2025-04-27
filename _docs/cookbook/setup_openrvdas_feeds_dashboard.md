@@ -7,8 +7,6 @@ toc_label: "Contents"
 toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
-# OpenRVDAS Feed Status Dashboard
-
 ![Grafana sensor feed status dashboard](../../assets/images/grafana_sensor_feed_dashboard.png)
 
 The left side shows current status of the feeds, the right show a time-series of that information.
@@ -23,6 +21,7 @@ These dashboard panels auto-adjust for whatever instruments are being fed into I
 1. Create a new InfluxDB task called "openrvdas_feed_check"
 2. Set the task to run every 30 seconds: '30s'
 3. Copy the following into the task editor:
+
 ```
 import "join"
 
@@ -66,6 +65,7 @@ union(tables: [inActiveFeeds, activeFeeds])
 1. Create a new Grafana dashboard
 2. Select "Import dashboard"
 3. Paste the follow json object into the "Import via dashboard JSON model"
+
 ```
 {
   "annotations": {
@@ -250,6 +250,7 @@ union(tables: [inActiveFeeds, activeFeeds])
   "version": 22
 }
 ```
+
 4. Click the "Load" button.
 5. Verify the dashboard works... you may need to wait a few minutes for the task to generated enough data to visualize.
 6. Optionally, Override the names.
