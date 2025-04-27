@@ -48,7 +48,7 @@ Need to add a `no_write+influx_restricted` mode that is identical to the unrestr
         net_reader: net_reader-on+influx_restricted
     ```
 
-### Logger setup:
+### Logger setup
 Here are the restricted and non-restricted versions of the net_reader-on+influx logger configs.  The unrestricted version applies a `restricted: 'no'` tag to all data.  The restricted version does the same with except `restricted: 'yes'` for the `s330` and `gyr1` measurements.
     
     ```
@@ -90,13 +90,13 @@ Here are the restricted and non-restricted versions of the net_reader-on+influx 
 
 ## InfluxDB Setup
 
-### Create "non_restricted" bucket on ship's InfluxDB server.
+### Bucket setup
 
-Set a retention policy of 24h.  This bucket will store the measurements/fields that will be replicated shoreside.
+Create "non_restricted" bucket on ship's InfluxDB server, and give it a retention policy of 24h.  This bucket will store the measurements/fields that will be replicated shoreside.
 
-### Create the non_restricted task
+### Task setup
 
-This tasks runs every second, querying all data where tag: `restricted == 'no'`.  The numberical parts of the retrieved data are averaged over 1s.  For the non-numerical data (boolean, strings) the last value is used. The processed data is saved to the `non_restricted` bucket.
+Create the non_restricted task, setting it to run every second, querying all data where tag: `restricted == 'no'`.  The numberical parts of the retrieved data are averaged over 1s.  For the non-numerical data (boolean, strings) the last value is used. The processed data is saved to the `non_restricted` bucket.
  
     ```
     import "types"
@@ -134,7 +134,7 @@ This tasks runs every second, querying all data where tag: `restricted == 'no'`.
         |> to(bucket: "non_restricted")
     ```
 
-### Set up remote connection and replication
+### Remote connection/replication setup
 
 This part assumes the remote InfluxDB server is installed, running and accessible from the shipboard server. And, of course, that you use your own access tokens and ip addresses instead of the sample ones provided below.
 
