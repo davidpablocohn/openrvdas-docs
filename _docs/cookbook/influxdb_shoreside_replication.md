@@ -90,9 +90,12 @@ Here are the restricted and non-restricted versions of the net_reader-on+influx 
 
 ## InfluxDB Setup
 
-1. Create "non_restricted" bucket on ship's InfluxDB server with a retention policy of 24h.  This bucket will store the measurements/fields that will be replicated shoreside.
+### Create "non_restricted" bucket on ship's InfluxDB server.
 
-2. Create the non_retricted task:
+Set a retention policy of 24h.  This bucket will store the measurements/fields that will be replicated shoreside.
+
+### Create the non_restricted task
+
 This tasks runs every second, querying all data where tag: `restricted == 'no'`.  The numberical parts of the retrieved data are averaged over 1s.  For the non-numerical data (boolean, strings) the last value is used. The processed data is saved to the `non_restricted` bucket.
  
     ```
@@ -131,67 +134,68 @@ This tasks runs every second, querying all data where tag: `restricted == 'no'`.
         |> to(bucket: "non_restricted")
     ```
 
-3. Setting up Remote Connection and Replication
+### Set up remote connection and replication
 
 This part assumes the remote InfluxDB server is installed, running and accessible from the shipboard server. And, of course, that you use your own access tokens and ip addresses instead of the sample ones provided below.
 
-### Local Server Information
+__Local Server Information__
  - IP address: 161.35.96.48
  - InfluxDB Access Token: ```hvOVhxzaOVYBosyjBEAi4xK9uSwsudM9e-OXipBgiyAYIxlE8uSlwStFzrDqWIpCKBBD7Cz2wFxgAG8hU9yA```
  - Org ID: `484128927fd28af7`
  - Bucket ID for openrvdas : `293a647bad0b5a7c`
  - Bucket ID for non_restricted: `40bd5db8108cc867`
  
-### Remote Server Information
+__Remote Server Information__
  - IP address: 162.243.201.175
  - InfluxDB Access Token: ``Ygukgz1pBo6A8vFtdQ5-n7Wj-vHUB1a90m_Ybxzv6UXQDdPoK6e4wAfAEx_p6RkriVo2vOtKPbYH2e8mAcPww``
  - Org ID: `6f2573a909dc163c`
  - Target Bucket Name: `openrvdas`
+
 To run the following commands you must set the INFLUX_TOKEN environmental variable to the InfluxDB token for the local server:
 
-    ```
-    export INFLUX_TOKEN=hvOVhxzaOVYBosyjBaEAi4xK9uSwsudM9e-OXipBgiyAYIxlE8uSlwStFzrDqWIp_CKBBD7Cz2wFxgAG8hU9yA
-    ```
+```
+export INFLUX_TOKEN=hvOVhxzaOVYBosyjBaEAi4xK9uSwsudM9e-OXipBgiyAYIxlE8uSlwStFzrDqWIp_CKBBD7Cz2wFxgAG8hU9yA
+```
 
 Create/Save the connection for the remote instance of InfluxDB:
-    
-    ```
-    influx remote create --name 'openrvdas_remote' \
-    --org-id 484128927fd28af7 \
-    --token 'hvOVhxzaOVYBosyjBaEAi4xK9uSwsudM9e-OXipBgiyAYIxlE8uSlwStFzrDqWIp_CKBBD7Cz2wFxgAG8hU9yA' \
-    --remote-url 'http://162.243.201.175:8086' \
-    --remote-org-id 6f2573a909dc163c \
-    --remote-api-token 'Ygukgz1pBo6A8vFtdQ5-n7Wj-vHUB190m_Ybxzv6UXQDdPoK6e_4wAfAEx_p6RkriVo2vOtKPbYH2e8mAcPww' --allow-insecure-tls
-    ```
+
+```
+influx remote create --name 'openrvdas_remote' \
+--org-id 484128927fd28af7 \
+--token 'hvOVhxzaOVYBosyjBaEAi4xK9uSwsudM9e-OXipBgiyAYIxlE8uSlwStFzrDqWIp_CKBBD7Cz2wFxgAG8hU9yA' \
+--remote-url 'http://162.243.201.175:8086' \
+--remote-org-id 6f2573a909dc163c \
+--remote-api-token 'Ygukgz1pBo6A8vFtdQ5-n7Wj-vHUB190m_Ybxzv6UXQDdPoK6e_4wAfAEx_p6RkriVo2vOtKPbYH2e8mAcPww' --allow-insecure-tls
+```
 
 Example response:
 
-    ```
-    ID      Name      Org ID      Remote URL      Remote Org ID   Allow Insecure TLS
-    0e739b8befc31000  openrvdas_remote  484128927fd28af7  http://162.243.201.175:8086 6f2573a909dc163c  true
-    ```
+```
+ID      Name      Org ID      Remote URL      Remote Org ID   Allow Insecure TLS
+0e739b8befc31000  openrvdas_remote  484128927fd28af7  http://162.243.201.175:8086 6f2573a909dc163c  true
+```
 
 List the available remote connections:
 
-    ```
-    influx remote list --org-id 484128927fd28af7
-    ```
+```
+influx remote list --org-id 484128927fd28af7
+```
 
 Create the replication layer, the local-bucket-id is for the 'non-restricted' bucket:
     
-    ```
-    influx replication create --name Ship_to_Shore \
-    --remote-id 0e739b8befc31000 \
-    --local-bucket-id 40bd5db8108cc867  --org-id 484128927fd28af7 \
-    --remote-bucket openrvdas
-    ```
+```
+influx replication create --name Ship_to_Shore \
+--remote-id 0e739b8befc31000 \
+--local-bucket-id 40bd5db8108cc867  --org-id 484128927fd28af7 \
+--remote-bucket openrvdas
+```
 
 Example response:
     
-    ```
-    ID      Name    Org ID      Remote ID   Local Bucket ID   Remote Bucket ID  Remote Bucket Name  Remaining Bytes to be Synced  Current Queue Bytes on Disk Max Queue Bytes Latest Status Code  Drop Non-Retryable Data
-    0e73bb64059f5000  Ship_to_Shore 484128927fd28af7  0e739b8befc31000  40bd5db8108cc867        openrvdas   0       0     67108860  0     false
-    ```
+```
+ID      Name    Org ID      Remote ID   Local Bucket ID   Remote Bucket ID  Remote Bucket Name  Remaining Bytes to be Synced  Current Queue Bytes on Disk Max Queue Bytes Latest Status Code  Drop Non-Retryable Data
+0e73bb64059f5000  Ship_to_Shore 484128927fd28af7  0e739b8befc31000  40bd5db8108cc867        openrvdas   0       0     67108860  0     false
+```
 
 That's it.  At this point the non-restricted data should appear on the shore-side InfluxDB server.  It's worth verifying the data is arriving before continuing to the next section.
 
@@ -213,15 +217,15 @@ That's it.  At this point the non-restricted data should appear on the shore-sid
      **NOTE:** *Turning off legends and setting the palette to single color will make the graphs look cleaner.*
 
 3. Retrieve the JSON model for the Dashboard on the shipboard Grafana server:
- - Go to Dashboard Settings --> JSON Model.
- - Copy the JSON object.
+   - Go to Dashboard Settings --> JSON Model.
+   - Copy the JSON object.
 
 4. Open Grafana on the shoreside server.
- - Create new dashboard
- - Select Import Model
- - Paste JSON object into textarea
- - Click "Load" button
- - Click "Import" button
+   - Create new dashboard
+   - Select Import Model
+   - Paste JSON object into textarea
+   - Click "Load" button
+   - Click "Import" button
 
 ## Final checks
 
