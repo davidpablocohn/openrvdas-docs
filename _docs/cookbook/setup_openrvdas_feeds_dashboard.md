@@ -1,5 +1,5 @@
 ---
-permalink: /grafana_feed_status_dashboard/
+permalink: /cookbook/grafana_feed_status_dashboard/
 title: "OpenRVDAS Feed Status Dashboard"
 layout: single
 toc: true
@@ -8,7 +8,7 @@ toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
 
-![Grafana sensor feed status dashboard](../assets/images/grafana_sensor_feed_dashboard.png)
+![Grafana sensor feed status dashboard](../../assets/images/grafana_sensor_feed_dashboard.png)
 
 The left side shows current status of the feeds, the right show a time-series of that information.
 
