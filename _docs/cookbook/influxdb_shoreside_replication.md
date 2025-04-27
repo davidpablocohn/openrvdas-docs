@@ -141,12 +141,12 @@ This parts assumes the remote InfluxDB server is installed, running and accessib
  - Bucket ID for openrvdas : `293a647bad0b5a7c`
  - Bucket ID for non_restricted: `40bd5db8108cc867`
 
+## Test 2
+
 #### Remote Server Information (162.243.201.175)
  - InfluxDB Access Token: `Ygukgz1pBo6A8vFtdQ5-n7Wj-vHUB1a90m_Ybxzv6UXQDdPoK6e_4wAfAEx_p6RkriVo2vOtKPbYH2e8mAcPww==`
  - Org ID: `6f2573a909dc163c`
  - Target Bucket Name: `openrvdas`
- 
-## Test 2
 
 To run the following commands you must set the INFLUX_TOKEN environmental variable to the InfluxDB token for the local server:
 
