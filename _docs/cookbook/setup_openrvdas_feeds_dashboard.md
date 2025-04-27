@@ -255,11 +255,11 @@ These dashboard panels auto-adjust for whatever instruments are being fed into I
 5. Verify the dashboard works... you may need to wait a few minutes for the task to generated enough data to visualize.
 6. Optionally, Override the names.
 By default the names on the panels will use the raw variable names.  This can be overridden to make the panels easier to ready. To override the names:
-  1. Click the upper-right of the panel and select "Edit". On the right-side nav bar select the "Overrides" tab.
-  2. Click the "Add field override" button and select "Field with name".
-  3. Select the variable name to override.
-  4. Click "Add override property" and select "Standard Options > Display name".
-  5. Add the string to use instead of the variable name.
+    1. Click the upper-right of the panel and select "Edit". On the right-side nav bar select the "Overrides" tab.
+    2. Click the "Add field override" button and select "Field with name".
+    3. Select the variable name to override.
+    4. Click "Add override property" and select "Standard Options > Display name".
+    5. Add the string to use instead of the variable name.
   
-  Repeat for each of the variables.
-  Repeat the process for the other panel.
+    Repeat for each of the variables.
+    Repeat the process for the other panel.
