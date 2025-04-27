@@ -7,14 +7,17 @@ toc_label: "Contents"
 toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
-![Grafana sensor feed status dashboard](../../assets/images/grafana_sensor_feed_dashboard.png)
+
+![Grafana sensor feed status dashboard](../assets/images/grafana_sensor_feed_dashboard.png)
 
 The left side shows current status of the feeds, the right show a time-series of that information.
 
 These dashboard panels auto-adjust for whatever instruments are being fed into Influx by OpenRVDAS.  New feeds are added automatically and if a feed is inactive for more than 24 hours it is automatically removed from the list. 
 
 ## Instructions
-### 1. Set up a new "openrvdas_feed_check" InfluxDB bucket with a duration of 2 days
+### 1. Set up a new feed bucket
+
+Create an "openrvdas_feed_check" InfluxDB bucket with a duration of 2 days
 
 ### 2. Set up the influx task
 
@@ -254,7 +257,7 @@ These dashboard panels auto-adjust for whatever instruments are being fed into I
 4. Click the "Load" button.
 5. Verify the dashboard works... you may need to wait a few minutes for the task to generated enough data to visualize.
 
-### 4. Optionally, Override the names.
+### 4. Optionally, override variable names
 By default the names on the panels will use the raw variable names.  This can be overridden to make the panels easier to ready. To override the names:
 1. Click the upper-right of the panel and select "Edit". On the right-side nav bar select the "Overrides" tab.
 2. Click the "Add field override" button and select "Field with name".
