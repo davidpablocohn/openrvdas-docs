@@ -135,12 +135,7 @@ This tasks runs every second, querying all data where tag: `restricted == 'no'`.
 
 This parts assumes the remote InfluxDB server is installed, running and accessible from the shipboard server. And, of course, assumes that you use your own access tokens instead of the sample ones provided below.
 
-#### Local Server Information `(161.35.96.48)`
- - InfluxDB Access Token: `hvOVhxzaOVYBosyjBEAi4xK9uSwsudM9e-OXipBgiyAYIxlE8uSlwStFzrDqWIp_CKBBD7Cz2wFxgAG8hU9yA==`
- - Org ID: `484128927fd28af7`
- - Bucket ID for openrvdas : `293a647bad0b5a7c`
- - Bucket ID for non_restricted: `40bd5db8108cc867`
- 
+
 #### Remote Server Information `(162.243.201.175)`
  - InfluxDB Access Token: `Ygukgz1pBo6A8vFtdQ5-n7Wj-vHUB1a90m_Ybxzv6UXQDdPoK6e_4wAfAEx_p6RkriVo2vOtKPbYH2e8mAcPww==`
  - Org ID: `6f2573a909dc163c`
