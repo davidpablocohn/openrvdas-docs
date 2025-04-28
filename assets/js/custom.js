@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('Persistent collapsible menu script loaded');
+  console.log('Adjusted toggle position script loaded');
 
   // Find all navigation section titles
   const sectionTitles = document.querySelectorAll('.nav__sub-title');
@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const savedState = sessionStorage.getItem('menuState');
     if (savedState) {
       savedMenuState = JSON.parse(savedState);
-      console.log('Loaded menu state:', savedMenuState);
     }
   } catch (e) {
     console.error('Error loading menu state:', e);
@@ -26,11 +25,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Create a unique ID for this menu
     const menuId = 'menu-' + index;
 
-    // Add toggle indicator
+    // Get title text content
+    const titleText = title.textContent.trim();
+
+    // Clear title content
+    title.textContent = '';
+
+    // Create text span
+    const textSpan = document.createElement('span');
+    textSpan.textContent = titleText;
+
+    // Create toggle indicator
     const toggle = document.createElement('span');
     toggle.className = 'nav-toggle';
-    toggle.textContent = ' +';
-    toggle.style.float = 'right';
+    toggle.style.marginLeft = '4px';
+    toggle.textContent = '+';
+
+    // Append text and toggle to title
+    title.appendChild(textSpan);
     title.appendChild(toggle);
 
     // Get the submenu
@@ -55,10 +67,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Apply the state
     if (isExpanded) {
       submenu.style.display = 'block';
-      toggle.textContent = ' −'; // Minus sign
+      toggle.textContent = '−'; // Minus sign
     } else {
       submenu.style.display = 'none';
-      toggle.textContent = ' +'; // Plus sign
+      toggle.textContent = '+'; // Plus sign
     }
 
     // Save the initial state
@@ -72,17 +84,16 @@ document.addEventListener('DOMContentLoaded', function() {
     title.onclick = function() {
       if (submenu.style.display === 'none' || submenu.style.display === '') {
         submenu.style.display = 'block';
-        toggle.textContent = ' −'; // Minus sign
+        toggle.textContent = '−'; // Minus sign
         savedMenuState[menuId] = true;
       } else {
         submenu.style.display = 'none';
-        toggle.textContent = ' +'; // Plus sign
+        toggle.textContent = '+'; // Plus sign
         savedMenuState[menuId] = false;
       }
 
       // Save the updated state
       sessionStorage.setItem('menuState', JSON.stringify(savedMenuState));
-      console.log('Saved menu state:', savedMenuState);
 
       return false;
     };
