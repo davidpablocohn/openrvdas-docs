@@ -53,6 +53,8 @@ navdocs:
     children:
       - title: "Simulating Live Data"
         url: /simulating_live_data/
+      - title: "Working with Secure Websockets"
+        url: /secure_websockets/
       - title: "Adding a Sensor"
         url: /adding_a_sensor/
       - title: "Geofencing"
