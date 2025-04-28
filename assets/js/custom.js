@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('Fixed collapsible menu script');
+  console.log('Persistent collapsible menu script loaded');
 
   // Find all navigation section titles
   const sectionTitles = document.querySelectorAll('.nav__sub-title');
@@ -9,8 +9,23 @@ document.addEventListener('DOMContentLoaded', function() {
     toggle.remove();
   });
 
+  // Try to load saved menu state
+  let savedMenuState = {};
+  try {
+    const savedState = sessionStorage.getItem('menuState');
+    if (savedState) {
+      savedMenuState = JSON.parse(savedState);
+      console.log('Loaded menu state:', savedMenuState);
+    }
+  } catch (e) {
+    console.error('Error loading menu state:', e);
+  }
+
   // Process each section
-  sectionTitles.forEach(function(title) {
+  sectionTitles.forEach(function(title, index) {
+    // Create a unique ID for this menu
+    const menuId = 'menu-' + index;
+
     // Add toggle indicator
     const toggle = document.createElement('span');
     toggle.className = 'nav-toggle';
@@ -25,15 +40,30 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check if this menu contains the active page
     const isActive = submenu.querySelector('a.active') !== null;
 
-    // Set initial state
+    // Set initial state based on saved state or active status
+    let isExpanded = false;
+
+    // First priority: If this section has the active page, expand it
     if (isActive) {
-      // Keep the active section's menu expanded
+      isExpanded = true;
+    }
+    // Second priority: Use saved state if it exists for this menu
+    else if (menuId in savedMenuState) {
+      isExpanded = savedMenuState[menuId];
+    }
+
+    // Apply the state
+    if (isExpanded) {
       submenu.style.display = 'block';
       toggle.textContent = ' −'; // Minus sign
     } else {
-      // Collapse non-active sections
       submenu.style.display = 'none';
+      toggle.textContent = ' +'; // Plus sign
     }
+
+    // Save the initial state
+    savedMenuState[menuId] = isExpanded;
+    sessionStorage.setItem('menuState', JSON.stringify(savedMenuState));
 
     // Make the title look clickable
     title.style.cursor = 'pointer';
@@ -43,10 +73,17 @@ document.addEventListener('DOMContentLoaded', function() {
       if (submenu.style.display === 'none' || submenu.style.display === '') {
         submenu.style.display = 'block';
         toggle.textContent = ' −'; // Minus sign
+        savedMenuState[menuId] = true;
       } else {
         submenu.style.display = 'none';
         toggle.textContent = ' +'; // Plus sign
+        savedMenuState[menuId] = false;
       }
+
+      // Save the updated state
+      sessionStorage.setItem('menuState', JSON.stringify(savedMenuState));
+      console.log('Saved menu state:', savedMenuState);
+
       return false;
     };
   });
