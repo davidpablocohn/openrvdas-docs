@@ -1,56 +1,53 @@
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('Updated collapsible navigation script loaded');
+  console.log('Fixed collapsible menu script');
 
-  // Find all nav__sub-title elements
-  const navTitles = document.querySelectorAll('.nav__sub-title');
+  // Find all navigation section titles
+  const sectionTitles = document.querySelectorAll('.nav__sub-title');
 
-  navTitles.forEach(function(title) {
-    // Remove any existing toggle indicators to prevent duplicates
-    const existingToggles = title.querySelectorAll('.nav-toggle');
-    existingToggles.forEach(toggle => toggle.remove());
+  // First, remove any existing toggle indicators to avoid duplicates
+  document.querySelectorAll('.nav-toggle').forEach(function(toggle) {
+    toggle.remove();
+  });
 
-    // Add new toggle indicator
+  // Process each section
+  sectionTitles.forEach(function(title) {
+    // Add toggle indicator
     const toggle = document.createElement('span');
     toggle.className = 'nav-toggle';
     toggle.textContent = ' +';
     toggle.style.float = 'right';
     title.appendChild(toggle);
 
-    // Get the UL that follows each nav__sub-title
+    // Get the submenu
     const submenu = title.nextElementSibling;
+    if (!submenu || submenu.tagName !== 'UL') return;
 
-    // Add click handler to title
-    title.onclick = function(event) {
-      // Prevent event bubbling
-      event.preventDefault();
-      event.stopPropagation();
+    // Check if this menu contains the active page
+    const isActive = submenu.querySelector('a.active') !== null;
 
-      // Toggle submenu visibility
-      if (submenu && submenu.tagName === 'UL') {
-        console.log('Toggling submenu for:', title.textContent.trim());
-
-        if (submenu.style.display === 'none' || submenu.style.display === '') {
-          // Expand menu
-          submenu.style.display = 'block';
-          toggle.textContent = ' −'; // Minus sign
-          console.log('Expanded submenu');
-        } else {
-          // Collapse menu
-          submenu.style.display = 'none';
-          toggle.textContent = ' +'; // Plus sign
-          console.log('Collapsed submenu');
-        }
-      }
-
-      return false;
-    };
-
-    // Initially hide all submenus
-    if (submenu && submenu.tagName === 'UL') {
+    // Set initial state
+    if (isActive) {
+      // Keep the active section's menu expanded
+      submenu.style.display = 'block';
+      toggle.textContent = ' −'; // Minus sign
+    } else {
+      // Collapse non-active sections
       submenu.style.display = 'none';
     }
 
-    // Add pointer cursor to indicate clickable
+    // Make the title look clickable
     title.style.cursor = 'pointer';
+
+    // Add click handler directly to the title element
+    title.onclick = function() {
+      if (submenu.style.display === 'none' || submenu.style.display === '') {
+        submenu.style.display = 'block';
+        toggle.textContent = ' −'; // Minus sign
+      } else {
+        submenu.style.display = 'none';
+        toggle.textContent = ' +'; // Plus sign
+      }
+      return false;
+    };
   });
 });
