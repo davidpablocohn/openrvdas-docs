@@ -61,6 +61,8 @@ navdocs:
         url: /geofencing/
       - title: "Derived Data"
         url: /derived_data/
+      - title: "Calibrated Values"
+        url: /cookbook/calibrated_values/
       - title: "InfluxDB Shoreside Replication"
         url: /cookbook/influxdb_shoreside_replication/
       - title: "Grafana Feed Status Dashboard"
