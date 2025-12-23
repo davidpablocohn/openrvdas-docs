@@ -23,8 +23,8 @@ This document provides guidance on how to find those instructions, and how to co
 ---
 ## InfluxDB
 
-The latest package can be retrieved at 
-[https://www.influxdata.com/products/influxdb/]; follow the installation guide appropriate for your platform (Linux, macOS, Windows, Docker, or cloud) and verify that the InfluxDB service is running before continuing.
+The latest package can be retrieved at
+(https://www.influxdata.com/products/influxdb/); follow the installation guide appropriate for your platform (Linux, macOS, Windows, Docker, or cloud) and verify that the InfluxDB service is running before continuing.
 
 ### Initial setup
 
@@ -40,7 +40,7 @@ During this setup, InfluxDB will generate one or more authentication tokens.
 ### Create a token (if one does not already exist)
 
 If you need to create a new token:
-1. Open the InfluxDB user interface (typically at [http://localhost:8086])
+1. Open the InfluxDB user interface (typically at (http://localhost:8086))
 2. Log in as an admin user
 3. Navigate to Load Data → API Tokens (or Settings → Tokens, depending on version)
 4. Create a new token with the appropriate permissions. E.g. with write access to the target bucket
@@ -74,11 +74,11 @@ Grafana is an open source visualization and dashboarding system that can read da
 ### Installation
 
 Grafana installation procedures vary by operating system and deployment method.  
-Please install Grafana by following the official instructions provided by Grafana Labs: [https://grafana.com/grafana/download]
+Please install Grafana by following the official instructions provided by Grafana Labs: (https://grafana.com/grafana/download)
 
 Choose the installation method appropriate for your platform (Linux packages, macOS, Windows, Docker, or cloud) and verify that the Grafana service is running before continuing.
 
-Once installed, the Grafana web interface is typically available at: [http://localhost:3000]
+Once installed, the Grafana web interface is typically available at: (http://localhost:3000)
 
 Log in using the credentials created during installation (or the default credentials, if applicable), and complete any initial setup steps required by your installation.
 
@@ -179,7 +179,7 @@ In some cases, additional plugins may be useful, though they are not required. E
 Optional plugins can be installed using Grafana’s plugin manager or command-line tools. Refer to the Grafana documentation for plugin installation instructions.
 
 
-One particularly useful panel that can be added is the [Ocean Data Tools Compass Panel](https://github.com/OceanDataTools/grafana-compass-panel). Please visit [https://github.com/OceanDataTools/grafana-compass-panel] for instructions how to install and configure it for your system.
+One particularly useful panel that can be added is the [Ocean Data Tools Compass Panel](https://github.com/OceanDataTools/grafana-compass-panel). Please visit (https://github.com/OceanDataTools/grafana-compass-panel) for instructions how to install and configure it for your system.
 
 ![Grafana Compass Panel](../assets/images/grafana_compass_panel.png)
 
@@ -226,7 +226,7 @@ Telegraf is an open source agent for collecting system and application metrics a
 ### Installation
 
 Telegraf installation procedures vary by operating system and deployment method.  
-Please install Telegraf by following the official instructions provided by InfluxData: [https://www.influxdata.com/time-series-platform/telegraf/]
+Please install Telegraf by following the official instructions provided by InfluxData: (https://www.influxdata.com/time-series-platform/telegraf/)
 
 Choose the installation method appropriate for your platform (Linux packages, macOS, Windows, Docker, or cloud) and verify that the Telegraf service is installed before continuing.
 
