@@ -74,11 +74,11 @@ Grafana is an open source visualization and dashboarding system that can read da
 ### Installation
 
 Grafana installation procedures vary by operating system and deployment method.  
-Please install Grafana by following the official instructions provided by Grafana Labs: <https://grafana.com/grafana/download>
+Please install Grafana by following the official instructions provided by Grafana Labs: <https://grafana.com/grafana/download>.
 
 Choose the installation method appropriate for your platform (Linux packages, macOS, Windows, Docker, or cloud) and verify that the Grafana service is running before continuing.
 
-Once installed, the Grafana web interface is typically available at <http://localhost:3000>
+Once installed, the Grafana web interface is typically available at <http://localhost:3000>.
 
 Log in using the credentials created during installation (or the default credentials, if applicable), and complete any initial setup steps required by your installation.
 
@@ -226,7 +226,7 @@ Telegraf is an open source agent for collecting system and application metrics a
 ### Installation
 
 Telegraf installation procedures vary by operating system and deployment method.  
-Please install Telegraf by following the official instructions provided by InfluxData: <https://www.influxdata.com/time-series-platform/telegraf/>
+Please install Telegraf by following the official instructions provided by InfluxData: <https://www.influxdata.com/time-series-platform/telegraf/>.
 
 Choose the installation method appropriate for your platform (Linux packages, macOS, Windows, Docker, or cloud) and verify that the Telegraf service is installed before continuing.
 
