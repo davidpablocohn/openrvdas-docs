@@ -328,3 +328,70 @@ includes:
 ```
 
 Use of logger templates and variable substitution make it possible to take an unwieldy full cruise definition file of over a thousand lines and bring it down to not much more than a hundred.
+
+## Validating Configuration Files
+
+OpenRVDAS includes a validation utility that checks configuration files for common errors before you attempt to run them. The validator auto-detects whether a file is a device definition, logger configuration, cruise definition, or template, and runs the appropriate checks.
+
+### Command-Line Usage
+
+Validate a single file:
+```
+python logger/utils/validate_config.py path/to/config.yaml
+```
+
+Validate multiple files with verbose output:
+```
+python logger/utils/validate_config.py -v contrib/devices/*.yaml
+```
+
+In normal mode, the validator only prints output for files with errors or warnings. With the `-v` flag, it also prints the detected file type and an "OK" message for files that pass validation.
+
+### What Gets Checked
+
+The validator performs different checks depending on the type of file it detects.
+
+#### Device Definitions
+- Valid `category` (`device` or `device_type`)
+- Presence of `format` strings with balanced braces (for device types)
+- Presence of `device_type` reference and `fields` mapping (for devices)
+
+#### Logger Configurations
+- Warns if a non-empty config is missing `readers` or `writers`
+- Validates that `class` names for readers, transforms, and writers are recognized
+- Checks that `kwargs` values are dictionaries
+
+#### Cruise Definitions
+- `cruise` section has an `id` field
+- Each logger has `configs` or a `logger_template`
+- Configs referenced by loggers are actually defined
+- Configs defined in the `configs` section are actually used by a logger
+- Each mode covers all declared loggers
+- Modes don't reference unknown loggers or undefined configs
+- A `default_mode` is specified when modes are present
+
+#### Templates
+- `logger_templates` and `config_templates` have the expected dictionary structure
+- Each template contains a `configs` section
+
+### Programmatic API
+
+The validator can also be used from Python code, for example to check a configuration before loading it:
+```python
+from logger.utils.validate_config import validate
+
+is_valid, error_msg = validate('path/to/config.yaml')
+if not is_valid:
+    print(f"Configuration errors:\n{error_msg}")
+```
+
+The `validate()` function returns a tuple of `(is_valid, error_message)`, where `is_valid` is `True` if no errors were found (warnings alone don't cause it to be `False`), and `error_message` is a formatted string of any errors and warnings.
+
+### Pre-commit Hook
+
+To automatically validate YAML files before each commit, install the included pre-commit hook:
+```
+ln -sf ../../scripts/validate_yaml_precommit.sh .git/hooks/pre-commit
+```
+
+This hook runs the validator against any staged `.yaml` or `.yml` files and blocks the commit if errors are found. To bypass the check for a specific commit, use `git commit --no-verify`.
