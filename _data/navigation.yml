@@ -37,10 +37,10 @@ navdocs:
 
   - title: Data Parsing
     children:
-      - title: "General Record Parsing"
+      - title: "Record Parsing"
         url: /parsing/
-      - title: "NMEA Record Parsing"
-        url: /nmea_parsing/
+      - title: "NMEA Device Type Library"
+        url: /nmea_device_types/
 
   - title: Graphs and Displays
     children:

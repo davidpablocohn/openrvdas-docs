@@ -16,6 +16,7 @@ group :jekyll_plugins do
   gem "jekyll-algolia"
   gem "jekyll-sass-converter"
   gem 'webrick'
-
   gem "minimal-mistakes-jekyll"
 end
+
+gem "openssl", "~> 4.0"
