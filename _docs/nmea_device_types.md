@@ -8,7 +8,7 @@ toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
 
-OpenRVDAS ships with a comprehensive library of NMEA 0183 device type
+OpenRVDAS includes a comprehensive library of NMEA 0183 device type
 definitions in
 [logger/devices/NMEA\_0183.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/logger/devices/NMEA_0183.yaml).
 This file provides ready-to-use definitions for the most common marine
