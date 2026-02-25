@@ -134,3 +134,13 @@ Please see the [Introduction to OpenRVDAS Components]({{ "/components/" | relati
 ## Managing Multiple Loggers and Configurations
 
 A typical vessel installation will necessitate running multiple loggers at once, each running a configuration specific to a particular sensor, and possibly also to a specific phase of a cruise. This set of loggers and configurations can be defined and managed via a [Cruise Definition File]({{ "/cruise_definition_files/" | relative_url }}), which is described in an accompanying document.
+
+## Validating Configuration Files
+
+OpenRVDAS includes a command-line tool for validating configuration files before running them. It checks YAML syntax, required fields, and reader/transform/writer class names, providing clear error messages rather than Python stack traces.
+
+```
+python logger/utils/validate_config.py my_logger_config.yaml
+```
+
+The validator auto-detects the file type (device definitions, logger configs, cruise definitions, and templates) and runs the appropriate checks. See the [Validating Configuration Files]({{ "/cruise_definition_files/#validating-configuration-files" | relative_url }}) section in the Cruise Definition Files document for full details.

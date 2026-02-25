@@ -10,16 +10,14 @@ toc_sticky: true  # Makes the TOC stick on scroll
 Perhaps the second most crucial task that a data acquisition system
 must accomplish (after reliably storing incoming data records) is to
 be able to parse those records into meaningful values that can be
-displayed and manipulated to provide insight. The
-[RecordParser](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/record_parser.py) class in
-([logger/utils/record\_parser.py](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/record_parser.py)
-and its associated transform in
-[logger/transforms/parse\_transform.py](https://github.com/OceanDataTools/openrvdas/blob/master/logger/transforms/parse_transform.py)
-provide a tool for accomplishing this.
+displayed and manipulated to provide insight.
 
-The [RecordParser](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/record_parser.py) class takes text
-records and parses them into structured data with named fields
-and timestamps.
+OpenRVDAS provides two parse transforms for this purpose:
+
+- The **ParseTransform** ([logger/transforms/parse\_transform.py](https://github.com/OceanDataTools/openrvdas/blob/master/logger/transforms/parse_transform.py)), which uses the [PyPI parse module](https://pypi.org/project/parse/) to match format strings. This is the original and default parser in OpenRVDAS.
+- The **RegexParseTransform** ([logger/transforms/regex\_parse\_transform.py](https://github.com/OceanDataTools/openrvdas/blob/master/logger/transforms/regex_parse_transform.py)), a newer alternative that uses Python's built-in regular expressions.
+
+Both transforms take text records and parse them into structured data with named fields and timestamps. They are thin wrappers around the underlying [RecordParser](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/record_parser.py) and [RegexParser](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/regex_parser.py) classes, respectively.
 
 Input:
 
@@ -54,135 +52,149 @@ Output:
   'timestamp': 1406851200.931}]
 ```
 
-An alternative parse transform, the [RegexParseTransform](https://github.com/OceanDataTools/openrvdas/blob/master/contrib/csiro/logger/transforms/regex_parse_transform.py), has been contributed to the repository in the [contrib/csiro/logger/transforms directory](https://github.com/OceanDataTools/openrvdas/blob/master/contrib/csiro/logger/transforms/regex_parse_transform.py), and may be moved to the main tree in the future.
+# Record Format
 
-Note that there is also an earlier and now-deprecated module, the
-[NMEAParser]({{ "/nmea_parsing/" | relative_url }}), whose functionality has
-mostly been superceded by the RecordParser.
-
-## Table of Contents
-
-* [Basic Operation](#basic-operation)
-   * [ParseTransform](#parsetransform)
-* [Devices and device types](#devices-and-device-types)
-   * [Device type definitions](#device-type-definitions)
-   * [Device definitions](#device-definitions)
-   * [Device and device type definition files](#device-and-device-type-definition-files)
-* [Parser output format](#parser-output-format)
-* [Parser format strings](#parser-format-strings)
-   * [Additional parser formats](#additional-parser-formats)
-
-# Basic Operation
-
-The basic operation of the parser is as follows
+Both transforms expect the raw text records they receive to arrive in a
+predefined format, by default beginning with a data\_id identifying the
+physical or virtual sensor that created the record, followed by an ISO
+8601-compliant timestamp and the body of the message:
 
 ```
-  >>> parser = RecordParser(
-                 record_format='{data_id:w} {timestamp:ti} {field_string}',
-                 field_patterns=[
-                   '{:d}:{GravityValue:d} {GravityError:d}']
-               )
-  >>> parser.parse_record('grv1 2017-11-10T01:00:06.572Z 01:024557 00')
-
-    {
-      'data_id': grv1
-      'timestamp': 1510275606.572,
-      'fields':{
-        'GravityValue': 24557,
-        'GravityError': 0
-        }
-    }
+data_id timestamp field_string
+```
+e.g.
+```
+s330 2014-08-01T00:00:00.522000Z $PSXN,23,0.35,-1.74,218.26,0.58*13
 ```
 
-If successful, parse_record() will return a dictionary of the
-components defined in the ``record_format`` definition (the one
-provided here is the default record format that will be used if
-omitted from the method call).
+The first field, the ``data_id``, is what the parser will use to try to
+match to a device definition (described later), and from that, the format it expects the record fields to be in.
 
-If the ``record_format`` includes a ``field_string`` section,
-parse_record() will attempt to parse it, either using the
-``field_patterns`` provided or, if omitted, definitions read from a
-definition path (described further below).
+This default record format, including timestamp format, delimiters and other factors, can be overridden at construction time by specifying the argument `record_format=...`.
 
-Below is an example where a RecordParser is constructed using only
-default values:
+# Using the ParseTransform
+
+The [ParseTransform](https://github.com/OceanDataTools/openrvdas/blob/master/logger/transforms/parse_transform.py) uses the [PyPI parse module](https://pypi.org/project/parse/) to match format strings against incoming records.
+
+## Parsing with field patterns
+
+The simplest way to use the parser is to provide field patterns
+directly. Each pattern is a format string using the ``parse`` module's
+``{FieldName:type}`` syntax:
 
 ```
-  >>> parser = RecordParser()
-  >>> record = 'knud 2014-08-01T00:00:00.814000Z 3.5kHz,5139.94,0,,,,1500,-39.587550,-37.472355'
-  >>> parser.parse_record(record)
+  transform = ParseTransform(
+      field_patterns=['{:d}:{GravityValue:d} {GravityError:d}']
+  )
+  transform.transform('grv1 2017-11-10T01:00:06.572Z 01:024557 00')
 
-  {
-    'data_id': 'knud',
-    'timestamp': 1406851200.814,
-    'fields':{'KnudHFDepth': None,
-        'KnudHFInUse': None,
-        'KnudHFValidFlag': None,
-        'KnudLFDepth': 5139.94,
-        'KnudLFInUse': '3.5kHz',
-        'KnudLFValidFlag': 0,
-        'KnudLatitude': -39.58755,
-        'KnudLongitude': -37.472355,
-        'KnudSoundVelocity': 1500.0},
-    'metadata': {}
-  }
+  # Returns:
+  # {'data_id': 'grv1',
+  #  'timestamp': 1510275606.572,
+  #  'fields': {'GravityValue': 24557, 'GravityError': 0}}
 ```
-Going from the timestamped text to the the structured record requires a few steps and definitions.
 
-We expect the raw text records we receive to arrive in a predefined
-format, by default beginning with a data\_id identifying the physical
-or virtual sensor that created the record and an ISO 8601-compliant
-timestamp followed by the body of the message (This default is defined
-as ```DEFAULT_RECORD_FORMAT``` in
-[logger/utils/record_parser.py](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/record_parser.py) and
-can be overridden during creation of the RecordParser instance).
+The parser automatically extracts the ``data_id`` and ``timestamp``
+from the record envelope and applies the field patterns to the
+remaining field string. The ``field_patterns`` argument is a list; the
+parser tries each pattern in order and uses the first one that matches.
 
-After stripping the data\_id and timestamp off, we are left with the
-field string itself. To parse that, we need to look up information about
-the device that produced it, in this case, 'knud'.
+## Multiple message types
 
-## ParseTransform
+Some devices, such as GPS receivers, output several different types of
+messages. To handle this, ``field_patterns`` can be specified as a
+**dict** keyed by message type instead of a plain list:
 
-The record parser is encapulated for logger use within the thin
-wrapper of the
-[ParseTransform](https://github.com/OceanDataTools/openrvdas/blob/master/logger/transforms/parse_transform.py) and takes
-the same optional arguments as the bare RecordParser:
+```
+  transform = ParseTransform(
+      field_patterns={
+          'GGA': '$GPGGA,{GPSTime:f},{Latitude:f},{NorS:w},{Longitude:f},{EorW:w},{FixQuality:d},{NumSats:d},{HDOP:of},{AntennaHeight:of},M,{GeoidHeight:of},M,{LastDGPSUpdate:of},{DGPSStationID:od}*{CheckSum:x}',
+          'HDT': '$GPHDT,{HeadingTrue:f},T*{CheckSum:x}',
+          'VTG': '$GPVTG,{CourseTrue:of},T,{CourseMag:of},M,{SpeedKt:of},N,{SpeedKm:of},K,{Mode:w}*{CheckSum:x}',
+      }
+  )
+```
 
-  ```
-  transform = ParseTransform()
-  output = transform.transform(record)
-  ```
+When a dict is used, the matching key (e.g., ``GGA``, ``HDT``) is
+assigned to the ``message_type`` field of the resulting record. This
+is the preferred approach for devices that emit multiple message types,
+as it allows downstream consumers to identify which type of message
+produced a given record.
 
-It can be invoked from the command line ```listen.py``` script as well:
+Each dict value may be a single format string or a list of format
+strings (for message types with multiple variants).
 
-  ```
-  logger/listener/listen.py \
-      --port 6224 \
-      --transform_parse \
-      --write_file -
-  ```
+## The RegexParseTransform alternative
 
-When called from listen.py, the optional RecordParser initialization
-parameters may be specified with additional command line arguments
-(which, in the spirit of the listen.py script, must appear on the
-command line **before** ```--transform_parse``` argument):
+The [RegexParseTransform](https://github.com/OceanDataTools/openrvdas/blob/master/logger/transforms/regex_parse_transform.py) is a newer alternative that uses Python's built-in regular expressions instead of the PyPI ``parse`` module. It unifies the functionality of the earlier CSIRO and CORIOLIX contributed regex transforms into the main OpenRVDAS tree.
 
-  ```
-  logger/listener/listen.py \
-      --udp 6224 \
-      --parse_definition_path "local/devices/*.yaml,/opt/openrvdas/local/devices/*.yaml" \
-      --parse_to_json \
-      --transform_parse \
-      --write_file -
-  ```
+```
+  transform = RegexParseTransform(
+      field_patterns=[
+          r'(?P<CounterUnits>\d+):(?P<GravityValue>\d+)\s+(?P<GravityError>\d+)']
+  )
+  transform.transform('grv1 2017-11-10T01:00:06.572Z 01:024557 00')
+```
 
-# Devices and device types
+The RegexParseTransform uses Python named capture groups
+(``(?P<FieldName>pattern)``) instead of parse-style format strings
+(``{FieldName:type}``). Like the ParseTransform, it supports
+``field_patterns`` as either a list or a dict keyed by message type.
+The key differences are described in
+[RegexParser Differences](#regexparser-differences) below.
 
-The RecordParser works with the abstraction of "device types" and
-"devices." A device type might be something like a SeaPath 330 GPS, or
-a Bell Aerospace BGM-3 Gravimeter. A device would be a specific
-instance of some device type, like the SeaPath 330 GPS with serial
-number #S330-415-AX019G installed on the bridge of the N. B. Palmer.
+## Output format
+
+A parser can return results in three formats:
+
+- **DASRecord** — a [DASRecord](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/das_record.py) object; this is the default (only!) output format for `RegexParseTransform`; `ParseTransform` can be set to output DASRecords by setting ``return_das_record=True``.
+
+- **Python dict** — a dictionary with ``data_id``, ``timestamp``, and ``fields`` keys. For historical reasons, this is the default output format for `ParseTransform`.
+
+- **JSON** — the dict in JSON-encoded string form (for `ParseTransform`, use ``return_json=True``).
+
+If metadata about the fields are provided (either in the metadata
+argument or in the device definitions) and the ``metadata_interval``
+argument is non-zero, it will be attached to records at intervals of
+that many seconds.
+
+# Device and Device Type Definitions
+
+As an alternative to specifying ``field_patterns`` directly, both
+parsers can load format definitions from YAML files via the
+``definition_path`` argument. This is the preferred approach for
+installations with many instruments, as it centralizes format
+definitions, enables per-device field renaming, and attaches metadata
+to parsed fields.
+
+```
+  transform = ParseTransform(
+      definition_path='local/devices/nbp_devices.yaml'
+  )
+  transform.transform('grv1 2017-11-10T01:00:06.572Z 01:024557 00')
+
+  # Returns:
+  # {'data_id': 'grv1',
+  #  'timestamp': 1510275606.572,
+  #  'fields': {'Grv1GravityValue': 24557, 'Grv1GravityError': 0}}
+```
+
+Here the parser looks up ``grv1`` in the definition file, finds its
+device type, applies the matching format, and renames the fields
+according to the device definition (e.g., ``GravityValue`` becomes
+``Grv1GravityValue``).
+
+## Devices and device types
+
+The definition system works with two abstractions:
+
+- A **device type** describes a class of instrument — e.g., a SeaPath
+  330 GPS or a Bell Aerospace BGM-3 Gravimeter. It defines the message
+  format(s) that any instrument of that type can emit.
+- A **device** is a specific instance of a device type — e.g., the
+  particular SeaPath 330 with serial number #S330-415-AX019G installed
+  on the bridge of the N.B. Palmer. It maps the device type's generic
+  field names to device-specific names.
 
 ## Device type definitions
 
@@ -210,14 +222,16 @@ Gravimeter_BGM3:
       description: "unknown semantics"
 ```
 
-Some sensors can output many different types of messages. To accommodate
-this, the definition may specify a list of formats to try matching. The 
-The parser will use the first one that matches the whole line.
+As we noted above, some sensors can output multiple types of messages. To accommodate this, the definition may specify a list of formats to try matching. The parser will use the first one that matches the whole line. 
 
-Each element in the list may be either a single format string or a dict,
-where the dict key is the message type of the corresponding value. As indicated
-below, the value may either be a single string (matching that message type)
-or a list of strings that match that message type:
+Alternatively, a dict of formats may be provided, with the message type
+for each serving as the key and either a single format string or a list
+of format strings serving as the value. When a format is specified as a
+dict entry, the message type key is assigned  to the ``message_type`` 
+field of the resulting DASRecord. This is the preferred approach for
+devices that emit multiple message types, as it allows downstream
+consumers to identify which type of message produced
+a given record:
 
 ```
 Seapath330:
@@ -244,8 +258,8 @@ one that matches.
 
 In addition to device type definitions, we need to be able to specify
 which physical devices we have in our system map to which device
-types. We do this with device definitions, as in the YAML definition
-for a device with id 's330' on the N.B. Palmer:
+types. We do this with _device_ definitions, as in the YAML definition
+for a device with id `s330` on the N.B. Palmer:
 
 ```
 s330:
@@ -270,11 +284,11 @@ mapping from the device type's generic field names ('SpeedKt') to the
 field name we will want this datum to have in our system
 ('S330SpeedKt').
 
-The location of device and device type definitions a RecordParser is
-to use may be specified when it is instantiated, using a string
-containing a comma-separated list of paths:
+Any fields in the device type definition that are not mapped in the device
+definition's "fields" section will be silently dropped, allowing us to
+propagate only the fields we care about. 
 
-## Device and device type definition files
+## Definition files
 
 Definitions should be encoded in a YAML file:
 
@@ -306,6 +320,8 @@ device_types:
   Gravimeter_BGM3:
     ...
 ```
+Device and device type definitions may be aggregated from multiple files
+by use of `includes` entries, as illustrated above.
 
 A top-level "devices" key contains a dictionary of device
 definitions. A top-level "device\_types" key contains a dictionary of
@@ -331,7 +347,9 @@ Gravimeter_BGM3:
 
 ```
 
-To load one or more definition files, use the ``definition_path`` argument when instantiating a RecordParser:
+## Loading definitions
+
+To load one or more definition files, use the ``definition_path`` argument when instantiating a parser:
 
 ```
 # nbp_devices.yaml includes other, generic definition files
@@ -343,36 +361,37 @@ parser = RecordParser(definition_path='local/usap/nbp/devices/nbp_devices.yaml')
 parser = RecordParser(definition_path='local/devices/*.yaml,/opt/openrvdas/local/devices/*.yaml')
 ```
 
-If no ``definition_path`` is specified, the RecordParser will look for
+If no ``definition_path`` is specified, the parser will look for
 definitions in `DEFAULT_DEFINITION_PATH`, defined as `local/devices/*.yaml`.
 
-# Parser output format
+## Built-in NMEA device type definitions
 
-By default, a RecordParser will output a dict with three top-level fields:
+OpenRVDAS provides a built-in library of NMEA 0183 device type definitions
+in [logger/devices/NMEA\_0183.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/logger/devices/NMEA_0183.yaml),
+covering 13 common device categories and 87 format patterns. These can
+be included in your definition files and referenced by your device
+definitions. See the
+[NMEA Device Type Library]({{ "/nmea_device_types/" | relative_url }}) for details.
 
-```
-{'data_id': 'seap',
- 'timestamp': 1406851200.814
- 'fields': { ... },
-}
-```
+# Creating Device Type Definitions
 
-If metadata about the fields are provided (either in the metadata
-argument or in the device definitions) and the metadata_interval
-argument is non-zero, it will be attached to records at intervals of
-that many seconds.
+If your system takes input from non-NMEA sources and you are unable to
+find existing device type definitions that fit your needs, you will need
+to create your own. This section describes how to write your own
+using the RecordParser's format string syntax. For a step-by-step
+walkthrough of adding a complete device, see
+[Adding a Sensor]({{ "/adding_a_sensor/" | relative_url }}).
 
-If invoked with the flag ```return_das_record=True``` it will return [DASRecord
-objects](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/das_record.py), and if invoked with
-```return_json=True``` it will return the dict in JSON-encoded format.
+## Format string syntax
 
-# Parser format strings
-
-The format RecordParser relies on the [PyPi parse
-module](https://pypi.org/project/parse/). In brief, the format
+The RecordParser format strings use the [PyPI parse
+module](https://pypi.org/project/parse/). The format
 consists of literal text that is to be matched in a string along with
-interspersed "{VariableName:VariableFormat}" definitions. The variable
-formats understood roughly correspond to those in Python 3's 'print'
+interspersed ``{VariableName:VariableFormat}`` definitions.
+
+### Standard format types
+
+The variable formats understood roughly correspond to those in Python 3's ``print``
 statement:
 
 - d: digits
@@ -384,10 +403,11 @@ and more elaborate formats:
 
 - ti: ISO8601 datetime
 - ts: Linux format timestamp
+- x: hexadecimal numbers
 
 Please consult the documentation at [https://pypi.org/project/parse/](https://pypi.org/project/parse/) for the full list.
 
-## Additional parser formats
+### Custom format types
 
 For all the power encoded into PyPi's parse module, the available
 formats have a few limitations. Most notably, it is difficult to cope
@@ -406,15 +426,14 @@ seap 2014-08-01T00:00:00.931000Z $GPVTG,213.66,T,,M,9.4,N,,K,A*1E
 But the 'f' format does not recognize empty numbers, so the above
 record will not match our format.
 
-To cope with this, we have created a few "extra" formats, defined in
-[logger/utils/record\_parser\_formats.py](logger/utils/record_parser_formats.py):
+To cope with this, OpenRVDAS defines several extra formats in
+[logger/utils/record\_parser\_formats.py](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/record_parser_formats.py):
 
  - od = optional integer
  - of = optional generalized float
  - og = optional generalized number - will parse '#VALUE!' as None
  - ow = optional sequence of letters, numbers, underscores
  - nc = any ASCII text that is not a comma
-
  - nlat = NMEA-formatted latitude or longitude, converted to decimal degrees
  - nlat_dir = NMEA-formatted latitude or longitude, along with hemisphere (N/E/W/S) converted to signed decimal degrees. South and West are considered negative, North and East positive.
 
@@ -429,3 +448,149 @@ Using these, the extended format string
 See 'Custom Type Conversions' in
 [https://pypi.org/project/parse/](https://pypi.org/project/parse/) for
 a discussion of how format types work.
+
+# RegexParser Differences
+
+The [RegexParser](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/regex_parser.py) operates on the same principles as the RecordParser but differs in several important ways.
+
+## Regex format syntax
+
+The RegexParser uses Python named capture groups instead of ``parse``-style format strings:
+
+```
+(?P<field_name>regex_pattern)
+```
+
+For example, where the RecordParser would use:
+
+```
+{GravityValue:d}
+```
+
+the RegexParser equivalent is:
+
+```
+(?P<GravityValue>\d+)
+```
+
+This gives full access to Python's regular expression engine, making
+it straightforward to match irregular or ambiguous formats that are
+difficult to express with the ``parse`` module.
+
+## Type conversion with the ``fields`` argument
+
+Because regular expressions capture everything as strings, the
+RegexParser does not perform type conversion during parsing. Instead,
+type information is provided separately via the ``fields`` argument,
+which maps field names to their desired types:
+
+```
+  transform = RegexParseTransform(
+      field_patterns=[
+          r'(?P<CounterUnits>\d+):(?P<GravityValue>\d+)\s+(?P<GravityError>\d+)'],
+      fields={
+          'CounterUnits': 'int',
+          'GravityValue': 'int',
+          'GravityError': 'int'
+      }
+  )
+```
+
+Without the ``fields`` argument, all captured values remain as
+strings. When device definitions are loaded via ``definition_path``,
+type conversions and field name mappings are applied automatically from
+the definitions.
+
+## Output
+
+The RegexParseTransform always returns
+[DASRecord](https://github.com/OceanDataTools/openrvdas/blob/master/logger/utils/das_record.py)
+objects — it does not support returning plain dicts or JSON strings.
+If field patterns are specified as a dict, the matching key is assigned
+to the ``message_type`` field of the DASRecord.
+
+## YAML configuration example
+
+Using the RegexParser in a logger configuration:
+
+```
+  readers:
+  - class: UDPReader
+    kwargs:
+      port: 6224
+  transforms:
+  - class: TimestampTransform
+  - class: PrefixTransform
+    kwargs:
+      prefix: grv1
+  - class: RegexParseTransform
+    kwargs:
+      field_patterns:
+        - '(?P<CounterUnits>\d+):(?P<GravityValue>\d+)\s+(?P<GravityError>\d+)'
+      fields:
+        CounterUnits: int
+        GravityValue: int
+        GravityError: int
+  writers:
+  - class: CachedDataWriter
+    kwargs:
+      data_server: localhost:8766
+```
+
+# Choosing a Parser
+
+| Feature | RecordParser | RegexParser |
+|---|---|---|
+| **Format syntax** | `{FieldName:type}` (parse module) | `(?P<FieldName>regex)` (Python re) |
+| **External dependency** | [PyPI parse](https://pypi.org/project/parse/) | None (built-in re) |
+| **Type conversion** | Built into format strings (`:d`, `:f`, etc.) | Via `fields` argument or device definitions |
+| **Custom optional types** | Yes (`:od`, `:of`, `:og`, etc.) | Use regex alternation (e.g., `[\d.]*`) |
+| **Output format** | Dict by default; DASRecord or JSON optional | Always DASRecord |
+| **Transform class** | ParseTransform | RegexParseTransform |
+| **listen.py flag** | `--transform_parse` | Use YAML configuration |
+| **Best for** | Standard formats, quick setup | Complex patterns, no-dependency environments |
+
+## Field patterns vs. device definitions
+
+Both parsers support two modes of specifying formats:
+
+- **Direct field patterns** — pass ``field_patterns`` (and for
+  RegexParser, ``fields``) at construction time. Simplest for one-off
+  parsing or a small number of known formats.
+- **Device/device type definition files** — provide a
+  ``definition_path`` pointing to YAML files. Preferred for
+  multi-instrument installations where you want centralized format
+  management, per-device field renaming, and field metadata.
+
+Note that the two parsers use different format syntaxes in their device
+type definition files — RecordParser definitions use ``parse``-module
+format strings (e.g., ``{FieldName:f}``) while RegexParser definitions
+use Python regex patterns (e.g., ``(?P<FieldName>[\d.]+)``). The
+device and device type YAML structure is otherwise the same, so
+switching between parsers requires rewriting the format strings but not
+restructuring the definition files.
+
+# Using listen.py
+
+The ParseTransform can be invoked from the command line ``listen.py`` script:
+
+  ```
+  logger/listener/listen.py \
+      --port 6224 \
+      --transform_parse \
+      --write_file -
+  ```
+
+When called from listen.py, the optional RecordParser initialization
+parameters may be specified with additional command line arguments
+(which, in the spirit of the listen.py script, must appear on the
+command line **before** the ``--transform_parse`` argument):
+
+  ```
+  logger/listener/listen.py \
+      --udp 6224 \
+      --parse_definition_path "local/devices/*.yaml,/opt/openrvdas/local/devices/*.yaml" \
+      --parse_to_json \
+      --transform_parse \
+      --write_file -
+  ```
