@@ -1,96 +1,32 @@
-# Minimal Mistakes remote theme starter
+# OpenRVDAS Documentation
 
-Click [**Use this template**](https://github.com/mmistakes/mm-github-pages-starter/generate) button above for the quickest method of getting started with the [Minimal Mistakes Jekyll theme](https://github.com/mmistakes/minimal-mistakes).
 
-Contains basic configuration to get you a site with:
 
-- Sample posts.
-- Sample top navigation.
-- Sample author sidebar with social links.
-- Sample footer links.
-- Paginated home page.
-- Archive pages for posts grouped by year, category, and tag.
-- Sample about page.
-- Sample 404 page.
-- Site wide search.
+OpenRVDAS (Open Research Vessel Data Acquisition System) is an open source software framework for building custom data acquisition systems. It is designed for oceanographic research vessels and other science platforms that need to record streaming data from serial ports, network-aware sensors, and other sources.
 
-Replace sample content with your own and [configure as necessary](https://mmistakes.github.io/minimal-mistakes/docs/configuration/).
+## Where to start?
+* [OpenRVDAS Quickstart](quickstart.md) if you want to just grab the code and poke around with basic loggers as quickly as possible.
+* [GUI Quickstart](quickstart_gui.md) if you want to play with the web-based interface.
+
+Other relevant documents are:
+
+* [The Listener Script - listen.py](listen_py.md) - how to use OpenRVDAS's core utility script
+* [Configuration Files](configuration_files.md) - how to define configuration files to simplify running loggers with listen.py
+* [OpenRVDAS Components](components.md) - what components exist and what they do
+* [Simulating Live Data](simulating_live_data.md) - using the simulate_data.py script to simulate a live system using stored data for development and testing
+* [Grafana/InfluxDB-based Displays](grafana_displays.md) - an introduction to using InfluxDB and Grafana for displaying data
+* [Parsing](parsing.md) - how to work with the included RecordParser to turn raw text records into structured data fields
+* [Security assumptions](security.md) - the (rather naive) security assumptions made about the environment in which OpenRVDAS runs.
 
 ---
 
-## Troubleshooting
+## This Repository
 
-If you have a question about using Jekyll, start a discussion on the [Jekyll Forum](https://talk.jekyllrb.com/) or [StackOverflow](https://stackoverflow.com/questions/tagged/jekyll). Other resources:
+This repository contains the source for the OpenRVDAS documentation site, built with [Jekyll](https://jekyllrb.com/) using the [Minimal Mistakes](https://mmistakes.github.io/minimal-mistakes/) theme and hosted via GitHub Pages.
 
-- [Ruby 101](https://jekyllrb.com/docs/ruby-101/)
-- [Setting up a Jekyll site with GitHub Pages](https://jekyllrb.com/docs/github-pages/)
-- [Configuring GitHub Metadata](https://github.com/jekyll/github-metadata/blob/master/docs/configuration.md#configuration) to work properly when developing locally and avoid `No GitHub API authentication could be found. Some fields may be missing or have incorrect data.` warnings.
+See [install.md](install.md) for instructions on running the documentation site locally.
 
-## Running Jekyll Locally on MacOS with Minimal Mistakes Theme
+## Links
 
-This guide provides instructions for setting up and running a Jekyll site with the Minimal Mistakes theme locally on macOS, including how to implement collapsible sidebar navigation.
-
-### Prerequisites Installation
-
-1. Install Ruby (using Homebrew is recommended):
-   ```bash
-   brew install ruby
-   ```
-
-2. Add Ruby to your PATH in `.zshrc` or `.bash_profile`:
-   ```bash
-   export PATH="/usr/local/opt/ruby/bin:$PATH"
-   ```
-
-3. Install Bundler:
-   ```bash
-   gem install bundler
-   ```
-
-### Set Up Your Jekyll Site
-
-1. Create a new directory for your site (or navigate to your existing site)
-
-2. Create or update your `Gemfile` to include Jekyll and Minimal Mistakes:
-   ```ruby
-   source "https://rubygems.org"
-   gem "jekyll"
-   gem "minimal-mistakes-jekyll"
-   gem "jekyll-include-cache", group: :jekyll_plugins
-   ```
-
-3. If you're using Ruby 3.0.0+, add webrick to your dependencies:
-   ```bash
-   bundle add webrick
-   ```
-
-4. Create or update `_config.yml` to use the theme:
-   ```yaml
-   remote_theme: "mmistakes/minimal-mistakes"
-   # OR
-   # theme: "minimal-mistakes-jekyll"
-   
-   plugins:
-     - jekyll-include-cache
-   ```
-
-### Install Dependencies and Run
-
-1. Install all dependencies:
-   ```bash
-   bundle install
-   ```
-
-2. Run the local server:
-   ```bash
-   bundle exec jekyll serve
-   ```
-
-3. View your site at `http://localhost:4000`
-
-4. Use the `--watch` flag to automatically regenerate the site when files change:
-   ```bash
-   bundle exec jekyll serve --watch
-   ```
-
-Remember that if you make changes to `_config.yml`, you'll need to restart the Jekyll server for those changes to take effect.
+- **OpenRVDAS GitHub Repository:** https://github.com/OceanDataTools/openrvdas
+- **Live Documentation Site:** https://oceandatatools.github.io/openrvdas-docs/
