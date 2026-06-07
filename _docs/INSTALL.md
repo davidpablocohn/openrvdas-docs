@@ -160,6 +160,45 @@ Would you like to enable a password on the supervisord web-interface?
 Enable Supervisor Web-interface user/pass?  (no)
 ```
 
+On CentOS/RHEL/Rocky systems the installer will optionally configure **firewalld**; on Ubuntu it will optionally configure **ufw**. Both default to 'no'.
+
+On CentOS/RHEL/Rocky:
+
+```
+#####################################################################
+The firewalld daemon can be installed and configured to only allow access
+to ports used by OpenRVDAS.
+
+Install and configure firewalld?  (no) 
+```
+
+On Ubuntu:
+
+```
+#####################################################################
+The ufw firewall can be installed and configured to only allow access
+to ports used by OpenRVDAS.
+
+Install and configure ufw?  (no) 
+```
+
+If you answer 'yes', the installer will automatically open the web console port and (if enabled) the supervisord web interface port. On Ubuntu it will also always permit SSH to prevent lockout. It will then prompt for any additional ports:
+
+```
+The installation script will open port 80 for TCP console access.
+What other ports should be opened for TCP or UDP? (enter comma-separated
+list of numbers, or hit return to accept the default.)
+
+Note: UDP ports 6221-6226 are those typically used in OpenRVDAS cruise
+definition files for instrument data. If you skip these, the data pipeline
+will be blocked by the firewall.
+
+Additional TCP ports to open? 
+Additional UDP ports to open? (default: 6221,6222,6223,6224,6225,6226) 
+```
+
+> **Important:** UDP ports 6221–6226 are those typically used in OpenRVDAS cruise definition files for instrument data. If you enable a firewall without opening these ports, instrument data will be silently dropped. Press return at the UDP prompt to accept the default.
+
 At this point, the script will run a while and, if all has gone well, print the install location and the
 command to activate the virtual environment, then wish you "Happy logging":
 
@@ -185,9 +224,8 @@ If you make this change, you will want to restart the Django-based services:
 supervisorctl restart django:*
 ```
 
-If you wish to use InfluxDB and Grafana to create dashboards and display data, you
-will need to run the installation script in `utils/install_influxdb.sh`. Please
-see and follow the instructions in [Grafana/InfluxDB-based Displays]({{ "/grafana_displays/" | relative_url }}).
+If you wish to use InfluxDB and Grafana to create dashboards and display data, see
+[Grafana/InfluxDB-based Displays]({{ "/grafana_displays/" | relative_url }}) for current installation and configuration instructions.
 
 ## Starting and Stopping Servers
 

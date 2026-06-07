@@ -103,6 +103,41 @@ The Listener class accepts a further (optional) special key,
 diagnostic messages. Its format is the same as that for the normal
 ``writers`` key.
 
+### Tapping a Reader or Transform with `mirror_to`
+
+Any Reader or Transform can include an optional ``mirror_to`` key that names a Writer to receive a copy of every record the component produces. This is useful for logging raw data at the same time as it flows through a processing pipeline, or for feeding data to a secondary destination without adding a full extra pipeline.
+
+```yaml
+readers:
+- class: SerialReader
+  kwargs:
+    port: /dev/ttyr15
+    baudrate: 9600
+
+transforms:
+- class: TimestampTransform
+  mirror_to:                      # tap: save timestamped records before parsing
+    class: LogfileWriter
+    kwargs:
+      filebase: /log/current/gyr1_raw
+- class: ParseTransform
+  kwargs:
+    definition_path: local/devices/*.yaml
+
+writers:
+- class: CachedDataWriter
+  kwargs:
+    data_server: localhost:8766
+```
+
+In this example every timestamped record is written to a rolling logfile _before_ the parse transform is applied. The parsed, structured output then goes on to the CachedDataWriter as normal.
+
+The copy is delivered **asynchronously** via a background thread and queue, so a slow ``mirror_to`` writer does not block the primary data flow.
+
+**Notes:**
+- ``mirror_to`` accepts a single Writer specification in the same ``class``/``kwargs`` format used elsewhere in the config.
+- Writers cannot be tapped — passing ``mirror_to`` to a Writer is silently ignored with a log warning.
+
 ### Reader, Transform and Writer Documentation
 
 The code is generally the best documentation of itself, and we have tried to create detailed and extensive docstrings in the headers of each component in the `logger/[readers, transforms, writers]` directories. Machine-extracted documentation on Reader, Transform and Writer components

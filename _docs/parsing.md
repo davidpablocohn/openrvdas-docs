@@ -368,7 +368,7 @@ definitions in `DEFAULT_DEFINITION_PATH`, defined as `local/devices/*.yaml`.
 
 OpenRVDAS provides a built-in library of NMEA 0183 device type definitions
 in [logger/devices/NMEA\_0183.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/logger/devices/NMEA_0183.yaml),
-covering 13 common device categories and 87 format patterns. These can
+covering 13 common device categories and 108 format patterns. These can
 be included in your definition files and referenced by your device
 definitions. See the
 [NMEA Device Type Library]({{ "/nmea_device_types/" | relative_url }}) for details.
@@ -536,6 +536,50 @@ Using the RegexParser in a logger configuration:
     kwargs:
       data_server: localhost:8766
 ```
+
+# TimestampTransform
+
+The [TimestampTransform](https://github.com/OceanDataTools/openrvdas/blob/master/logger/transforms/timestamp_transform.py) is typically the first transform in a logger pipeline. Its default behavior is to assign the current system clock time as the record's timestamp:
+
+```yaml
+transforms:
+- class: TimestampTransform
+- class: ParseTransform
+  kwargs:
+    definition_path: local/devices/*.yaml
+```
+
+## NMEA timestamp extraction
+
+When records carry embedded NMEA timestamps (GPS GGA, RMC, ZDA, etc.), using those embedded times produces more accurate results than the system clock. Set `use_nmea_timestamp: true` to extract the timestamp directly from the NMEA sentence, falling back to the system clock only if extraction fails:
+
+```yaml
+transforms:
+- class: TimestampTransform
+  kwargs:
+    use_nmea_timestamp: true
+    nmea_timestamp_timeout: 1        # seconds a prior NMEA timestamp stays valid (default: 1)
+    nmea_time_drift_threshold: 0.1   # warn if NMEA time drifts from system clock by this many seconds (default: 0.1)
+```
+
+The extractor supports the following sentence types:
+
+**Standard NMEA sentences with embedded timestamps:** GGA, GLL, RMC, ZDA, GBS, GST, GNS, BWC, TLL, TTM
+
+**Proprietary sentences:** PASHR, PGRMF, PTNL GGK/PJK, PUBX 00/04, PSIMSNS, PSIMSSB, PSXN 26
+
+**Sentences without timestamps** (VTG, HDT, etc.): the extractor reuses the most recently extracted NMEA timestamp for up to `nmea_timestamp_timeout` seconds. After that window expires it falls back to the system clock and logs a warning.
+
+### Parameters
+
+| Parameter | Default | Description |
+|---|---|---|
+| `use_nmea_timestamp` | `False` | Extract timestamp from NMEA sentence instead of system clock |
+| `nmea_timestamp_timeout` | `1` | Seconds to keep a previously-extracted timestamp valid for non-timestamped sentences such as VTG and HDT |
+| `nmea_time_drift_threshold` | `0.1` | Log a warning when NMEA time differs from the system clock by more than this many seconds; set to `null` to disable |
+| `quiet` | `False` | Suppress all warnings (drift, staleness, clock fallback) |
+
+When `use_nmea_timestamp` is `true` and extraction fails (unrecognized sentence type or malformed fields), the transform falls back to the system clock and logs a warning (suppressed if `quiet: true`).
 
 # Choosing a Parser
 

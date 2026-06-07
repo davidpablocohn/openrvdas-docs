@@ -8,9 +8,9 @@ toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
 
-The [CachedDataServer](https://github.com/OceanDataTools/openrvdas/blob/master/server/cached_data_server.py) accepts timestamped field:value data, holds it in an in-memory cache, and serves it to clients over WebSockets. It is used to feed display widgets, to provide intermediate caching for derived-data transforms, and as a general-purpose data bus between OpenRVDAS components.
+The [CachedDataServer](https://github.com/OceanDataTools/openrvdas/blob/master/server/cached_data_server.py) accepts timestamped field:value data, holds it in an in-memory cache, and serves it to clients over WebSockets. It also accepts plain HTTP GET requests on the same port for simple one-off queries. It is used to feed display widgets, to provide intermediate caching for derived-data transforms, and as a general-purpose data bus between OpenRVDAS components.
 
-In the default OpenRVDAS installation a CachedDataServer is already running and listening for WebSocket connections on port **8766**.
+In the default OpenRVDAS installation a CachedDataServer is already running and listening on port **8766**.
 
 ---
 
@@ -50,11 +50,10 @@ supervisor> exit
 
 You can also run the server directly. If you are running a LoggerManager, pass `--start_data_server` to have it start its own CachedDataServer automatically.
 
-For a standalone server that also listens for data on a UDP port:
+A typical standalone invocation:
 
 ```
 server/cached_data_server.py \
-  --udp 6225 \
   --port 8766 \
   --disk_cache /var/tmp/openrvdas/disk_cache \
   --back_seconds 3600 \
@@ -67,7 +66,7 @@ server/cached_data_server.py \
 | Flag | Default | Description |
 |---|---|---|
 | `--port` | _(required)_ | WebSocket port to serve clients on |
-| `--udp` | _(none)_ | Comma-separated UDP port(s) to listen for incoming data on. Prefix with a multicast group to use multicast, e.g. `239.0.0.1:6225` |
+| `--udp` | _(none)_ | _(deprecated)_ Comma-separated UDP port(s) to listen for incoming data on. Prefix with a multicast group to use multicast, e.g. `239.0.0.1:6225` |
 | `--disk_cache` | _(none)_ | Directory for the disk-backed cache. On restart, data is reloaded from here to warm the in-memory cache |
 | `--back_seconds` | `86400` | Maximum age (seconds) of data to retain |
 | `--max_records` | `2880` | Maximum number of records to retain per field. Set to `0` for unlimited |
@@ -217,6 +216,66 @@ Any WebSocket client can push data into the cache using a `publish` message:
 ```
 
 This is the mechanism used by the [CachedDataWriter](https://github.com/OceanDataTools/openrvdas/blob/master/logger/writers/cached_data_writer.py) component to feed data into the server.
+
+---
+
+## HTTP GET API
+
+_Requires `websockets >= 12`._
+
+In addition to the WebSocket protocol, the server accepts plain HTTP GET requests on the same port. This lets shell scripts, elog systems, and other simple tools retrieve the latest cached values without implementing a WebSocket handshake.
+
+### `GET /fields` — list available fields
+
+```
+GET http://localhost:8766/fields
+```
+
+Returns a JSON object listing all field names currently in the cache:
+
+```json
+{"fields": ["S330CourseTrue", "S330SpeedKt", "MwxAirTemp", ...]}
+```
+
+Example:
+
+```bash
+curl http://localhost:8766/fields
+```
+
+### `GET /latest/<fields>` — get latest value(s)
+
+```
+GET http://localhost:8766/latest/<field_1>[,<field_2>,...]
+```
+
+Returns the most recent cached timestamp and value for each requested field:
+
+```json
+{
+  "S330CourseTrue": {"timestamp": 1555468528.452, "value": 219.61},
+  "S330SpeedKt":    {"timestamp": 1555468530.001, "value": 8.9},
+  "MwxAirTemp":     null
+}
+```
+
+Fields not present in the cache are returned as `null`. All other HTTP requests receive `400 Bad Request`.
+
+Examples:
+
+```bash
+# Single field
+curl http://localhost:8766/latest/S330CourseTrue
+
+# Multiple fields (comma-separated, no spaces)
+curl http://localhost:8766/latest/S330CourseTrue,S330SpeedKt,MwxAirTemp
+```
+
+### When to use HTTP GET vs WebSocket
+
+HTTP GET is the right choice for **occasional, on-demand queries** — populating an elog entry, a status check, or a one-shot script. For anything that needs continuous or frequent updates, use the [WebSocket subscription API](#subscribe--stream-field-updates) instead.
+
+HTTP GET requests run inside the same asyncio event loop as all WebSocket connections. High-frequency polling (multiple requests per second) will delay WebSocket data delivery to connected clients.
 
 ---
 
@@ -427,19 +486,7 @@ data = asyncio.run(latest_values())
 
 ### JavaScript (browser)
 
-The OpenRVDAS `WidgetServer` class in [`display/js/widgets/widget_server.js`](https://github.com/OceanDataTools/openrvdas/blob/master/display/js/widgets/widget_server.js) handles the subscribe/ready loop automatically and dispatches incoming data to a list of display widgets:
-
-```javascript
-var widgets = [
-  new TextWidget('course_div', {'S330CourseTrue': {'seconds': 0}}, 'Degrees'),
-  new TextWidget('speed_div',  {'S330SpeedKt':    {'seconds': 0}}, 'kt'),
-];
-
-var server = new WidgetServer(widgets, 'ws://localhost:8766');
-server.serve();
-```
-
-For custom pages that don't use the widget framework, the raw browser WebSocket API works the same way:
+For browser pages that connect directly to the CDS, the standard browser WebSocket API works with the subscribe/ready protocol described above:
 
 ```javascript
 const ws = new WebSocket('ws://localhost:8766');
@@ -482,20 +529,6 @@ writers:
 
 It accepts `DASRecord` or dict-format records and forwards them to the server via WebSocket `publish` messages. If the connection is lost, it buffers up to `max_backup` records (default: 86400) locally until it can reconnect.
 
-### UDP input
-
-If the server is started with one or more `--udp` ports, it will also accept JSON-encoded records broadcast on those ports:
-
-```
-server/cached_data_server.py --port 8766 --udp 6225
-```
-
-The default supervisord installation does **not** enable UDP input. To enable it, uncomment the relevant line in `scripts/start_openrvdas.sh`:
-
-```bash
-#DATA_SERVER_LISTEN_ON_UDP='--udp $DATA_SERVER_UDP_PORT'
-```
-
 ### Direct Python API
 
 Code that instantiates a `CachedDataServer` object directly (rather than connecting to a running server) can call `cache_record()` directly:
@@ -508,6 +541,22 @@ server.cache_record({
     'timestamp': time.time(),
     'fields': {'field_1': 'value_1', 'field_2': 'value_2'}
 })
+```
+
+### UDP input _(deprecated)_
+
+> **Deprecated.** Use `CachedDataWriter` in a logger pipeline instead. UDP input remains functional but is no longer enabled by default and may be removed in a future release.
+
+If the server is started with one or more `--udp` ports, it will also accept JSON-encoded records broadcast on those ports:
+
+```
+server/cached_data_server.py --port 8766 --udp 6225
+```
+
+The default supervisord installation does **not** enable UDP input. To enable it, uncomment the relevant line in `scripts/start_openrvdas.sh`:
+
+```bash
+#DATA_SERVER_LISTEN_ON_UDP='--udp $DATA_SERVER_UDP_PORT'
 ```
 
 ---
@@ -567,11 +616,11 @@ Whether data arrives via UDP, WebSocket `publish`, or direct `cache_record()` ca
 | Method | When to use |
 |---|---|
 | `listen.py --cached_data` | Command-line inspection; piping into other tools |
+| `curl` / HTTP GET | One-off queries from shell scripts, elog systems, or tools that can't use WebSockets |
 | `wscat` / `websocat` | Interactive protocol debugging |
 | `CachedDataReader` in YAML | Reading CDS data inside a logger or derived-data pipeline |
 | `CachedDataReader` in Python | Scripted consumers within the OpenRVDAS codebase |
-| `asyncio` + `websockets` | External Python programs or services |
-| JavaScript `WidgetServer` | Browser display pages using the built-in widget framework |
+| `asyncio` + `websockets` | External Python programs or services needing continuous updates |
 | Raw `WebSocket` (JS/other) | Custom browser pages or other language bindings |
 
 **Writing:**
@@ -580,5 +629,25 @@ Whether data arrives via UDP, WebSocket `publish`, or direct `cache_record()` ca
 |---|---|
 | `CachedDataWriter` in YAML | Feeding the CDS from a logger pipeline |
 | WebSocket `publish` message | Any WebSocket client pushing data directly |
-| `--udp` port | Legacy UDP broadcast from instruments or other processes |
 | `cache_record()` in Python | In-process use when directly instantiating a `CachedDataServer` |
+| `--udp` port | _(deprecated)_ Legacy UDP broadcast |
+
+---
+
+## Deprecated
+
+### JavaScript WidgetServer
+
+> **Deprecated.** The `WidgetServer` / widget framework (`display/js/widgets/`) is no longer the recommended approach for browser-based displays. Use [Grafana/InfluxDB-based displays]({{ "/grafana_displays/" | relative_url }}) instead. The raw browser WebSocket API (shown in the [JavaScript section above](#javascript-browser)) continues to work and is supported.
+
+The OpenRVDAS `WidgetServer` class in [`display/js/widgets/widget_server.js`](https://github.com/OceanDataTools/openrvdas/blob/master/display/js/widgets/widget_server.js) handles the subscribe/ready loop automatically and dispatches incoming data to a list of display widgets:
+
+```javascript
+var widgets = [
+  new TextWidget('course_div', {'S330CourseTrue': {'seconds': 0}}, 'Degrees'),
+  new TextWidget('speed_div',  {'S330SpeedKt':    {'seconds': 0}}, 'kt'),
+];
+
+var server = new WidgetServer(widgets, 'ws://localhost:8766');
+server.serve();
+```
