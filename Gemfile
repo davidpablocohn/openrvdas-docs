@@ -1,11 +1,19 @@
 source "https://rubygems.org"
 
-gem "github-pages", group: :jekyll_plugins
+gem "jekyll", "~> 4.3"
+gem "minimal-mistakes-jekyll"
+
+# Stdlib gems removed from Ruby 3.4+ / 4.0
+gem "csv"
+gem "bigdecimal"
+gem "ostruct"
+gem "base64"
+gem "mutex_m"
+gem "logger"
 
 gem "tzinfo-data"
 gem "wdm", "~> 0.1.0" if Gem.win_platform?
 
-# If you have any plugins, put them here!
 group :jekyll_plugins do
   gem "jekyll-paginate"
   gem "jekyll-sitemap"
@@ -14,9 +22,5 @@ group :jekyll_plugins do
   gem "jemoji"
   gem "jekyll-include-cache"
   gem "jekyll-algolia"
-  gem "jekyll-sass-converter"
-  gem 'webrick'
-  gem "minimal-mistakes-jekyll"
+  gem "webrick"
 end
-
-gem "openssl", "~> 4.0"

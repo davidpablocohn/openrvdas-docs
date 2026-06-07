@@ -7,7 +7,7 @@ toc_label: "Contents"
 toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
-This page will familiarize you with OpenRVDAS and walk you through setting up and running a few simple loggers. These are _not_ the instructions to follow if you want to run it on a ship. If you actually want to set up a proper installation, please read and follow the instructions on the [installation page]({{ "/install/" | relative_url }}) or [the repository's installation guide](https://github.com/OceanDataTools/openrvdas/blob/master/INSTALL.md).
+This page will familiarize you with OpenRVDAS and walk you through setting up a minimal installation and running a few simple loggers. These are _not_ the instructions to follow if you want to experiment with the full system or run it on a ship. If you actually want to set up a proper installation, please read and follow the instructions on the [installation page]({{ "/install/" | relative_url }}) or [the repository's installation guide](https://github.com/OceanDataTools/openrvdas/blob/master/INSTALL.md).
 
 ### Get the code
 Download from the [OpenRVDAS GitHub repository](https://github.com/OceanDataTools/openrvdas). If you have `git` installed, you would do this by opening a terminal, changing to the directory where you want the code to live (it will create its own `openrvdas` subdirectory here) and running
@@ -26,10 +26,12 @@ cd openrvdas
 python3 -m venv venv
 source venv/bin/activate     # On Windows: venv\Scripts\activate
 pip install pyyaml pyserial websockets parse
-pip install -e .  # you can ignore any 'No pyproject.toml found' message
+pip install -e .
 ```
 
 You will need to activate this environment (`source venv/bin/activate`) each time you open a new terminal before running OpenRVDAS scripts. Your shell prompt will show `(venv)` when the environment is active.
+
+> **Note:** `pip install -e .` registers `listen`, `simple_listener`, and `logger_manager` as shell commands. The examples below use the full path `logger/listener/listen.py`, which always works; after installation you can also run them as just `listen`.
 
 > **Note:** The full installation would perform `pip install -r utils/requirements.txt`, including packages (such as `uwsgi`) that are only needed for the web console. The packages installed above are sufficient for everything in this quickstart. When you perform a full installation via the installer script, it handles all dependencies for you automatically.
 
@@ -231,9 +233,7 @@ For detailed instructions on using the `ParseTransform`, please read the ["Recor
 
 ### Writing to databases
 #### InfluxDB
-OpenRVDAS includes an `InfluxDBWriter` that, as one would expect, writes to the open source time-series database InfluxDB. InfluxDB and its associated graphing package Grafana can be installed and configured by running the script in `utils/install_influx.sh`.
-
-More information on using InfluxDB and Grafana with OpenRVDAS can be found on the [OpenRVDAS Grafana Displays]({{ "/grafana_displays/" | relative_url }}) page, and on the [InfluxDB](https://www.influxdata.com/) and [Grafana](https://grafana.com/oss/grafana/) project pages.
+OpenRVDAS includes an `InfluxDBWriter` that writes to the open source time-series database InfluxDB. For installation and configuration instructions, see the [Grafana/InfluxDB-based Displays]({{ "/grafana_displays/" | relative_url }}) page, which covers the current recommended setup along with the [InfluxDB](https://www.influxdata.com/) and [Grafana](https://grafana.com/oss/grafana/) project pages.
 
 #### Other databases
 OpenRVDAS includes a `DatabaseWriter` that can be configured to run with PostgreSQL, MySQL, MariaDB or MongoDB via a "database connector".

@@ -35,8 +35,8 @@ search: true
 
 # Build settings
 markdown: kramdown
-remote_theme: mmistakes/minimal-mistakes
-#theme: minimal-mistakes-jekyll
+theme: minimal-mistakes-jekyll
+#remote_theme: mmistakes/minimal-mistakes
 
 # Outputting
 permalink: /:categories/:title/
@@ -69,7 +69,6 @@ plugins:
   - jekyll-feed
   - jemoji
   - jekyll-include-cache
-  - jekyll-toc
 
 author:
   #name   : "OpenRVDAS"

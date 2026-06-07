@@ -12,7 +12,7 @@ OpenRVDAS includes a comprehensive library of NMEA 0183 device type
 definitions in
 [logger/devices/NMEA\_0183.yaml](https://github.com/OceanDataTools/openrvdas/blob/master/logger/devices/NMEA_0183.yaml).
 This file provides ready-to-use definitions for the most common marine
-instrument categories, covering 13 device types with 87 format
+instrument categories, covering 13 device types with 108 format
 patterns.
 
 For background on how device types and parsing work, see
@@ -22,14 +22,14 @@ For background on how device types and parsing work, see
 
 | Device Type | Formats | Description |
 |---|---|---|
-| NMEA_GPS | 17 | Standard GPS/GNSS receiver — GGA, GLL, RMC, VTG, ZDA, GSA, GSV, GBS, GST, GNS, DTM, plus Garmin, Trimble, and u-blox proprietary sentences |
+| NMEA_GPS | 21 | Standard GPS/GNSS receiver — GGA, GLL, RMC, VTG, ZDA, GSA, GSV, GBS, GST, GNS, DTM, plus Garmin, Trimble, and u-blox proprietary sentences |
 | NMEA_GPS_INS | 15 | Integrated GPS/INS (e.g., Seapath) — GPS sentences plus Kongsberg PSXN and Ashtech PASHR |
 | NMEA_MRU | 16 | Standalone gyro/motion reference unit — HDT, HDM, HDG, ROT plus Kongsberg PSXN, Ashtech PASHR, True North PTNTHTM, Furuno PFEC, Kongsberg HiPAP PSIMSNS |
-| NMEA_Depth | 7 | Depth/echo sounder — DBT, DPT, DBS, DBK plus Kongsberg KIDPT and Knudsen PKEL99 |
-| NMEA_Speed | 7 | Speed log/ADCP — VHW, VLW, VBW, VDR plus RD Instruments PRDID/PUHAW and Teledyne VDVBW |
+| NMEA_Depth | 10 | Depth/echo sounder — DBT, DPT, DBS, DBK plus Kongsberg KIDPT and Knudsen PKEL99/PKELalt |
+| NMEA_Speed | 8 | Speed log/ADCP — VHW, VLW, VBW, VDR plus RD Instruments PRDID/PUHAW and Teledyne VDVBW |
 | NMEA_Wind | 4 | Anemometer — MWV, MWD, VWR, VWT |
-| NMEA_Meteo | 7 | Weather/oceanographic sensors — MDA, MTW, XDR plus Sea-Bird SBE45/SBE38/SBE48 |
-| NMEA_Autopilot | 8 | Navigation/autopilot — APB, XTE, BOD, BWC, RMB, WPL, RTE, AAM |
+| NMEA_Meteo | 13 | Weather/oceanographic sensors — MDA, MTW, XDR, MTA, MHU, MMB plus Sea-Bird SBE45/SBE38/SBE48 |
+| NMEA_Autopilot | 11 | Navigation/autopilot — APB, XTE, BOD, BWC, RMB, WPL, RTE, AAM |
 | NMEA_Rudder | 1 | Rudder angle — RSA |
 | NMEA_AIS | 2 | AIS transponder — AIVDM, AIVDO |
 | NMEA_Radar | 4 | Radar/ARPA tracking — TTM, TLL, TLB, OSD |
