@@ -26,14 +26,14 @@ cd openrvdas
 python3 -m venv venv
 source venv/bin/activate     # On Windows: venv\Scripts\activate
 pip install pyyaml pyserial websockets parse
-pip install -e .
+pip install -e . --no-deps    # install openrvdas itself, not its full dependency list
 ```
 
 You will need to activate this environment (`source venv/bin/activate`) each time you open a new terminal before running OpenRVDAS scripts. Your shell prompt will show `(venv)` when the environment is active.
 
-> **Note:** `pip install -e .` registers `listen`, `simple_listener`, and `logger_manager` as shell commands. The examples below use the full path `logger/listener/listen.py`, which always works; after installation you can also run them as just `listen`.
+> **Note:** The `-e` install step also registers `listen`, `logger_manager` and other scripts as shell commands, though the examples below still use the full path `logger/listener/listen.py` to show where each script lives. Both `listen` and the full path need the virtual environment active.
 
-> **Note:** The full installation would perform `pip install -r utils/requirements.txt`, including packages (such as `uwsgi`) that are only needed for the web console. The packages installed above are sufficient for everything in this quickstart. When you perform a full installation via the installer script, it handles all dependencies for you automatically.
+> **Note:** The above commands install only what the examples below need. If you want to use components beyond these examples — the InfluxDB writer, the Modbus reader, or the Django web console — see the [installation page]({{ "/install/" | relative_url }}), or run `pip install -e .` without `--no-deps` to pull in the full set of core dependencies. Note that these include `uwsgi`, which needs a C compiler and OpenSSL headers, and `geopandas`, which needs GDAL — either can fail to build on a Raspberry Pi or any machine without development tools. Some optional features are installed separately as extras, e.g. `pip install -e '.[geofence]'` for `GeofenceTransform`. When you perform a full installation via the installer script, it handles all dependencies for you automatically.
 
 ### Your first logger
 The heart of OpenRVDAS is the __logger__. Loggers read data from some source (typically a sensor), optionally transform it in some or another way (timestamp, parse, perform QC), and then write it somewhere (file, database, network socket).
