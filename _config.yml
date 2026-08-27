@@ -49,6 +49,12 @@ include:
   - _docs
   - assets/files
 
+# The API reference at /api/ is copied into _site/ from the OpenRVDAS source
+# repo (by the deploy workflow, or by bin/stage_api_docs.sh locally) rather
+# than being built from this repo. Keep Jekyll from deleting it on rebuild.
+keep_files:
+  - api
+
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
 # to override the default setting.

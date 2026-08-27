@@ -4,6 +4,11 @@ on:
   push:
     branches: ["master"]
   workflow_dispatch:
+  # The API reference under /api/ is pulled from the OpenRVDAS source repo at
+  # build time, so a rebuild here is what picks up newly-generated API docs.
+  # Uncomment to refresh nightly, or send a repository_dispatch from that repo.
+  # schedule:
+  #   - cron: "17 6 * * *"
 
 permissions:
   contents: read
@@ -35,6 +40,23 @@ jobs:
         run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
+
+      # The OpenRVDAS repo commits its pdoc-generated API reference under
+      # docs/html/, so we only need to fetch and stage it -- no Python, no pdoc.
+      # This runs *after* the Jekyll build so the checkout can't be swept into
+      # the site source.
+      - name: Fetch generated API docs
+        uses: actions/checkout@v4
+        with:
+          repository: OceanDataTools/openrvdas
+          ref: master
+          path: openrvdas-src
+          sparse-checkout: docs/html
+
+      - name: Stage API docs at /api/
+        run: |
+          mkdir -p _site/api
+          cp -r openrvdas-src/docs/html/. _site/api/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
