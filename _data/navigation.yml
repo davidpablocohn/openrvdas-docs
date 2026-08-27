@@ -7,6 +7,8 @@ main:
     url: /quickstart_gui/
   - title: "All the Docs"
     url: /docs/
+  - title: "API Reference"
+    url: /api_reference/
   #- title: "Posts"
   #  url: /posts/
   #- title: "Categories"
@@ -41,6 +43,11 @@ navdocs:
         url: /parsing/
       - title: "NMEA Device Type Library"
         url: /nmea_device_types/
+
+  - title: Reference
+    children:
+      - title: "Component API Reference"
+        url: /api_reference/
 
   - title: Graphs and Displays
     children:
