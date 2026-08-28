@@ -14,11 +14,10 @@ will be added here as they are verified and documented.
 You will need to be able to run the ``sudo`` command. To begin installation, grab the script from Github and run from
 the command line using the following commands:
 ```
-OPENRVDAS_REPO=raw.githubusercontent.com/oceandatatools/openrvdas
 BRANCH=master
+OPENRVDAS_REPO=raw.githubusercontent.com/oceandatatools/openrvdas
 curl -O -L https://$OPENRVDAS_REPO/$BRANCH/utils/install_openrvdas.sh
-chmod +x install_openrvdas.sh
-./install_openrvdas.sh
+bash install_openrvdas.sh
 ```
 selecting ``master``, ``dev`` or other branch of the repo if your project has one.
 
