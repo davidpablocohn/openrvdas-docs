@@ -12,6 +12,8 @@ toc_sticky: true  # Makes the TOC stick on scroll
 
 Please see the [Introduction to OpenRVDAS Loggers]({{ "/intro_to_loggers/" | relative_url }}) and 
 [Logger Configurations Files]({{ "/logger_configuration_files/" | relative_url }}) for a general introduction to loggers and their configuration files.
+If YAML is new to you, please see the
+[Short Introduction to YAML]({{ "/yaml/" | relative_url }}).
 
 ## Cruise Definitions
 
