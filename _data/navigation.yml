@@ -32,6 +32,8 @@ navdocs:
         url: /listen_py/
       - title: "Controlling Loggers"
         url: /controlling_loggers/
+      - title: "A Short Introduction to YAML"
+        url: /yaml/
       - title: "Cruise Definition Files"
         url: /cruise_definition_files/
       - title: "The Cached Data Server"

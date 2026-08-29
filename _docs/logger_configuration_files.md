@@ -24,7 +24,9 @@ Writers should be run together and with what parameters.
 logger/listener/listen.py --config_file gyr_logger.yaml
 ```
 This document describes the format and rationale behind those
-configuration files.
+configuration files. If YAML is new to you, the
+[Short Introduction to YAML]({{ "/yaml/" | relative_url }}) covers everything
+you need to read and edit these files.
 
 ## Logger Configurations
 
