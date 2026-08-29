@@ -10,7 +10,10 @@ toc_sticky: true  # Makes the TOC stick on scroll
 
 Every OpenRVDAS configuration file — logger configurations, cruise
 definitions, device type definitions — is written in YAML. YAML is a format
-for writing down structured data in a way that stays readable to humans; the full YAML specification is quite powerful, but you only need to learn a small part of it to understand and work with OpenRVDAS configuration files with confidence.
+for writing down structured data in a way that stays readable to humans; the
+full YAML specification is quite powerful, but you only need to learn a small
+part of it to understand and work with OpenRVDAS configuration files with
+confidence.
 
 ## Two building blocks
 
@@ -23,7 +26,8 @@ class: SerialReader
 baudrate: 9600
 port: /dev/ttyr15
 ```
-A set of key-value pairs is often referred to as a mapping, or a dictionary, or dict for short, depending on the context - they all mean the same thing.
+A set of key-value pairs is often referred to as a mapping, or a dictionary,
+or dict for short, depending on the context - they all mean the same thing.
 
 **Lists**, written as lines beginning with a dash and a space:
 
@@ -32,7 +36,9 @@ A set of key-value pairs is often referred to as a mapping, or a dictionary, or 
 - contrib/logger_templates/parse_data_logger_template.yaml
 ```
 
-That is essentially it. Everything else is these two, nested inside each other. Lists can be lists of key-value pairs, and key-value pairs may have lists (of other key-value pairs, even!) as their elements.
+That is essentially it. Everything else is these two, nested inside each
+other. Lists can be lists of key-value pairs, and key-value pairs may have
+lists (of other key-value pairs, even!) as their elements.
 
 ## Indentation shows what belongs to what
 
@@ -47,9 +53,9 @@ cruise:
   end: '2019-12-31'
 ```
 
-Here `cruise` is a key, and its value is the subordinate dictionary of key-value pairs enumerated on the three indented lines
-beneath it. so this reads as "cruise is a dictionary containing id, start and
-end."
+Here `cruise` is a key, and its value is the subordinate dictionary of
+key-value pairs enumerated on the three indented lines beneath it. We would
+read this as "`cruise` is a dictionary containing `id`, `start` and `end`."
 
 Three rules keep this out of trouble:
 
