@@ -106,12 +106,29 @@ Perusing a complete cruise configuration file such as [test/NBP1406/NBP1406\_cru
 
 By default, when the logger manager runs a logger, it will redirect
 stderr for that process to a file, by default at
-``/var/tmp/openrvdas/{logger}.stderr``. This can be overridden by
+``/var/log/openrvdas/loggers/{logger}.stderr``. This can be overridden by
 specifying the ``--stderr_file_pattern`` flag when invoking
 ``logger_manager.py``. The argument should have the string
 ``{logger}`` in it somewhere; this will be replaced by the name of the
-relevant logger, e.g. ``/var/tmp/openrvdas/gyr1.stderr``, when each
+relevant logger, e.g. ``/var/log/openrvdas/loggers/gyr1.stderr``, when each
 process is started up.
+
+Note the two levels here: the servers themselves (the logger manager and
+cached data server) write their output directly to ``/var/log/openrvdas/``,
+while the individual loggers they run write to the ``loggers/``
+subdirectory beneath it.
+
+Each logger's stderr file is rotated when it reaches 1 MB, and up to 100
+older files are kept alongside it as ``{logger}.stderr.1``,
+``{logger}.stderr.2`` and so on. This matters when a logger has been
+failing and restarting in a loop: the first, most informative error may
+have already rotated out of the current file.
+
+_Note: this location changed recently. Installations that were upgraded
+without re-running the installer may still be writing logger stderr to the
+previous location, ``/var/tmp/openrvdas/{logger}.stderr``. If a logger's
+stderr file appears stale or missing, check there before concluding that
+the logger never started._
 
 # Running and Controlling the LoggerManager
 ## Running from the command line
