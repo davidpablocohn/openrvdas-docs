@@ -552,10 +552,10 @@ file and a display can lose the display while the file keeps growing, and the
 person who calls you will describe that as "the logger is down." It is not. One
 writer is.
 
-NOTE: two minutes. Good candidates from the sample cruise: knud-net+file (file plus network), net_reader-on+influx (reads UDP, writes to the cached data server and InfluxDB), and one of the true_wind configs.
+NOTE: two minutes. Good candidates from the sample cruise: knud-net+file (file plus network), parse_data-on+influx (reads UDP, writes to the cached data server and InfluxDB), and true_winds_port-on (reads from the cached data server and writes back to it).
 
 # Defining a whole cruise
-Five slides, six minutes. Scaling from one logger to a ship, and the operational concept that matters most to the people on watch: modes.
+Six slides, seven minutes. Scaling from one logger to a ship, and the operational concept that matters most to the people on watch: modes.
 
 ## The cruise definition  {ref}
 
@@ -628,6 +628,46 @@ configuration is currently active for knud. And that last line is worth
 remembering: `listen`, a cruise file, a colon and a config name runs that one
 configuration by itself. We will use exactly that when we troubleshoot.
 
+## Loggers that feed loggers
+
+ON SLIDE
+
+```mermaid
+flowchart LR
+  K["knud-net<br/>SerialReader"] -- "raw, UDP 6224" --> P
+  S["s330-net<br/>SerialReader"] -- "raw, UDP 6224" --> P
+  P["parse_data<br/>UDPReader → ParseTransform"] -- "named fields" --> CDS["cached data server"]
+  P -. "on+influx" .-> IDB["InfluxDB"]
+  CDS --> TW["true_winds_port<br/>CachedDataReader → TrueWindsTransform"]
+  TW -- "true winds" --> CDS
+```
+
+- Instrument loggers read their serial ports and broadcast raw records on UDP 6224
+- `parse_data` reads that UDP stream, parses every instrument's records into named fields, and writes them to the cached data server (and InfluxDB)
+- `true_winds_port` reads from the cached data server, computes true winds, and writes them back
+- One logger's writer is another logger's reader
+
+SAY
+
+Not every logger talks to an instrument. On the training cruise, the instrument
+loggers do as little as possible: read the port, stamp and label each record,
+broadcast it on UDP port 6224, and, when writing, keep a raw file. A separate
+logger, `parse_data`, listens on 6224, parses everything it hears into named
+fields, and hands the result to the cached data server. A third kind of logger,
+`true_winds_port`, reads course, heading and wind from the cached data server,
+computes true winds, and writes them back.
+
+It is the same three-part logger every time; only the reader changes. That is
+why the network readers matter: one logger's writer is another logger's reader.
+
+The consequence for troubleshooting is worth saying out loud. If `parse_data`
+is off or failing, every instrument logger stays green and every raw file keeps
+growing, but every display and every Grafana panel goes blank at once. When
+everything downstream fails together and the raw data is fine, look at the
+logger in the middle.
+
+NOTE: on the training cruise (compact NBP1406_cruise.yaml) the parsing logger is `parse_data`, with configs parse_data-off, parse_data-on and parse_data-on+influx. In NBP1406_cruise_full.yaml the equivalent logger is called net_reader.
+
 ## modes: the operational switch
 
 ON SLIDE
@@ -656,7 +696,7 @@ One mode change puts the entire ship into a known, consistent state. That is the
 whole point: nobody has to remember which of twenty instruments to start when
 you clear the breakwater.
 
-NOTE: the sample cruise names its modes 'off', no_write and write; port and underway here are illustrative.
+NOTE: the sample cruise names its modes 'off', no_write, write, no_write+influx and write+influx; port and underway here are illustrative.
 
 ## The values that bite  {gotcha}
 
@@ -727,7 +767,7 @@ flowchart TD
   CDS --> D["displays and widgets"]
 ```
 
-Displays blank but files growing? Suspect the cached data server, not the loggers.
+Displays blank but files growing? Suspect the cached data server or the parsing logger, not the instrument loggers.
 
 SAY
 
@@ -738,7 +778,8 @@ services: the logger manager, the cached data server, and the web stack.
 The logger manager spawns the individual logger processes. The cached data
 server holds recent data in memory and serves it to the console and the built-in
 displays. It is short-term memory, not your archive, so if displays are blank but
-the data files are growing, look there rather than at the loggers.
+the data files are growing, look there, or at the parsing logger that feeds it,
+rather than at the instrument loggers.
 
 If your ship runs InfluxDB and Grafana under supervisord too, you will see them in
 the same status listing. They are still separate systems, and we will get to
@@ -841,10 +882,10 @@ SAY
 
 InfluxDB is a database designed for exactly what we produce: values with
 timestamps, lots of them. OpenRVDAS gets data into it the same way it gets data
-anywhere else — with a writer. On the training cruise, a logger called
-`net_reader` listens on UDP port 6224, parses everything it hears into named
-fields, and hands the result to two writers: the cached data server and
-`InfluxDBWriter`.
+anywhere else — with a writer. On the training cruise it is the `parse_data`
+logger from earlier, in its `on+influx` config: it listens on UDP port 6224,
+parses everything it hears into named fields, and hands the result to two
+writers, the cached data server and `InfluxDBWriter`.
 
 The point to hold onto: InfluxDB does not reach out and collect anything. If a
 value is not in InfluxDB, either no logger sent it, or the writer that tried to
@@ -892,7 +933,7 @@ SAY
 
 Let me follow one value, ship's speed from the s330 GPS, all the way up. First,
 on the network, straight out of the s330 logger: `listen` on port 6224, and there
-is the raw sentence. Second, in InfluxDB's Data Explorer: after `net_reader` has
+is the raw sentence. Second, in InfluxDB's Data Explorer: after `parse_data` has
 parsed it, there is `S330SpeedKt` as a field with recent values. Third, the
 Grafana panel that plots it.
 
@@ -900,7 +941,7 @@ The reason to do this now is that it is exactly the troubleshooting method for
 the downstream half. Each of those three places can be checked on its own, and
 whichever one is the first to go empty tells you which system owns the problem.
 
-NOTE: needs a training machine with InfluxDB, Grafana and net_reader running in its on+influx config.
+NOTE: needs a training machine with InfluxDB, Grafana and parse_data running in its on+influx config (the no_write+influx or write+influx mode).
 
 ## Where OpenRVDAS stops, and where to get help  {ref}
 
@@ -922,7 +963,7 @@ SAY
 
 Here is the line. The last piece of OpenRVDAS in the chain is the writer. If
 `InfluxDBWriter` cannot reach the database, or its token has changed, that error
-shows up in the error file of the OpenRVDAS logger running it — `net_reader` on
+shows up in the error file of the OpenRVDAS logger running it — `parse_data` on
 our training cruise — even though the fix is in InfluxDB. That trips people up, so
 remember it. Everything after the data is stored — the queries, the panels, the
 QC rules, the alerts — belongs to Grafana.
@@ -939,7 +980,7 @@ owns the dashboards.
 NOTE: for install questions, point people to the docs page and the vendors' instructions, not utils/install_influxdb.sh, which is deprecated.
 
 # Running it, and fixing it
-Four slides, twelve minutes. The reason everyone is in the room: first decide which system you are in, then work down the OpenRVDAS side one step at a time.
+Four slides, eleven minutes. The reason everyone is in the room: first decide which system you are in, then work down the OpenRVDAS side one step at a time.
 
 ## OpenRVDAS or downstream?
 
@@ -1223,7 +1264,7 @@ ON SLIDE
 | Everything stops at once | Disk full — check the log partition first |
 | Timestamps wrong or jumping | System clock or time sync |
 | Console unreachable | nginx or uwsgi down — check supervisord |
-| Displays blank, files still growing | Cached data server down |
+| Displays blank, files still growing | Cached data server down, or the parsing logger off or failing |
 | Loggers restart forever | A failure the manager keeps retrying — read the stderr |
 
 SAY

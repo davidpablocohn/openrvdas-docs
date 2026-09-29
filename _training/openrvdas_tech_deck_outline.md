@@ -25,9 +25,9 @@ the network, and databases. InfluxDB stores what an `InfluxDBWriter` sends it,
 and Grafana draws and QCs what InfluxDB holds. On CORIOLIX (CX) ships, a
 `CORIOLIXWriter` also writes to whatever database backend CX is installed
 with, and CX sits on top of OpenRVDAS. Slide 3 draws the picture, §7 explains the InfluxDB/Grafana half,
-and slide 30 turns it into a troubleshooting question.
+and slide 31 turns it into a troubleshooting question.
 
-Target: 35 slides in 60 min.
+Target: 36 slides in 60 min.
 
 ---
 
@@ -103,7 +103,7 @@ Target: 35 slides in 60 min.
     wrong parent fails silently.
 11. **Validate, don't guess** (demo): `validate_config`. Put a tab in
     `s330.yaml` and show the error.
-    - "Values that bite" moves to §5 (slide 20), where its examples live.
+    - "Values that bite" moves to §5 (slide 21), where its examples live.
 
 ## 4. Defining one logger (6 min)
 
@@ -119,7 +119,7 @@ Target: 35 slides in 60 min.
 16. **Drill: read a config like a troubleshooter** (2 min): what does it
     depend on, and which destination goes quiet first?
 
-## 5. Defining a whole cruise (6 min)
+## 5. Defining a whole cruise (7 min)
 
 17. **The cruise definition**: one file for the whole ship, with its five
     top-level keys (ref).
@@ -127,31 +127,40 @@ Target: 35 slides in 60 min.
     running process is the config.
     - *Plant for §8:* any one config runs straight from the cruise file with
       `listen cruise.yaml:knud-net`.
-19. **Modes: the operational switch**: port / underway, and one change puts
+19. **Loggers that feed loggers** (diagram): instrument loggers broadcast raw
+    records on UDP 6224; `parse_data` reads that stream, parses it, and writes
+    named fields to the cached data server (and InfluxDB); `true_winds_port`
+    reads from the cached data server and writes true winds back. *Point: one
+    logger's writer is another logger's reader. If `parse_data` fails, every
+    instrument logger stays green and raw files keep growing, but all displays
+    and Grafana go blank at once.*
+20. **Modes: the operational switch**: port / underway, and one change puts
     the whole ship in a known state.
-20. **Values that bite** (gotcha): why the `'off'` mode on the last slide is
+21. **Values that bite** (gotcha): why the `'off'` mode on the last slide is
     quoted, why the `cruise:` start and end dates on slide 17 need quotes,
     and the general rule for when to quote
     → moved here from §3, so it explains things the room has just seen.
-21. **What a mode change actually does**: stop/start processes, one per
+22. **What a mode change actually does**: stop/start processes, one per
     config. *Point: this is what you're watching when a logger goes red.*
     - *(appendix: includes / variables / templates, "what you read isn't
       what runs")*
 
+*Timing note:* slide 19 adds a minute to §5; §8 gives it back (12 → 11 min).
+
 ## 6. The servers that keep it running (7 min)
 
-22. **The moving parts** (diagram): supervisord → logger_manager,
+23. **The moving parts** (diagram): supervisord → logger_manager,
     cached_data_server, and the web stack. One-liner: "Displays blank but
     files growing = the cached data server, not the loggers."
     - If InfluxDB and Grafana are managed by supervisord on your ship, they
       appear in the same `status` listing. They're still separate systems,
       covered in §7.
-23. **supervisord** (demo): `:9001` and `supervisorctl status`; restart the
+24. **supervisord** (demo): `:9001` and `supervisorctl status`; restart the
     cached data server live.
-24. **logger_manager**: runs the cruise, restarts failures. *Point:
+25. **logger_manager**: runs the cruise, restarts failures. *Point:
     flickering means a restart loop, and that logger's stderr will say why.
     §8 shows where to find it.*
-25. **Web console** (demo): modes, per-logger dropdown, stderr and the
+26. **Web console** (demo): modes, per-logger dropdown, stderr and the
     expanded config in one click.
 
 ## 7. Downstream: InfluxDB and Grafana (8 min)
@@ -160,21 +169,21 @@ This is new. It sits here because the room now knows what a writer is and
 which servers OpenRVDAS runs. So "InfluxDB is fed by a writer" needs no new
 concepts, and it comes just before troubleshooting, which relies on it.
 
-26. **InfluxDB: a time-series store**: In many installations, OpenRVDAS writes to an external time series database with
+27. **InfluxDB: a time-series store**: In many installations, OpenRVDAS writes to an external time series database with
     `InfluxDBWriter`, an ordinary writer at the end of an ordinary logger.
     Default bucket `openrvdas`; the measurement is the record's data_id;
     `:8086`, with a built-in Data Explorer.
     *Point: InfluxDB doesn't collect anything itself; it stores what a writer
     sends it.*
-27. **Grafana: dashboards and QC**: it queries InfluxDB to draw panels, set
+28. **Grafana: dashboards and QC**: it queries InfluxDB to draw panels, set
     thresholds and alerts, and run QC workflows. `:3000`.
     - Footnote: `GrafanaLiveWriter` can stream straight to a live Grafana
       panel with no database in between. Know which path your dashboards use.
-28. **Demo: follow one field up the stack**: a field in `listen` output →
+29. **Demo: follow one field up the stack**: a field in `listen` output →
     the same field in the InfluxDB Data Explorer → the same field on a Grafana
     panel. *Point: each layer can be checked on its own. That becomes the
     §8 method.*
-29. **Where OpenRVDAS stops, and where to get help** (ref):
+30. **Where OpenRVDAS stops, and where to get help** (ref):
     - The boundary is inside the `InfluxDBWriter`. If it can't connect or its
       token is rejected, the error shows up in *that OpenRVDAS logger's
       stderr*, even though the fix is on the InfluxDB side.
@@ -192,13 +201,13 @@ concepts, and it comes just before troubleshooting, which relies on it.
       - CX: the CORIOLIX team (next talk)
       - Who owns the dashboards on your ship *(fill in per ship)*
 
-## 8. Running it, and fixing it (12 min)
+## 8. Running it, and fixing it (11 min)
 
-30. **OpenRVDAS or downstream?** Before you start debugging, work out which
+31. **OpenRVDAS or downstream?** Before you start debugging, work out which
     system you're in. Walk up the stack from slide 3:
     1. **Is OpenRVDAS producing it?** Is the logger green, and does data show
        up in `tail -f` or `listen --udp`? If not, it's OpenRVDAS, so go to
-       slide 32.
+       slide 33.
     2. **Is it in InfluxDB?** Check the Data Explorer, set to the last 15 min.
        If not, read the `InfluxDBWriter` logger's stderr: connection, token,
        bucket.
@@ -216,10 +225,10 @@ concepts, and it comes just before troubleshooting, which relies on it.
       - "CX missing data, `CORIOLIXWriter` logger green and stderr clean" →
         CX.
       - "Everything blank, including the data files" → OpenRVDAS, reader side.
-31. **Follow the record**: a chain fails at one link; bisect, and don't
+32. **Follow the record**: a chain fails at one link; bisect, and don't
     reboot. Includes a one-line "what healthy looks like"
     → merges "Why this model makes debugging easy", "Healthy", and "The method".
-32. **The triage ladder, OpenRVDAS side** (drill). It works from the outside
+33. **The triage ladder, OpenRVDAS side** (drill). It works from the outside
     in, and the least disruptive checks come first:
     1. **Console**: is the system in the mode you think? Is the logger in the
        config you expect? Is it green, red, or flickering?
@@ -231,7 +240,7 @@ concepts, and it comes just before troubleshooting, which relies on it.
          network too.
 
        *If data is arriving, the logger is fine and the problem is
-       downstream: back to slide 30.*
+       downstream: back to slide 31.*
     3. **Read that logger's stderr**: in the console, or with
        `less /var/log/openrvdas/loggers/{logger}.stderr`. Start from the
        **first** error.
@@ -239,7 +248,7 @@ concepts, and it comes just before troubleshooting, which relies on it.
        `listen cruise.yaml:knud-net -v`.
     5. **Still nothing? Read the port directly**. Silence and garbage
        characters point to different causes.
-33. **Where the files are / take this with you** (ref): data files vs stderr
+34. **Where the files are / take this with you** (ref): data files vs stderr
     files (per-logger and server); ports (`:80`, `:9001`, `:8766`, `:6224`,
     plus InfluxDB `:8086` and Grafana `:3000`); five commands; help sources by
     layer; what to send when you ask for help
@@ -248,7 +257,7 @@ concepts, and it comes just before troubleshooting, which relies on it.
       Grafana/InfluxDB table drawn from the docs' troubleshooting sections:
       InfluxDBWriter can't connect, Grafana "No data", token changed)*
 
-Why this order: slide 30 sorts the problem into a system before slide 32 digs
+Why this order: slide 31 sorts the problem into a system before slide 33 digs
 into OpenRVDAS. Otherwise people spend twenty minutes on a healthy logger when
 the problem is a Grafana time range. In the ladder, the data check (step 2)
 comes before stderr. It takes seconds, changes nothing, and splits the problem
@@ -256,11 +265,11 @@ in half.
 
 ## 9. Handoff (2 min)
 
-34. **What's next: CORIOLIX**: a one-slide recap of slide 3. OpenRVDAS gets
+35. **What's next: CORIOLIX**: a one-slide recap of slide 3. OpenRVDAS gets
     data onto disk, the network and databases (including CX's backend,
     through `CORIOLIXWriter`), and CX builds on top.
     Suggest questions to bring to the next talk.
-35. **Questions** (buffer, about 2 min)
+36. **Questions** (buffer, about 2 min)
 
 ---
 
@@ -281,7 +290,7 @@ in half.
   `listen cruise.yaml:config` replace `--config_file`.
 - The wraparound puts context up front (slides 3–4) and adds a downstream
   section (§7) before troubleshooting. "Which system is it?" is the first
-  troubleshooting step (slide 30).
+  troubleshooting step (slide 31).
 
 ## Fixes to carry into the deck
 
@@ -291,7 +300,7 @@ in half.
 - YAML section blurb: "Three slides".
 - `knud-net`: `readers:` and `writers:` written as lists, matching `tsg1-net`.
 - The old "Optional layers on top" slide is replaced by §7. Its "Grafana down
-  ≠ data lost" line moves to slide 26 or 29.
+  ≠ data lost" line moves to slide 27 or 30.
 - Every slide number, section blurb and "next slide" or "next section"
   reference in the SAY text gets updated for the new order. In particular,
   logger_manager now points forward to §8, not to "the next slide".
@@ -300,7 +309,7 @@ in half.
 - The data-file path in step 2: use the `LogfileWriter` path from the demo
   config, so the room has already seen it. *To check against the sample
   cruise during the rewrite.*
-- The InfluxDB and Grafana demo (slide 28) runs on a training machine with
+- The InfluxDB and Grafana demo (slide 29) runs on a training machine with
   InfluxDB, Grafana and one `InfluxDBWriter` logger in the demo cruise.
   *Confirmed.*
 - CX terms: the deck names the writer `CORIOLIXWriter`, and never ties CX
