@@ -923,7 +923,7 @@ ON SLIDE
 
 `S330SpeedKt`, three places:
 
-1. On the network: `listen --udp 6224` shows the raw s330 record
+1. On the network, from a second machine: `listen --udp 6224` shows the raw s330 record
 2. In InfluxDB: Data Explorer, bucket `openrvdas`, last 15 minutes
 3. In Grafana: the panel that plots ship's speed
 
@@ -941,7 +941,7 @@ The reason to do this now is that it is exactly the troubleshooting method for
 the downstream half. Each of those three places can be checked on its own, and
 whichever one is the first to go empty tells you which system owns the problem.
 
-NOTE: needs a training machine with InfluxDB, Grafana and parse_data running in its on+influx config (the no_write+influx or write+influx mode).
+NOTE: needs a training machine with InfluxDB, Grafana and parse_data running in its on+influx config (the no_write+influx or write+influx mode). Run step 1 from a second machine on the same subnet: on the training machine itself, parse_data already holds UDP 6224, so `listen --udp 6224` there fails with "Address already in use". Without a second machine, use write+influx and show the raw s330 data file with `tail -f` instead.
 
 ## Where OpenRVDAS stops, and where to get help  {ref}
 
@@ -988,7 +988,7 @@ ON SLIDE
 
 Before you debug, find out which system you are in. Walk up the stack:
 
-1. **Is OpenRVDAS producing it?** Logger green? Does data show up in `tail -f` or `listen --udp`? If not, it's OpenRVDAS: go to the triage ladder
+1. **Is OpenRVDAS producing it?** Logger green? Does data show up in `tail -f`, or in `listen --udp` run from another machine? If not, it's OpenRVDAS: go to the triage ladder
 2. **Is it in InfluxDB?** Data Explorer, last 15 minutes. If not, read the stderr of the logger with the `InfluxDBWriter`: connection, token, bucket
 3. **Is the panel asking for it correctly?** Time range, bucket, field name, data source. If the data is in InfluxDB but not on the panel, it's a Grafana dashboard problem, not OpenRVDAS
 
@@ -1049,12 +1049,14 @@ ON SLIDE
 From the outside in, least disruptive first:
 
 1. **Console** — right mode? right config? green, red, or flickering?
-2. **Is data arriving where it should?** File writer: `tail -f /var/data/openrvdas/knud/raw/NBP1406_knud-2026-09-29`. UDP writer: `listen --udp 6224`, from another machine to test the network too
+2. **Is data arriving where it should?** File writer: `tail -f /var/data/openrvdas/knud/raw/NBP1406_knud-2026-09-29`. UDP writer: `listen --udp 6224` from another machine, which also tests the network
 3. **Read that logger's stderr** — in the console, or `less /var/log/openrvdas/loggers/knud.stderr`. Start at the **first** error
 4. **Stop the managed logger**, then run its config by hand: `listen cruise.yaml:knud-net+file -v`
 5. **Still nothing? Read the port directly**: `listen --serial port=/tmp/tty_knud,baudrate=19200`. Silence and garbage point to different causes
 
 If data is arriving at step 2, the logger is fine: go back to "OpenRVDAS or downstream?"
+
+**Port already held by another process?** The second process fails: "Address already in use" for UDP, "Could not exclusively lock port" for serial. Find the holder with `sudo lsof /tmp/tty_knud` or `sudo lsof -i UDP:6224`.
 
 SAY
 
@@ -1068,17 +1070,33 @@ Second, check the output directly. If the config writes a file, `tail -f` it and
 look for new lines — a file that exists is not a file that is being written to.
 The file name is the `filebase` from the config with the date appended. If it
 writes to the network, `listen` on that port; it prints to the screen, just like
-the first demo. If data is arriving, stop: the logger is fine, and the problem is
-downstream.
+the first demo. Do that from another machine. On the logger machine itself,
+`parse_data` is usually already listening on 6224, and your `listen` will fail with
+"Address already in use". If data is arriving, stop: the logger is fine, and the
+problem is downstream.
 
 Third, read that logger's error file — in the console, or in the loggers
 directory. Read the first error, not the last; when a process has been restarting
 in a loop, the later errors are fallout. Fourth, stop the managed logger and run
 its configuration yourself with `listen` and `-v`, so the errors appear in front of
-you. Stop it first: a serial port can only be read by one process at a time.
-Fifth, with the logger stopped, read the port directly. Silence means nothing is
-arriving: cable, power, wrong port. Garbage means data is arriving and you are
-decoding it wrong: baud rate, framing.
+you. Stop it first, and the reason is the next failure to know. Fifth, with the
+logger stopped, read the port directly. Silence means nothing is arriving: cable,
+power, wrong port. Garbage means data is arriving and you are decoding it wrong:
+baud rate, framing.
+
+Both of those steps depend on one thing: nothing else holding the port. A port
+has one owner. A second process trying to listen on the same UDP port fails with
+"Address already in use", and a second process opening the same serial port fails
+with "Could not exclusively lock port". Either message lands in that process's
+stderr. Watch for the case where the second process is the managed logger itself,
+restarting after a mode change while a test `listen` of yours still holds the
+port. It will flicker, and its stderr will name the port. `lsof` on the device, or
+on the UDP port, tells you which process has it.
+
+One caveat for older installs. Before serial ports were locked by default, a
+second process opened the port without complaint, and the two quietly split the
+data between them: gaps in the file, and no error anywhere. On those systems,
+set `exclusive: true` in the `SerialReader`'s kwargs.
 
 NOTE: for the drill, break something on the training machine beforehand (wrong baud rate in one config, or a logger set to off in the current mode) and let the room climb the ladder. Replace the date in the tail command with today's UTC date.
 
@@ -1220,17 +1238,24 @@ ON SLIDE
 | Garbage characters | Wrong baud rate or framing |
 | Permission denied on `/dev/tty…` | User not in the right group after a rebuild |
 | Device file missing | USB adapter re-enumerated under a different name |
-| Worked in your terminal, fails when managed | Two processes on one port, or a different user |
+| "Could not exclusively lock port" in a logger's stderr | Another process has the serial port open; `sudo lsof /tmp/tty_knud` names it |
+| "Address already in use" in a logger's stderr | Another process already listening on that UDP port; `sudo lsof -i UDP:6224` names it |
+| Records missing or chopped, no error anywhere (older installs) | Two processes sharing a serial port without locking; set `exclusive: true` |
+| Worked in your terminal, fails when managed | Your test still holding the port, or a different user |
 
 SAY
 
-The bottom two are the ones that will genuinely confuse you. USB serial adapters
-can come back after a reboot with a different device name, and every config that
-points at the old name silently stops working.
+Three of these will genuinely confuse you. USB serial adapters can come back
+after a reboot with a different device name, and every config that points at the
+old name silently stops working.
 
-And a serial port can only be read by one process at a time. If you left a test
-listener running in a forgotten terminal, the managed logger cannot open the port.
-Check for your own leftovers before you blame the system.
+The other two are the same mistake on different kinds of port: a second process
+wanting a port that is already taken. It fails with "Could not exclusively lock
+port" for serial or "Address already in use" for UDP. The usual culprit is a test
+listener you left running in a forgotten terminal. Check for your own leftovers
+with `lsof` before you blame the system. On older installs, a shared serial port
+does not fail at all: the two processes split the data, and records go missing with
+no error. That is what `exclusive: true` fixes.
 
 ## Common failures: configuration  {gotcha}
 

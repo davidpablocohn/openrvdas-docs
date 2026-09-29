@@ -248,6 +248,14 @@ concepts, and it comes just before troubleshooting, which relies on it.
        `listen cruise.yaml:knud-net -v`.
     5. **Still nothing? Read the port directly**. Silence and garbage
        characters point to different causes.
+    - **Port held by another process** (applies to steps 2, 4 and 5). The
+      second process fails: "Address already in use" for UDP, "Could not
+      exclusively lock port" for serial (`SerialReader` now defaults to
+      `exclusive=True`). On the logger machine, `parse_data` already holds
+      6224, so run `listen --udp` from another machine. Find the holder with
+      `sudo lsof <device>` or `sudo lsof -i UDP:<port>`. Older installs don't
+      lock serial ports, so two processes silently split the data; set
+      `exclusive: true` there.
 34. **Where the files are / take this with you** (ref): data files vs stderr
     files (per-logger and server); ports (`:80`, `:9001`, `:8766`, `:6224`,
     plus InfluxDB `:8086` and Grafana `:3000`); five commands; help sources by
@@ -315,6 +323,10 @@ in half.
 - CX terms: the deck names the writer `CORIOLIXWriter`, and never ties CX
   to one particular database. It introduces "CX" on slide 4 and uses it
   from there on. *Confirmed.*
+- Serial port locking: the deck assumes `SerialReader` defaults to
+  `exclusive=True` (fix in progress). Once it lands, confirm the error text
+  ("Could not exclusively lock port" comes from pyserial) and which release
+  introduces it, so the "older installs" caveat can name a version.
 - Install questions for InfluxDB and Grafana point to the "Grafana/InfluxDB-based
   Displays" docs page and the vendors' instructions, not
   `utils/install_influxdb.sh`, which is deprecated. *Confirmed.*
