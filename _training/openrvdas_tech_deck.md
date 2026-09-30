@@ -92,45 +92,40 @@ knowledge, taken one step further.
 ON SLIDE
 
 ```svg
-<svg viewBox="0 0 720 396" role="img" aria-label="Instruments feed OpenRVDAS. CORIOLIX sits beside OpenRVDAS and writes its configuration. OpenRVDAS writes to files and the network, to databases such as InfluxDB that Grafana reads, and through CORIOLIXWriter to the CX database backend, which CX reads." font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" fill="none" stroke="currentColor" stroke-width="1.5">
+<svg id="where-openrvdas-sits" viewBox="0 0 720 396" role="img" aria-label="Instruments feed OpenRVDAS. CORIOLIX sits beside OpenRVDAS and writes its configuration. OpenRVDAS writes to files and the network, to databases such as InfluxDB that Grafana reads, and through CORIOLIXWriter to the CX database backend, which CX reads." font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" fill="none" stroke="currentColor" stroke-width="1.5">
   <defs>
-    <marker id="where-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <marker id="where-openrvdas-sits-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="currentColor" stroke="none"/>
     </marker>
   </defs>
-  <!-- row 1 -->
-  <rect x="140" y="16" width="180" height="40" rx="4"/>
-  <text x="230" y="41" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">Instruments</text>
-  <!-- row 2 -->
-  <rect x="120" y="100" width="220" height="60" rx="4" style="stroke: var(--accent); stroke-width: 2.5"/>
-  <text x="230" y="126" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" stroke="none">OpenRVDAS</text>
-  <text x="230" y="146" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">read · process · write</text>
-  <rect x="480" y="100" width="220" height="60" rx="4"/>
-  <text x="590" y="126" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" stroke="none">CORIOLIX (CX)</text>
-  <text x="590" y="146" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">keeps OpenRVDAS running</text>
-  <!-- row 3 -->
-  <rect x="20" y="240" width="180" height="50" rx="4"/>
-  <text x="110" y="261" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">Files and network</text>
-  <text x="110" y="278" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">(UDP)</text>
-  <rect x="240" y="240" width="180" height="50" rx="4"/>
-  <text x="330" y="261" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">Databases</text>
-  <text x="330" y="278" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">such as InfluxDB</text>
-  <rect x="500" y="240" width="180" height="50" rx="4"/>
-  <text x="590" y="270" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">CX database backend</text>
-  <!-- row 4 -->
-  <rect x="240" y="340" width="180" height="40" rx="4"/>
-  <text x="330" y="365" text-anchor="middle" font-size="12" fill="currentColor" stroke="none">Grafana dashboards</text>
-  <!-- arrows -->
-  <line x1="230" y1="56" x2="230" y2="98" marker-end="url(#where-arrow)"/>
-  <line x1="480" y1="130" x2="342" y2="130" marker-end="url(#where-arrow)"/>
-  <text x="411" y="121" text-anchor="middle" font-size="11" fill="currentColor" stroke="none">writes configuration</text>
-  <line x1="170" y1="160" x2="115" y2="238" marker-end="url(#where-arrow)"/>
-  <line x1="250" y1="160" x2="320" y2="238" marker-end="url(#where-arrow)"/>
-  <line x1="320" y1="160" x2="530" y2="238" marker-end="url(#where-arrow)"/>
-  <text x="428" y="182" text-anchor="middle" font-size="11" fill="currentColor" stroke="none">CORIOLIXWriter</text>
-  <line x1="640" y1="240" x2="640" y2="162" marker-end="url(#where-arrow)"/>
+  <rect x="140" y="16" width="180" height="40" rx="4" style="fill: var(--surface)"/>
+  <text x="230" y="40" font-size="13" text-anchor="middle" fill="currentColor" stroke="none">Instruments</text>
+  <rect x="120" y="100" width="220" height="60" rx="4" style="fill: var(--surface); stroke: var(--accent); stroke-width: 2.5"/>
+  <text x="230" y="125" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor" stroke="none">OpenRVDAS</text>
+  <text x="230" y="143" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">read · process · write</text>
+  <rect x="480" y="100" width="220" height="60" rx="4" style="fill: var(--surface)"/>
+  <text x="590" y="125" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor" stroke="none">CORIOLIX (CX)</text>
+  <text x="590" y="143" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">keeps OpenRVDAS running</text>
+  <rect x="20" y="240" width="180" height="50" rx="4" style="fill: var(--surface)"/>
+  <text x="110" y="260" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">Files and network</text>
+  <text x="110" y="278" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">(UDP)</text>
+  <rect x="240" y="240" width="180" height="50" rx="4" style="fill: var(--surface)"/>
+  <text x="330" y="260" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">Databases</text>
+  <text x="330" y="278" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">such as InfluxDB</text>
+  <rect x="500" y="240" width="180" height="50" rx="4" style="fill: var(--surface)"/>
+  <text x="590" y="269" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">CX database backend</text>
+  <rect x="240" y="340" width="180" height="40" rx="4" style="fill: var(--surface)"/>
+  <text x="330" y="364" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">Grafana dashboards</text>
+  <line x1="230" y1="56" x2="230" y2="98" stroke-dasharray="5 4" marker-end="url(#where-openrvdas-sits-arrow)"/>
+  <line x1="480" y1="130" x2="342" y2="130" marker-end="url(#where-openrvdas-sits-arrow)"/>
+  <text x="411" y="121" font-size="11" text-anchor="middle" fill="currentColor" stroke="none">writes configuration</text>
+  <line x1="170" y1="160" x2="115" y2="238" stroke-dasharray="5 4" marker-end="url(#where-openrvdas-sits-arrow)"/>
+  <line x1="250" y1="160" x2="320" y2="238" stroke-dasharray="5 4" marker-end="url(#where-openrvdas-sits-arrow)"/>
+  <line x1="320" y1="160" x2="530" y2="238" stroke-dasharray="5 4" marker-end="url(#where-openrvdas-sits-arrow)"/>
+  <text x="428" y="182" font-size="11" text-anchor="middle" fill="currentColor" stroke="none">CORIOLIXWriter</text>
+  <line x1="640" y1="240" x2="640" y2="162" stroke-dasharray="5 4" marker-end="url(#where-openrvdas-sits-arrow)"/>
   <text x="648" y="205" font-size="11" fill="currentColor" stroke="none">reads</text>
-  <line x1="330" y1="290" x2="330" y2="338" marker-end="url(#where-arrow)"/>
+  <line x1="330" y1="290" x2="330" y2="338" stroke-dasharray="5 4" marker-end="url(#where-openrvdas-sits-arrow)"/>
   <text x="338" y="318" font-size="11" fill="currentColor" stroke="none">reads</text>
 </svg>
 ```
@@ -244,13 +239,37 @@ ON SLIDE
 Readers run **in parallel** → transforms apply **in series**
 → writers run **in parallel**.
 
-```mermaid
-flowchart LR
-  R1["SerialReader<br/>gyro"] --> T1
-  T1["TimestampTransform"] --> T2["PrefixTransform"]
-  T2 --> W1["LogfileWriter"]
-  T2 --> W2["UDPWriter"]
-  T2 --> W3["CachedDataWriter"]
+```svg
+<svg id="snapping-together" viewBox="0 0 720 356" role="img" aria-label="Inside one logger: a SerialReader reads the gyro serial port; TimestampTransform then PrefixTransform are applied in order; the result goes to LogfileWriter and UDPWriter at the same time, which write a data file and broadcast on UDP port 6224." font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" fill="none" stroke="currentColor" stroke-width="1.5">
+  <defs>
+    <marker id="snapping-together-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" stroke="none"/>
+    </marker>
+  </defs>
+  <text x="360" y="24" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">gyro serial port</text>
+  <rect x="270" y="60" width="180" height="36" rx="4" style="fill: var(--surface)"/>
+  <text x="360" y="82" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">SerialReader</text>
+  <rect x="270" y="124" width="180" height="36" rx="4" style="fill: var(--surface)"/>
+  <text x="360" y="146" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">TimestampTransform</text>
+  <rect x="270" y="188" width="180" height="36" rx="4" style="fill: var(--surface)"/>
+  <text x="360" y="210" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">PrefixTransform</text>
+  <rect x="170" y="262" width="180" height="36" rx="4" style="fill: var(--surface)"/>
+  <text x="260" y="284" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">LogfileWriter</text>
+  <rect x="370" y="262" width="180" height="36" rx="4" style="fill: var(--surface)"/>
+  <text x="460" y="284" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">UDPWriter</text>
+  <text x="260" y="342" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">data file</text>
+  <text x="460" y="342" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">UDP port 6224</text>
+  <text x="256" y="82" font-size="11" text-anchor="end" fill="currentColor" stroke="none">readers</text>
+  <text x="256" y="178" font-size="11" text-anchor="end" fill="currentColor" stroke="none">transforms, in order</text>
+  <text x="156" y="284" font-size="11" text-anchor="end" fill="currentColor" stroke="none">writers, all at once</text>
+  <line x1="360" y1="32" x2="360" y2="58" stroke-dasharray="5 4" marker-end="url(#snapping-together-arrow)"/>
+  <line x1="360" y1="96" x2="360" y2="122" stroke-dasharray="5 4" marker-end="url(#snapping-together-arrow)"/>
+  <line x1="360" y1="160" x2="360" y2="186" stroke-dasharray="5 4" marker-end="url(#snapping-together-arrow)"/>
+  <line x1="340" y1="224" x2="262" y2="260" stroke-dasharray="5 4" marker-end="url(#snapping-together-arrow)"/>
+  <line x1="380" y1="224" x2="458" y2="260" stroke-dasharray="5 4" marker-end="url(#snapping-together-arrow)"/>
+  <line x1="260" y1="298" x2="260" y2="326" stroke-dasharray="5 4" marker-end="url(#snapping-together-arrow)"/>
+  <line x1="460" y1="298" x2="460" y2="326" stroke-dasharray="5 4" marker-end="url(#snapping-together-arrow)"/>
+</svg>
 ```
 
 SAY
@@ -264,7 +283,7 @@ Two things to take from this. Order matters in the middle and nowhere else: if
 you prefix before you timestamp, the label lands in a different position, which
 can quietly break a parser downstream. And one record goes to several writers.
 So "the data is gone" usually means one writer's destination is unhappy, not
-that the instrument stopped. The file may be healthy while the display is dark.
+that the instrument stopped. The file may be healthy while nothing is arriving on the network.
 
 ## From flags to a file  {demo}
 
@@ -632,19 +651,60 @@ configuration by itself. We will use exactly that when we troubleshoot.
 
 ON SLIDE
 
-```mermaid
-flowchart LR
-  K["knud-net<br/>SerialReader"] -- "raw, UDP 6224" --> P
-  S["s330-net<br/>SerialReader"] -- "raw, UDP 6224" --> P
-  P["parse_data<br/>UDPReader → ParseTransform"] -- "named fields" --> CDS["cached data server"]
-  P -. "on+influx" .-> IDB["InfluxDB"]
-  CDS --> TW["true_winds_port<br/>CachedDataReader → TrueWindsTransform"]
-  TW -- "true winds" --> CDS
+```svg
+<svg id="loggers-feed-loggers" viewBox="0 0 720 600" role="img" aria-label="Two instrument loggers, knud-net and s330-net, each run SerialReader, TimestampTransform, PrefixTransform and UDPWriter, and broadcast to UDP port 6224. The parse_data logger reads that port with UDPReader, parses with ParseTransform, and writes with CachedDataWriter to cached_data_server and with InfluxDBWriter to InfluxDB. The true_winds logger reads from cached_data_server, computes true winds, and writes them back to cached_data_server." font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" fill="none" stroke="currentColor" stroke-width="1.5">
+  <defs>
+    <marker id="loggers-feed-loggers-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" stroke="none"/>
+    </marker>
+  </defs>
+  <rect x="110" y="16" width="200" height="120" rx="4" style="fill: var(--surface)"/>
+  <text x="210" y="38" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor" stroke="none">knud-net</text>
+  <line x1="110" y1="48" x2="310" y2="48"/>
+  <text x="210" y="68" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">SerialReader</text>
+  <text x="210" y="88" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">TimestampTransform</text>
+  <text x="210" y="108" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">PrefixTransform</text>
+  <text x="210" y="128" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">UDPWriter</text>
+  <rect x="410" y="16" width="200" height="120" rx="4" style="fill: var(--surface)"/>
+  <text x="510" y="38" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor" stroke="none">s330-net</text>
+  <line x1="410" y1="48" x2="610" y2="48"/>
+  <text x="510" y="68" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">SerialReader</text>
+  <text x="510" y="88" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">TimestampTransform</text>
+  <text x="510" y="108" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">PrefixTransform</text>
+  <text x="510" y="128" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">UDPWriter</text>
+  <rect x="200" y="200" width="320" height="110" rx="4" style="fill: var(--surface)"/>
+  <text x="360" y="222" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor" stroke="none">parse_data</text>
+  <line x1="200" y1="232" x2="520" y2="232"/>
+  <text x="360" y="252" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">UDPReader</text>
+  <text x="360" y="272" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">ParseTransform</text>
+  <line x1="200" y1="280" x2="520" y2="280" stroke-opacity="0.4"/>
+  <text x="280" y="300" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">CachedDataWriter</text>
+  <line x1="360" y1="280" x2="360" y2="310" stroke-opacity="0.4"/>
+  <text x="440" y="300" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">InfluxDBWriter</text>
+  <rect x="190" y="360" width="180" height="40" rx="4" style="fill: var(--surface-2)"/>
+  <text x="280" y="384" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">cached_data_server</text>
+  <rect x="380" y="360" width="120" height="40" rx="4" style="fill: var(--surface-2)"/>
+  <text x="440" y="384" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">InfluxDB</text>
+  <rect x="190" y="450" width="180" height="100" rx="4" style="fill: var(--surface)"/>
+  <text x="280" y="472" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor" stroke="none">true_winds</text>
+  <line x1="190" y1="482" x2="370" y2="482"/>
+  <text x="280" y="502" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">CachedDataReader</text>
+  <text x="280" y="522" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">TrueWindsTransform</text>
+  <text x="280" y="542" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">CachedDataWriter</text>
+  <line x1="210" y1="136" x2="330" y2="198" stroke-dasharray="5 4" marker-end="url(#loggers-feed-loggers-arrow)"/>
+  <line x1="510" y1="136" x2="390" y2="198" stroke-dasharray="5 4" marker-end="url(#loggers-feed-loggers-arrow)"/>
+  <text x="360" y="176" font-size="11" text-anchor="middle" fill="currentColor" stroke="none">UDP port 6224</text>
+  <line x1="280" y1="310" x2="280" y2="358" stroke-dasharray="5 4" marker-end="url(#loggers-feed-loggers-arrow)"/>
+  <line x1="440" y1="310" x2="440" y2="358" stroke-dasharray="5 4" marker-end="url(#loggers-feed-loggers-arrow)"/>
+  <line x1="280" y1="400" x2="280" y2="448" stroke-dasharray="5 4" marker-end="url(#loggers-feed-loggers-arrow)"/>
+  <polyline points="280,550 280,572 150,572 150,380 188,380" stroke-dasharray="5 4" marker-end="url(#loggers-feed-loggers-arrow)"/>
+  <text x="142" y="470" font-size="11" text-anchor="end" fill="currentColor" stroke="none">true winds</text>
+</svg>
 ```
 
 - Instrument loggers read their serial ports and broadcast raw records on UDP 6224
 - `parse_data` reads that UDP stream, parses every instrument's records into named fields, and writes them to the cached data server (and InfluxDB)
-- `true_winds_port` reads from the cached data server, computes true winds, and writes them back
+- `true_winds` reads from the cached data server, computes true winds, and writes them back
 - One logger's writer is another logger's reader
 
 SAY
@@ -654,7 +714,7 @@ loggers do as little as possible: read the port, stamp and label each record,
 broadcast it on UDP port 6224, and, when writing, keep a raw file. A separate
 logger, `parse_data`, listens on 6224, parses everything it hears into named
 fields, and hands the result to the cached data server. A third kind of logger,
-`true_winds_port`, reads course, heading and wind from the cached data server,
+`true_winds`, reads course, heading and wind from the cached data server,
 computes true winds, and writes them back.
 
 It is the same three-part logger every time; only the reader changes. That is
@@ -666,7 +726,7 @@ growing, but every display and every Grafana panel goes blank at once. When
 everything downstream fails together and the raw data is fine, look at the
 logger in the middle.
 
-NOTE: on the training cruise (compact NBP1406_cruise.yaml) the parsing logger is `parse_data`, with configs parse_data-off, parse_data-on and parse_data-on+influx. In NBP1406_cruise_full.yaml the equivalent logger is called net_reader.
+NOTE: on the training cruise (compact NBP1406_cruise.yaml) the parsing logger is `parse_data`, with configs parse_data-off, parse_data-on and parse_data-on+influx. In NBP1406_cruise_full.yaml the equivalent logger is called net_reader. The true winds logger on the slide is `true_winds_port` on the training cruise ("port" as in the port side; there is also `true_winds_stbd`). The slide drops the suffix so it isn't mistaken for a serial or UDP port.
 
 ## modes: the operational switch
 
@@ -754,17 +814,49 @@ Four slides, seven minutes. Who starts what, who watches whom, and where the web
 
 ON SLIDE
 
-```mermaid
-flowchart TD
-  S["supervisord<br/>:9001"] --> LM["logger_manager"]
-  S --> CDS["cached_data_server<br/>:8766"]
-  S --> W["nginx + uwsgi"]
-  LM --> P1["logger process"]
-  LM --> P2["logger process"]
-  LM --> P3["logger process"]
-  W --> GUI["Django web console"]
-  CDS --> GUI
-  CDS --> D["displays and widgets"]
+```svg
+<svg id="moving-parts" viewBox="0 0 720 290" role="img" aria-label="supervisord starts logger_manager, cached_data_server and nginx with uwsgi. logger_manager starts one logger process per active configuration. cached_data_server feeds live data to the built-in displays and to the Django web console, which nginx and uwsgi serve." font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" fill="none" stroke="currentColor" stroke-width="1.5">
+  <defs>
+    <marker id="moving-parts-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" stroke="none"/>
+    </marker>
+  </defs>
+  <rect x="270" y="16" width="180" height="40" rx="4" style="fill: var(--surface)"/>
+  <text x="360" y="40" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">supervisord (:9001)</text>
+  <rect x="40" y="110" width="180" height="40" rx="4" style="fill: var(--surface)"/>
+  <text x="130" y="134" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">logger_manager</text>
+  <rect x="270" y="110" width="180" height="40" rx="4" style="fill: var(--surface)"/>
+  <text x="360" y="134" font-size="11" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">cached_data_server (:8766)</text>
+  <rect x="500" y="110" width="180" height="40" rx="4" style="fill: var(--surface)"/>
+  <text x="590" y="134" font-size="12" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" fill="currentColor" stroke="none">nginx + uwsgi</text>
+  <rect x="10" y="210" width="78" height="50" rx="4" style="fill: var(--surface)"/>
+  <text x="49" y="230" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">logger</text>
+  <text x="49" y="248" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">process</text>
+  <rect x="94" y="210" width="78" height="50" rx="4" style="fill: var(--surface)"/>
+  <text x="133" y="230" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">logger</text>
+  <text x="133" y="248" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">process</text>
+  <rect x="178" y="210" width="78" height="50" rx="4" style="fill: var(--surface)"/>
+  <text x="217" y="230" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">logger</text>
+  <text x="217" y="248" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">process</text>
+  <rect x="285" y="210" width="150" height="50" rx="4" style="fill: var(--surface)"/>
+  <text x="360" y="230" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">displays and</text>
+  <text x="360" y="248" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">widgets</text>
+  <rect x="480" y="210" width="200" height="50" rx="4" style="fill: var(--surface)"/>
+  <text x="580" y="239" font-size="12" text-anchor="middle" fill="currentColor" stroke="none">Django web console</text>
+  <line x1="330" y1="56" x2="130" y2="110" marker-end="url(#moving-parts-arrow)"/>
+  <text x="232" y="76" font-size="11" text-anchor="middle" fill="currentColor" stroke="none">starts</text>
+  <line x1="360" y1="56" x2="360" y2="110" marker-end="url(#moving-parts-arrow)"/>
+  <line x1="390" y1="56" x2="590" y2="110" marker-end="url(#moving-parts-arrow)"/>
+  <line x1="130" y1="150" x2="49" y2="210" marker-end="url(#moving-parts-arrow)"/>
+  <line x1="130" y1="150" x2="133" y2="210" marker-end="url(#moving-parts-arrow)"/>
+  <line x1="130" y1="150" x2="217" y2="210" marker-end="url(#moving-parts-arrow)"/>
+  <text x="206" y="186" font-size="11" fill="currentColor" stroke="none">starts</text>
+  <line x1="360" y1="150" x2="360" y2="210" stroke-dasharray="5 4" marker-end="url(#moving-parts-arrow)"/>
+  <text x="368" y="186" font-size="11" fill="currentColor" stroke="none">live data</text>
+  <line x1="420" y1="150" x2="540" y2="208" stroke-dasharray="5 4" marker-end="url(#moving-parts-arrow)"/>
+  <line x1="590" y1="150" x2="600" y2="208" marker-end="url(#moving-parts-arrow)"/>
+  <text x="628" y="186" font-size="11" fill="currentColor" stroke="none">serves</text>
+</svg>
 ```
 
 Displays blank but files growing? Suspect the cached data server or the parsing logger, not the instrument loggers.
@@ -1182,7 +1274,7 @@ ON SLIDE
 
 **Questions?**
 
-Docs: `oceandatatools.org/openrvdas-docs`
+Docs: `https://openrvdas.org`
 
 SAY
 

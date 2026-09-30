@@ -261,7 +261,8 @@ section.part { display: flex; flex-direction: column; gap: 1.5rem; }
 
 .slide-body { padding: 1.15rem 1.35rem 1.35rem; display: flex; flex-direction: column; gap: 1.1rem; }
 
-.label {
+/* scoped to <p>: Mermaid gives its own node text class="label" too */
+p.label {
   font-family: var(--mono);
   font-size: 0.66rem;
   letter-spacing: 0.14em;

@@ -129,7 +129,7 @@ Target: 36 slides in 60 min.
       `listen cruise.yaml:knud-net`.
 19. **Loggers that feed loggers** (diagram): instrument loggers broadcast raw
     records on UDP 6224; `parse_data` reads that stream, parses it, and writes
-    named fields to the cached data server (and InfluxDB); `true_winds_port`
+    named fields to the cached data server (and InfluxDB); `true_winds`
     reads from the cached data server and writes true winds back. *Point: one
     logger's writer is another logger's reader. If `parse_data` fails, every
     instrument logger stays green and raw files keep growing, but all displays
