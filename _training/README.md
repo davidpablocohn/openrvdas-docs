@@ -6,6 +6,7 @@ script. Edit it, then rebuild:
 ```bash
 ./_training/build_deck.py            # -> _training/openrvdas_tech_deck.html
 ./_training/build_deck.py --check    # list slides and flag empty blocks
+./_training/build_deck.py --slides-only  # -> openrvdas_tech_deck_slides.html, no speaker script
 ```
 
 The generated HTML is gitignored; the Markdown is what gets reviewed.

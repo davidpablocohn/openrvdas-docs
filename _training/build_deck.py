@@ -3,6 +3,7 @@
 
     ./_training/build_deck.py                      # -> _training/openrvdas_tech_deck.html
     ./_training/build_deck.py --check              # parse and report, write nothing
+    ./_training/build_deck.py --slides-only        # -> _training/openrvdas_tech_deck_slides.html
 
 Edit openrvdas_tech_deck.md, run this, publish the HTML. Slide numbers, the
 contents list and the slide/section counts in the header are all generated, so
@@ -223,7 +224,16 @@ def render(body, indent='  '):
 # page assembly
 # --------------------------------------------------------------------------
 
-def build(doc, sections):
+SLIDES_ONLY_EYEBROW = 'Tutorial deck · slides only · draft'
+SLIDES_ONLY_STANDFIRST = ('What goes on screen, section by section. The speaker '
+                          'script and presenter notes are left out of this version.')
+SLIDES_ONLY_TITLE = 'OpenRVDAS Tutorial Slides'
+
+
+def build(doc, sections, slides_only=False):
+    """Render the page. slides_only drops everything meant for the presenter:
+    the SAY blocks (and the notes inside them), section blurbs, the intro and
+    the colophon."""
     n_slides = sum(len(s['slides']) for s in sections)
 
     # Slide numbers and per-section ranges are derived, never written by hand.
@@ -248,22 +258,25 @@ def build(doc, sections):
             facts.append(('Sections', str(len(sections))))
 
     parts = []
-    parts.append('<title>%s</title>' % html.escape(doc.get('TITLE', 'Deck'), quote=False))
+    title = SLIDES_ONLY_TITLE if slides_only else doc.get('TITLE', 'Deck')
+    parts.append('<title>%s</title>' % html.escape(title, quote=False))
     parts.append('<style>\n%s\n</style>\n' % (HERE / 'deck.css').read_text().rstrip())
     parts.append('<div class="wrap">\n')
 
     parts.append('  <header class="masthead">')
-    parts.append('    <p class="eyebrow">%s</p>' % inline(doc.get('EYEBROW', '')))
+    eyebrow = SLIDES_ONLY_EYEBROW if slides_only else doc.get('EYEBROW', '')
+    standfirst = SLIDES_ONLY_STANDFIRST if slides_only else doc.get('STANDFIRST', '')
+    parts.append('    <p class="eyebrow">%s</p>' % inline(eyebrow))
     parts.append('    <h1>%s</h1>' % inline(doc.get('TITLE', '')))
     parts.append('    <p class="standfirst">\n      %s\n    </p>'
-                 % inline(doc.get('STANDFIRST', '')))
+                 % inline(standfirst))
     parts.append('    <dl class="facts">')
     for key, val in facts:
         parts.append('      <div class="fact"><dt>%s</dt><dd>%s</dd></div>'
                      % (inline(key), inline(val)))
     parts.append('    </dl>\n  </header>\n')
 
-    if doc.get('INTRO'):
+    if doc.get('INTRO') and not slides_only:
         parts.append('  <div class="note-box">\n    %s\n  </div>\n'
                      % render(doc['INTRO'], indent='    '))
 
@@ -281,7 +294,7 @@ def build(doc, sections):
         label = 'Part %s' % (words[i - 1] if i <= len(words) else i)
         parts.append('      <span class="part-num">%s</span>' % label)
         parts.append('      <h2>%s</h2>' % inline(sec['title']))
-        if sec['blurb']:
+        if sec['blurb'] and not slides_only:
             parts.append('      <p>%s</p>' % inline(sec['blurb']))
         parts.append('    </div>\n')
         parts.append('    <div class="slides">\n')
@@ -296,10 +309,11 @@ def build(doc, sections):
             parts.append('        <div class="slide-body">')
             if slide.get('ON SLIDE'):
                 parts.append('          <div class="onslide">')
-                parts.append('            <p class="label">On the slide</p>')
+                if not slides_only:
+                    parts.append('            <p class="label">On the slide</p>')
                 parts.append('            %s' % render(slide['ON SLIDE'], indent='            '))
                 parts.append('          </div>')
-            if slide.get('SAY'):
+            if slide.get('SAY') and not slides_only:
                 parts.append('          <div class="say">')
                 parts.append('            <p class="label">What you say</p>')
                 parts.append('            %s' % render(slide['SAY'], indent='            '))
@@ -307,7 +321,7 @@ def build(doc, sections):
             parts.append('        </div>\n      </article>\n')
         parts.append('    </div>\n  </section>\n')
 
-    if doc.get('COLOPHON'):
+    if doc.get('COLOPHON') and not slides_only:
         parts.append('  <footer class="colophon">\n    %s\n  </footer>\n'
                      % render(doc['COLOPHON'], indent='    '))
 
@@ -320,6 +334,9 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('source', nargs='?', default=str(HERE / 'openrvdas_tech_deck.md'))
     ap.add_argument('-o', '--output', default=None)
+    ap.add_argument('--slides-only', action='store_true',
+                    help='leave out the speaker script, presenter notes and section '
+                    'blurbs; writes <source>_slides.html')
     ap.add_argument('--check', action='store_true',
                     help='parse and report structure, write nothing')
     args = ap.parse_args()
@@ -345,8 +362,13 @@ def main():
                          '{%s}' % slide['tag'] if slide['tag'] else '', flag))
         return
 
-    out = Path(args.output) if args.output else src.with_suffix('.html')
-    out.write_text(build(doc, sections))
+    if args.output:
+        out = Path(args.output)
+    elif args.slides_only:
+        out = src.with_name(src.stem + '_slides.html')
+    else:
+        out = src.with_suffix('.html')
+    out.write_text(build(doc, sections, slides_only=args.slides_only))
     print('wrote %s — %d sections, %d slides' % (out, len(sections), n_slides))
 
 
