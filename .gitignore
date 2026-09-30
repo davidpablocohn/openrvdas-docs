@@ -3,3 +3,7 @@ assets/.DS_Store
 .idea
 Gemfile.lock
 _site
+
+# Built deck script — regenerate with _training/build_deck.py
+_training/*.html
+_training/__pycache__/
