@@ -120,15 +120,18 @@ subdirectory beneath it.
 
 Each logger's stderr file is rotated when it reaches 1 MB, and up to 100
 older files are kept alongside it as ``{logger}.stderr.1``,
-``{logger}.stderr.2`` and so on. This matters when a logger has been
+``{logger}.stderr.2`` and so on. These limits can be changed with the
+``--stderr_max_bytes`` and ``--stderr_backup_count`` flags to
+``logger_manager.py``. Rotation matters when a logger has been
 failing and restarting in a loop: the first, most informative error may
 have already rotated out of the current file.
 
-_Note: this location changed recently. Installations that were upgraded
-without re-running the installer may still be writing logger stderr to the
-previous location, ``/var/tmp/openrvdas/{logger}.stderr``. If a logger's
-stderr file appears stale or missing, check there before concluding that
-the logger never started._
+_Note: in OpenRVDAS v2.6.2 and earlier, logger stderr was written directly
+to ``/var/log/openrvdas/{logger}.stderr``, alongside the servers' own
+output. After upgrading, the logger manager creates the ``loggers/``
+subdirectory itself and writes there, but files from before the upgrade
+remain at the top level. If you are looking for errors from before an
+upgrade, check there._
 
 # Running and Controlling the LoggerManager
 ## Running from the command line
