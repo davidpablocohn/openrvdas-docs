@@ -141,11 +141,11 @@ place of slashes. No `__init__.py` files are needed:
 because it knows only OpenRVDAS's built-in ones. That warning is expected. Its other checks still
 apply.
 
-**Loading a cruise definition** in the web console, or on the command line with `server/lmcmd.py`
+**Loading a cruise definition** in the web console, or on the command line with `lmcmd`
 (which works with the Django console's database), also works through the link:
 
 ```
-server/lmcmd.py load_configuration local/uuw/mvp/MVP2610_cruise.yaml
+lmcmd load_configuration local/uuw/mvp/MVP2610_cruise.yaml
 ```
 
 # Things to keep out of the repository

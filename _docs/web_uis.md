@@ -14,7 +14,7 @@ loggers. You can also run with no web console at all:
 |---|---|---|
 | `django` | Django, served by nginx + uwsgi | The classic console. Stable and full-featured; the default. |
 | `react` | React front end, FastAPI back end, served by nginx + uvicorn | Newer, and still marked experimental by the installer. |
-| `none` | | No web console. Loggers are controlled from the command line (e.g. with `server/lmcmd.py`). |
+| `none` | | No web console. Loggers are controlled from the command line (e.g. with `lmcmd`). |
 
 Only one console runs at a time. This page covers installing each, and switching between them on an
 installed system with `utils/switch_ui.sh`.

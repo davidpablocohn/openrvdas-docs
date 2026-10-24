@@ -41,7 +41,7 @@ ports have names/locations like `/tmp/tty_s330` (where we will, for example, fin
 
     Try running a simple logger from the command line that reads from one of the simulated serial ports. E.g:
     ```
-    logger/listener/listen.py --serial port=/tmp/tty_s330
+    listen --serial port=/tmp/tty_s330
     ```
    Do you see data? Hurrah!
 
@@ -115,9 +115,9 @@ Rather than talking to the logger manager directly, we use the Django-based GUI 
 
 Please see [Controlling Loggers](../controlling_loggers/) for information on running logger\_runner.py and logger\_manager.py.
 
-A command-line interface, `servers/lmcmd.py`, allows another way of connecting to the Django database to issue commands and get status updates.
+A command-line interface, `lmcmd` (`server/lmcmd.py`), allows another way of connecting to the Django database to issue commands and get status updates.
 ```
-/opt/openrvdas$ server/lmcmd.py
+/opt/openrvdas$ lmcmd
 command? help
 Valid commands:
   load_configuration <configuration file name>

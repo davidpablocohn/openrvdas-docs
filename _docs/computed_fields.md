@@ -296,7 +296,7 @@ To see exactly what a logger will do, run its config under `listen.py`, naming t
 colon:
 
 ```
-logger/listener/listen.py --config_file local/uuw/mvp/MVP2610_cruise.yaml:tsg_cal-on
+listen --config_file local/uuw/mvp/MVP2610_cruise.yaml:tsg_cal-on
 ```
 
 A bad equation fails immediately. A misspelled variable produces `Unexpanded variables found: ...`.
@@ -487,7 +487,7 @@ With the NBP1406 sample cruise running in the logger manager, so that its parsed
 CachedDataServer, you can try it directly:
 
 ```
-logger/listener/listen.py --config_file test/configs/computed_true_winds.yaml
+listen --config_file test/configs/computed_true_winds.yaml
 ```
 
 For a starboard anemometer, copy the logger, change the `Port`/`Mwx`/zero-line names, and use a

@@ -37,7 +37,7 @@ definition doesn't change.
 
 # The files
 
-The calibration files belong in your institution's own repository, linked into OpenRVDAS's `local/`
+The calibration files belong in your institution's own repository, symlinked into OpenRVDAS's `local/`
 directory as described in [Your Institution's Code and Configuration]({{ "/local_code/" | relative_url }}). Here, that repository
 is checked out at `/opt/openrvdas_uuw` and linked as `local/uuw`, with a directory `mvp` for the
 vessel:
@@ -243,7 +243,7 @@ To see the calibrated values a logger will produce, run its config under `listen
 config after a colon:
 
 ```
-logger/listener/listen.py --config_file local/uuw/mvp/MVP2610_cruise.yaml:tsg_cal-on
+listen --config_file local/uuw/mvp/MVP2610_cruise.yaml:tsg_cal-on
 ```
 
 A disabled rule logs `not computing "PARCal" - constant(s) scale are null`. If the system is
