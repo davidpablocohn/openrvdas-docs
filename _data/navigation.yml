@@ -28,6 +28,8 @@ navdocs:
     children:
       - title: "Installation"
         url: /install/
+      - title: "Web Consoles: Django and React"
+        url: /web_uis/
       - title: "The Listener Script"
         url: /listen_py/
       - title: "Controlling Loggers"
@@ -36,8 +38,12 @@ navdocs:
         url: /yaml/
       - title: "Cruise Definition Files"
         url: /cruise_definition_files/
+      - title: "Your Institution's Code and Configuration"
+        url: /local_code/
       - title: "The Cached Data Server"
         url: /cached_data_server/
+      - title: "Recording What Ran: Snapshots and Journal"
+        url: /cruise_records/
 
   - title: Data Parsing
     children:
@@ -45,6 +51,13 @@ navdocs:
         url: /parsing/
       - title: "NMEA Device Type Library"
         url: /nmea_device_types/
+
+  - title: Computing Derived Values
+    children:
+      - title: "Computed Fields"
+        url: /computed_fields/
+      - title: "Averaging and Resampling"
+        url: /interpolation_transform/
 
   - title: Reference
     children:
