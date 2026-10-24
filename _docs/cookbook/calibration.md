@@ -17,8 +17,7 @@ is specific to calibrations. For how the transform works (writing equations, con
 sequence, which fields are kept), see
 [Computed Fields: ComputedFieldsTransform]({{ "/computed_fields/" | relative_url }}).
 
-> **Version note:** `ComputedFieldsTransform` is new in OpenRVDAS v2.7.0 (first available as release
-> candidate v2.7.0rc1; this page describes rc3). For earlier versions, see
+> **Version note:** `ComputedFieldsTransform` is new in OpenRVDAS v2.7.0. For earlier versions, see
 > [ModifyValueTransform](#the-older-approach-modifyvaluetransform) below.
 
 # The approach
@@ -236,10 +235,9 @@ It can't catch a misspelled variable that has a default, because the default is 
 is left over. That's one more reason to
 [leave defaults off calibration variables](#dont-give-calibration-variables-defaults). It also
 checks the equations themselves; see
-[Checking a configuration]({{ "/computed_fields/#checking-a-configuration" | relative_url }}). (The
-variable check is new in rc3.)
+[Checking a configuration]({{ "/computed_fields/#checking-a-configuration" | relative_url }}).
 
-To see the calibrated values a logger will produce, run its config under `listen.py`, naming the
+To see the calibrated values a logger will produce, run its config with `listen`, naming the
 config after a colon:
 
 ```
@@ -283,8 +281,7 @@ moving the link but before reloading, the snapshot warns that the running logger
 definition. That's a useful check that the reload actually happened.
 
 > **Tip:** a snapshot captures `calibrations.yaml` under that name, with the contents of whichever
-> dated file it pointed to. From rc2 its manifest entry also records that file's name, as
-> `resolves_to`. A comment at the top of each dated file still helps, because it makes the copy in
+> dated file it pointed to, and its manifest entry records that file's name as `resolves_to`. A comment at the top of each dated file still helps, because it makes the copy in
 > the snapshot self-explanatory. See
 > [A note on symlinked files]({{ "/cruise_records/#a-note-on-symlinked-files" | relative_url }}).
 

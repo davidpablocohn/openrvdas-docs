@@ -20,8 +20,7 @@ Only one console runs at a time. This page covers installing each, and switching
 installed system with `utils/switch_ui.sh`.
 
 > **Version note:** `switch_ui.sh`, and the installer writing configuration for both consoles, are
-> new in OpenRVDAS v2.7.0 (first available as release candidate v2.7.0rc1). From v2.7.0, both
-> consoles also display the OpenRVDAS version.
+> new in OpenRVDAS v2.7.0. From v2.7.0, both consoles also display the OpenRVDAS version.
 
 # How the pieces fit together
 

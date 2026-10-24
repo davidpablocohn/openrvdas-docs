@@ -23,12 +23,11 @@ This page starts with a single computed field and builds up from there:
 * [True winds](#true-winds): a complete worked example
 * [Reference](#reference): every option
 
-For applying calibration coefficients, and keeping them in dated, version-controlled calibration
+For best practices in applying calibration coefficients, and keeping them in dated, version-controlled calibration
 files that can be updated without touching the cruise definition, see
 [Calibrated Values for Sensor Data]({{ "/cookbook/calibrated_values/" | relative_url }}).
 
-> **Version note:** `ComputedFieldsTransform` is new in OpenRVDAS v2.7.0 (first available as release
-> candidate v2.7.0rc1; this page describes rc3). It is the general case of `ModifyValueTransform` and
+> **Version note:** `ComputedFieldsTransform` is new in OpenRVDAS v2.7.0. It is the general case of `ModifyValueTransform` and
 > `calibration_logger_template`, which remain available for the linear slope-and-offset case.
 
 # A first example
@@ -258,7 +257,7 @@ nothing about it. On a mixed stream that's the normal case. While setting things
   which inputs were missing and why: not in the record, present but null, or a cached value that is
   too old.
 * A debug message is always logged when *some* of a rule's inputs are present and others aren't,
-  which usually means a misspelled field name. Run the logger under `listen.py` with `-v -v` to see it.
+  which usually means a misspelled field name. Run the logger with `listen` with `-v -v` to see it.
 
 # Checking a configuration
 
@@ -290,9 +289,9 @@ misspelled or missing:
 It can't catch a misspelled variable that has a default (`<<name|default>>`), because the default
 is used and nothing is left over. If the definition can't be expanded on the machine where you run
 the check, for example because it includes a file that only exists on the ship, these checks are
-skipped. (The equation and option checks are new in rc2, and the variable check in rc3.)
+skipped.
 
-To see exactly what a logger will do, run its config under `listen.py`, naming the config after a
+To see exactly what a logger will do, run its config with `listen`, naming the config after a
 colon:
 
 ```

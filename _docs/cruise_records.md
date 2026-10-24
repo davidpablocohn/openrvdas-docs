@@ -24,8 +24,7 @@ It then covers putting these together into an [archive at the end of a cruise](#
 and [turning mode changes and logger failures into Sealog events](#creating-sealog-events-from-logger-state-changes)
 so that they show up in the cruise's event log alongside everything else.
 
-> **Version note:** everything on this page is new in OpenRVDAS v2.7.0, and describes it as of
-> release candidate v2.7.0rc3. (rc1 lacked a few things noted below.) After upgrading, run
+> **Version note:** everything on this page is new in OpenRVDAS v2.7.0. After upgrading, run
 > `pip install -e .` with the OpenRVDAS virtual environment active, so that the `config_snapshot`
 > command is installed.
 
@@ -72,7 +71,7 @@ A few details are worth knowing:
   A noisy serial port won't fill the journal.
 * **`code` is the version of the code a logger was started with**, as given by `git describe`. If the
   working tree has uncommitted changes, the version ends in `-dirty.` and a hash of those changes,
-  e.g. `v2.7.0rc1-3-g4f88e4b0-dirty.3fa94c1e02ab`. Two different sets of local edits get two
+  e.g. `v2.7.0-3-g4f88e4b0-dirty.3fa94c1e02ab`. Two different sets of local edits get two
   different versions, so you can tell when someone patched a transform mid-cruise.
 * **`config_sha256` identifies a logger config's exact contents.** A snapshot uses it to tell whether
   a running logger is running the config currently in the definition file, or an older one.
@@ -222,7 +221,7 @@ current_state:
     tsg_cal:
       config: tsg_cal-on
       config_sha256: 88a4bd169d5a...
-      code: v2.7.0rc1
+      code: v2.7.0
       status: running
       since: '2026-10-23T21:23:17.445Z'
       matches_definition: true
@@ -279,9 +278,8 @@ to, and its git status is that of the dated file:
 
 (Here `local/uuw` is a link to the institution's own repository, checked out at
 `/opt/openrvdas_uuw`, as recommended in [Your Institution's Code and Configuration]({{ "/local_code/" | relative_url }}). So
-`resolves_to` shows the file's real location.) Snapshots taken with rc1 don't have `resolves_to`. For those, you can identify the dated
-file by matching sha256 values. Either way, it helps if each dated file says what it is in a comment
-at the top, so the copy in `sources/` is self-explanatory:
+`resolves_to` shows the file's real location.) It also helps if each dated file says what it is in a
+comment at the top, so the copy in `sources/` is self-explanatory:
 
 ```
 # calibrations-2026-10-01.yaml: coefficients from the October 2026 shipyard period
@@ -312,8 +310,7 @@ DEFAULT_LOGGER_MANAGER_SNAPSHOT_DIR=/var/log/openrvdas/snapshots
 
 then run `utils/install_openrvdas.sh` again. The installer doesn't ask about this setting. It is
 empty by default, which means no automatic snapshots. Once it is set, the installer keeps it on
-later runs, and `utils/switch_ui.sh` keeps it when switching consoles. (Installer support is new in
-rc2.)
+later runs, and `utils/switch_ui.sh` keeps it when switching consoles.
 
 ### By hand
 
@@ -536,10 +533,6 @@ in the same way.
 
 ## Things to watch for
 
-* **On rc1, give a `field_map`.** In v2.7.0rc1 and earlier, `SealogWriter` without a `field_map`
-  mangled option names, stripping leading letters along with the `event_option_` prefix
-  (`previous_mode` became `revious_mode`). This is fixed in rc2. On older versions, list each option
-  under `field_map` (e.g. `previous_mode: previous_mode`) to avoid it.
 * **The logger reads the journal from the beginning each time it starts.** `LogfileReader` has no
   option to start at the end of a file, so when this logger starts, it posts every matching event
   already in the journal files. To keep that to a minimum, give the logger *the same config in every
@@ -558,7 +551,7 @@ in the same way.
 ## Trying it out without a Sealog server
 
 To see the events this logger would post, without posting them, replace the writer with
-`ToSealogTransform` and print the result. Running a config like this under `listen.py` prints each
+`ToSealogTransform` and print the result. Running a config like this with `listen` prints each
 event as a (harmless) warning that `TextFileWriter` can't write it:
 
 ```

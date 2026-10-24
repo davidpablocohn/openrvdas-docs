@@ -20,7 +20,7 @@ statistic of each field over a window centred on each output time. Typical uses 
 
 This page covers how the transform works, then the algorithms it offers, then some recipes.
 
-> **Version note:** OpenRVDAS v2.7.0 (first available as release candidate v2.7.0rc1) added most of
+> **Version note:** OpenRVDAS v2.7.0 added most of
 > the algorithms below: `median`, `trimmed_mean`, `time_weighted_average`, `gaussian_average`,
 > `triangular_average`, `exponential_average` and the window statistics. It also added the
 > `min_count`, `outlier_mads` and `trim` options, made every algorithm ignore missing values, and
@@ -270,8 +270,8 @@ Allowed with `boxcar_average`, `median`, `trimmed_mean`, `min`, `max` and `std_d
 | `sigma` | `gaussian_average` | Width of the Gaussian in seconds (default: a sixth of the window, so the window spans 3σ either side). |
 | `time_constant` | `exponential_average` | Time constant in seconds. Required. |
 
-The transform checks these when the logger starts, and from rc2, `validate_config` checks them
-before that. Giving `outlier_mads`, `trim`, `sigma` or
+The transform checks these when the logger starts, and `validate_config` checks them before
+that. Giving `outlier_mads`, `trim`, `sigma` or
 `time_constant` to an algorithm that doesn't take it, `min_count` to `count` or
 `exponential_average`, or an invalid value to any of them, stops the logger with an error naming the
 field and the problem. (`min_count` given to `nearest` is ignored.)
