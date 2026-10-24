@@ -116,4 +116,4 @@ The other widely-useful derived data transform that is available is the Interpol
 
 The value associated with the 'algorithm' key should be a dict that will be passed to the interpolate() method of InterpolationTransform. As of v2.7.0 there are many algorithms besides 'boxcar_average', 'nearest' and 'polar_average', including medians, weighted averages and window statistics for quality control; see [Averaging and Resampling: InterpolationTransform]({{ "/interpolation_transform/" | relative_url }}) for the full list and their options.
 
-For derived values that are formulas rather than averages, such as calibrations, unit conversions or true winds computed step by step, see [Computed Fields and Calibrations: ComputedFieldsTransform]({{ "/computed_fields/" | relative_url }}).
+For derived values that are formulas rather than averages, such as unit conversions or true winds computed step by step, see [Computed Fields: ComputedFieldsTransform]({{ "/computed_fields/" | relative_url }}). For calibrations in particular, see [Calibrated Values for Sensor Data]({{ "/cookbook/calibrated_values/" | relative_url }}).

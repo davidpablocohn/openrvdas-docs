@@ -1,6 +1,6 @@
 ---
 permalink: /computed_fields/
-title: "Computed Fields and Calibrations: ComputedFieldsTransform"
+title: "Computed Fields: ComputedFieldsTransform"
 layout: single
 toc: true
 toc_label: "Contents"
@@ -10,20 +10,22 @@ toc_sticky: true  # Makes the TOC stick on scroll
 `ComputedFieldsTransform` computes new fields from algebraic expressions over the fields of the
 records passing through it. It handles anything from a one-line linear calibration to a calculation
 like true winds that combines readings from several instruments, without writing any Python. The
-arithmetic lives in the cruise definition, and calibration coefficients can live in a file of their
-own that is updated without touching the definition.
+arithmetic lives in the cruise definition.
 
-This page starts with a single calibrated field and builds up from there:
+This page starts with a single computed field and builds up from there:
 
 * [A first example](#a-first-example): one field, one equation
 * [Writing equations](#writing-equations): what an equation may contain
 * [Several rules, and rules in sequence](#several-rules-and-rules-in-sequence)
 * [Keeping or dropping fields](#keeping-or-dropping-fields)
 * [Combining instruments](#combining-instruments): inputs that arrive in different records
-* [Calibrations from a calibration file](#calibrations-from-a-calibration-file): coefficients kept in
-  a dated, version-controlled file
+* [Checking a configuration](#checking-a-configuration): catching mistakes before a logger runs
 * [True winds](#true-winds): a complete worked example
 * [Reference](#reference): every option
+
+For applying calibration coefficients, and keeping them in dated, version-controlled calibration
+files that can be updated without touching the cruise definition, see
+[Calibrated Values for Sensor Data]({{ "/cookbook/calibrated_values/" | relative_url }}).
 
 > **Version note:** `ComputedFieldsTransform` is new in OpenRVDAS v2.7.0 (first available as release
 > candidate v2.7.0rc1; this page describes rc3). It is the general case of `ModifyValueTransform` and
@@ -89,7 +91,7 @@ comprehensions, and calls to anything not in the list above. There are also some
   clearer as several rules (see [rules in sequence](#several-rules-and-rules-in-sequence)).
 
 Equations are checked when the logger starts, not when the first record arrives, and
-[`validate_config`](#checking-a-definition-before-you-sail) checks them before that. A typo or a
+[`validate_config`](#checking-a-configuration) checks them before that. A typo or a
 refused construct stops the logger right away with an error saying what is wrong, e.g.
 
 ```
@@ -118,7 +120,7 @@ DepthCorrected:
 **A constant whose value is `null` disables its rule.** The transform logs that it isn't computing
 the field because the device is presumably uncalibrated, and the rest of the logger carries on. That
 is the intended way to say "we have no calibration for this sensor yet". It also matters for
-[calibration files](#calibrations-from-a-calibration-file).
+[calibration files]({{ "/cookbook/calibrated_values/" | relative_url }}).
 
 ## Aliases for input fields
 
@@ -258,159 +260,10 @@ nothing about it. On a mixed stream that's the normal case. While setting things
 * A debug message is always logged when *some* of a rule's inputs are present and others aren't,
   which usually means a misspelled field name. Run the logger under `listen.py` with `-v -v` to see it.
 
-# Calibrations from a calibration file
+# Checking a configuration
 
-Calibration coefficients change more often than the processing that uses them, and they need a
-clear history: which coefficients were in use on which dates. A good way to manage them is:
-
-* keep each set of coefficients in its own **dated file**, under source control in your ship's
-  `local/` repository;
-* point a fixed name, `calibrations.yaml`, at the current one with a **symbolic link**;
-* have the cruise definition **include** `calibrations.yaml` and refer to the coefficients as
-  **variables**.
-
-Updating a calibration then means adding a new dated file and moving the link. The cruise
-definition doesn't change.
-
-## The files
-
-Following the [`local/` directory convention](https://github.com/OceanDataTools/openrvdas/blob/master/local/README.md),
-with an institution directory `uuw` and a vessel directory `mvp`:
-
-```
-local/uuw/mvp/
-  calibrations-2026-04-15.yaml        previous coefficients, kept for the record
-  calibrations-2026-10-01.yaml        current coefficients
-  calibrations.yaml -> calibrations-2026-10-01.yaml
-  MVP2610_cruise.yaml                 cruise definition
-```
-
-The dated file defines the coefficients as variables:
-
-```
-# calibrations-2026-10-01.yaml
-# Coefficients from the October 2026 shipyard calibrations.
-# Sheets are in the ship's calibration binder and on the science share under Calibrations/2026-10.
-
-variables:
-  # SBE45 TSG temperature, s/n 4521, calibrated 2026-09-12
-  tsg_temp_slope: 1.00021
-  tsg_temp_offset: -0.0032
-
-  # WET Labs ECO fluorometer, s/n 3381: Chl (ug/l) = scale * (counts - dark)
-  fluoro_scale: 0.0123
-  fluoro_dark: 48
-
-  # Paroscientific barometer, quadratic correction
-  baro_a0: -0.12
-  baro_a1: 0.998
-  baro_a2: 1.0e-5
-
-  # Biospherical PAR sensor: not yet calibrated after replacement
-  par_scale: null
-
-  # Port anemometer zero line, degrees clockwise from the bow
-  port_anemometer_zero_line: 0.0
-```
-
-Make the link, and commit both the dated file and the link, so the repository records which file was
-current when:
-
-```
-cd /opt/openrvdas/local/uuw/mvp
-ln -s calibrations-2026-10-01.yaml calibrations.yaml
-git add calibrations-2026-10-01.yaml calibrations.yaml
-git commit -m "Calibrations from October 2026 shipyard period"
-```
-
-Use a relative link target (just the file name, as above), so the link still works when the
-repository is checked out somewhere else.
-
-## Using the coefficients
-
-The cruise definition includes the link, and uses the variables as the rules' constants:
-
-```
-includes:
-  - local/uuw/mvp/calibrations.yaml
-
-loggers:
-  tsg_cal:
-    configs:
-      'off': {}
-      'on':
-        readers:
-          class: CachedDataReader
-          kwargs:
-            data_server: localhost:8766
-            subscription:
-              fields:
-                SeawaterTemp: {seconds: 0}
-                FluoroCounts: {seconds: 0}
-                PARRaw: {seconds: 0}
-        transforms:
-        - class: ComputedFieldsTransform
-          kwargs:
-            delete_input_fields: true
-            delete_other_fields: true
-            fields:
-              SeawaterTempCal:
-                equation: "slope * SeawaterTemp + offset"
-                constants:
-                  slope: <<tsg_temp_slope>>
-                  offset: <<tsg_temp_offset>>
-              ChlCal:
-                equation: "scale * (FluoroCounts - dark)"
-                constants:
-                  scale: <<fluoro_scale>>
-                  dark: <<fluoro_dark>>
-              PARCal:
-                equation: "scale * PARRaw"
-                constants:
-                  scale: <<par_scale>>
-        writers:
-          class: CachedDataWriter
-          kwargs:
-            data_server: localhost:8766
-```
-
-How this fits together:
-
-* **Paths in `includes` are relative to the OpenRVDAS directory** (e.g. `/opt/openrvdas`), not to
-  the file doing the including.
-* **The included file's `variables` are merged with the definition's own.** If the cruise definition
-  also defines a variable with the same name, the definition's value wins, so don't define
-  calibration variables anywhere else. Variables are shared across the whole definition, so give
-  them names that say which instrument they belong to.
-* **A variable used on its own, like `slope: <<tsg_temp_slope>>`, keeps its type.** The constant
-  is the number `1.00021`, not the string `"1.00021"`.
-* **`par_scale: null` disables the `PARCal` rule**, and nothing else. The temperature and
-  chlorophyll rules carry on. When the sensor is calibrated, put the coefficient in a new dated file.
-
-### Don't give calibration variables defaults
-
-A variable reference can give a default, used when the variable isn't defined:
-`<<tsg_temp_slope|1.0>>`. **Don't use defaults for calibration coefficients.** Write `<<tsg_temp_slope>>`,
-and put every coefficient in the calibration file, with `null` for a sensor that isn't calibrated
-(like `par_scale` above).
-
-A default hides mistakes. If the coefficient is misspelled or missing from the calibration file,
-the default is used and nothing is reported:
-
-* `<<tsg_temp_slope|1.0>>` silently publishes uncalibrated readings under a name that says they
-  are calibrated;
-* `<<tsg_temp_slope|null>>` is safer, but it silently disables the rule, so a calibrated field
-  simply stops appearing.
-
-Without a default, a misspelled or missing variable is left in the expanded definition as the
-literal text `<<tsg_temp_slope>>`, and that *is* reported:
-[`validate_config`](#checking-a-definition-before-you-sail) reports it as an error, and the logger
-manager logs `Unexpanded variables found: <<tsg_temp_slope>>` when the definition is loaded.
-
-## Checking a definition before you sail
-
-Run `validate_config` on the cruise definition, from the OpenRVDAS directory with its virtual
-environment active:
+Run `validate_config` on the cruise definition (or logger configuration file), from the OpenRVDAS
+directory with its virtual environment active:
 
 ```
 cd /opt/openrvdas
@@ -418,9 +271,9 @@ source venv/bin/activate
 validate_config local/uuw/mvp/MVP2610_cruise.yaml
 ```
 
-From rc2, besides checking the definition's structure, `validate_config` expands the definition as
-the logger manager would, and builds every `ComputedFieldsTransform` and `InterpolationTransform`
-in it. A bad equation is reported as an error naming the config and field:
+Besides checking the file's structure, `validate_config` expands a cruise definition as the logger
+manager would, and builds every `ComputedFieldsTransform` and `InterpolationTransform` in it. A bad
+equation is reported as an error naming the config and field:
 
 ```
   [ERROR] configs.tsg_cal-on.transforms[0]: ComputedFieldsTransform would fail when the logger
@@ -434,12 +287,10 @@ misspelled or missing:
   [ERROR] configs.tsg_cal-on: unexpanded variable <<tsg_temp_slpoe>> (misspelled or missing?)
 ```
 
-It can't catch a misspelled variable that has a default, because the default is used and nothing
-is left over. That's one more reason to
-[leave defaults off calibration variables](#dont-give-calibration-variables-defaults). If the
-definition can't be expanded on the machine where you run the check, for example because it
-includes a file that only exists on the ship, these checks are skipped. (The equation and option
-checks are new in rc2, and the variable check in rc3.)
+It can't catch a misspelled variable that has a default (`<<name|default>>`), because the default
+is used and nothing is left over. If the definition can't be expanded on the machine where you run
+the check, for example because it includes a file that only exists on the ship, these checks are
+skipped. (The equation and option checks are new in rc2, and the variable check in rc3.)
 
 To see exactly what a logger will do, run its config under `listen.py`, naming the config after a
 colon:
@@ -449,48 +300,10 @@ logger/listener/listen.py --config_file local/uuw/mvp/MVP2610_cruise.yaml:tsg_ca
 ```
 
 A bad equation fails immediately. A misspelled variable produces `Unexpanded variables found: ...`.
-A disabled rule logs `not computing "PARCal" - constant(s) scale are null`. If the config reads
-from the CachedDataServer and the system is running, you'll see calibrated values too. Stop it with
-Ctrl-C.
-
-## Updating a calibration
-
-When new coefficients arrive:
-
-1. **Make a new dated file.** Copy the current one, update the values and the comment saying where
-   they came from, and commit it:
-
-   ```
-   cd /opt/openrvdas/local/uuw/mvp
-   cp calibrations-2026-10-01.yaml calibrations-2026-11-15.yaml
-   vi calibrations-2026-11-15.yaml
-   git add calibrations-2026-11-15.yaml
-   git commit -m "TSG temperature recalibration, s/n 4521"
-   ```
-
-2. **Move the link, and commit that too:**
-
-   ```
-   ln -sfn calibrations-2026-11-15.yaml calibrations.yaml
-   git commit -am "Use calibrations from 2026-11-15"
-   ```
-
-3. **Check it** with `listen.py`, as [above](#checking-a-definition-before-you-sail).
-
-4. **Reload the cruise definition** in the web console. Moving the link changes nothing until you
-   do: running loggers keep the coefficients they started with. On reload, the logger manager
-   restarts just the loggers whose configs have changed, with the new coefficients.
-
-If the logger manager is [taking automatic snapshots]({{ "/cruise_records/#automatic-snapshots" | relative_url }}),
-it takes one when the link moves and another when the definition is reloaded. If you snapshot after
-moving the link but before reloading, the snapshot warns that the running loggers don't match the
-definition. That's a useful check that the reload actually happened.
-
-> **Tip:** a snapshot captures `calibrations.yaml` under that name, with the contents of whichever
-> dated file it pointed to. From rc2 its manifest entry also records that file's name, as
-> `resolves_to`. A comment at the top of each dated file still helps, because it makes the copy in
-> the snapshot self-explanatory. See
-> [A note on symlinked files]({{ "/cruise_records/#a-note-on-symlinked-files" | relative_url }}).
+A rule disabled by a null constant logs `not computing "..." - constant(s) ... are null`. If the
+config reads from the CachedDataServer and the system is running, you'll see computed values too.
+Add `-v -v` to see why a rule isn't firing (see [When a rule doesn't fire](#when-a-rule-doesnt-fire)).
+Stop it with Ctrl-C.
 
 # Using the logger template
 
@@ -501,22 +314,18 @@ the reader and writers each time. Include it, and fill in its variables:
 ```
 includes:
   - contrib/logger_templates/computed_fields_logger_template.yaml
-  - local/uuw/mvp/calibrations.yaml
 
 loggers:
-  baro_cal:
+  windsonic_dir_corr:
     logger_template: computed_fields_logger_template
     variables:
-      output_field: BaroPressureCal
-      equation: "a2 * P**2 + a1 * P + a0"
-      inputs: {P: BaroPressure}
+      output_field: Windsonic_WindDir_Corr
+      equation: "(Windsonic_WindDir + zero_line_reference) % 360"
       constants:
-        a0: <<baro_a0>>
-        a1: <<baro_a1>>
-        a2: <<baro_a2>>
+        zero_line_reference: 180
       subscribe_fields:
-        BaroPressure: {seconds: 0}
-      measurement_name: baro
+        Windsonic_WindDir: {seconds: 0}
+      measurement_name: windsonic
 ```
 
 This produces configs `off`, `influx`, `influx_restricted`, `file` and `file+influx` for the
@@ -524,8 +333,9 @@ logger. The template expects the definition to set the variables `cdw_port`,
 `influxdb_default_bucket`, `influxdb_restricted_bucket`, `header_dir`, `file_root` and `cruise`. Its
 optional variables are `constants`, `inputs`, `update_on_fields`, `max_field_age`,
 `warn_missing_inputs`, `header_file` and `file_suffix`. The comments at the top of the template have
-more worked examples. The template computes a single field, so for several rules in sequence, such
-as the true winds below, write the logger config out in full.
+more worked examples, and [Calibrated Values for Sensor Data]({{ "/cookbook/calibrated_values/" | relative_url }}) shows the template used
+with coefficients from a calibration file. The template computes a single field, so for several
+rules in sequence, such as the true winds below, write the logger config out in full.
 
 # True winds
 
@@ -536,7 +346,7 @@ The configuration below computes the same values with `ComputedFieldsTransform`,
 from `logger/utils/truewinds/truew.py`. OpenRVDAS's test suite checks that the two agree.
 
 Why do it this way? Because every step is visible in the configuration, and can be changed there. You
-can take the anemometer zero line from the calibration file, use a different speed source, or
+can take the anemometer zero line from a [calibration file]({{ "/cookbook/calibrated_values/" | relative_url }}), use a different speed source, or
 compute an apparent wind direction on the way. If you just want true winds and the standard
 `TrueWindsTransform` suits you, use it.
 
@@ -562,7 +372,8 @@ gyro), and wind direction and speed relative to the ship (from the anemometer).
 ## The logger
 
 This reads the five inputs from the CachedDataServer and writes the results back. The anemometer
-zero line comes from the calibration file [above](#the-files):
+zero line, `port_anemometer_zero_line`, comes from the calibration file described in
+[Calibrated Values for Sensor Data]({{ "/cookbook/calibrated_values/" | relative_url }}#the-files):
 
 ```
 includes:
@@ -699,7 +510,8 @@ class GSWComputedFieldsTransform(ComputedFieldsTransform):
                  'gsw_SP_from_C': gsw.SP_from_C}
 ```
 
-and use it with `module: local.uuw.modules.gsw_computed_fields_transform`. Names must be flat,
+and use it with `module: local.uuw.modules.gsw_computed_fields_transform` (see
+[Your Institution's Code and Configuration]({{ "/local_code/" | relative_url }}) for where such modules live). Names must be flat,
 because an equation can't contain attribute access: `gsw_z_from_p(...)` works, `gsw.z_from_p(...)`
 never can. The built-in functions all raise an error on bad input. Many `gsw` routines return NaN
 instead, which would pass quietly into your data, so guard against that, e.g. with a rule that

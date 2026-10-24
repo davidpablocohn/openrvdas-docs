@@ -264,7 +264,7 @@ A transform is any Python class that supports a `transform(record)` method that 
 #### Writers
 A writer is any Python class that supports...you guessed it, a `write(record)` method that takes a record or list of records and does something with it. No return value is expected or checked.
 
-In each case, it is good form to link your modules into the repository under the `local/` subdirectory following the guidance in `local/README.md`.
+In each case, it is good form to keep your modules in your institution's own repository and link it into OpenRVDAS's `local/` subdirectory, as described in [Your Institution's Code and Configuration]({{ "/local_code/" | relative_url }}).
 
 ### Record types
 Note that while most modules do at least some type checking on their inputs, there is no explicit type-checking of records between modules. It is expected that the configuration designer verify that the output format of each module is compatible with the input format of the modules it feeds into.

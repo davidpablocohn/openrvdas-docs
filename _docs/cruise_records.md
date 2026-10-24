@@ -191,7 +191,8 @@ exactly was this logger doing?"
 **`MANIFEST.yaml`** records:
 
 * when and where the snapshot was taken, and the OpenRVDAS version;
-* for each git repository a captured file came from (OpenRVDAS itself, and your `local/` repository):
+* for each git repository a captured file came from (OpenRVDAS itself, and your institution's
+  repository, [linked into `local/`]({{ "/local_code/" | relative_url }})):
   its commit, branch, tag, remote, whether it had uncommitted changes, and any untracked Python files;
 * the operating system, Python version and every installed package with its version;
 * each captured file with its sha256, size, modification time and git status (`clean`, `modified`,
@@ -258,7 +259,7 @@ a public archive.
 
 ## A note on symlinked files
 
-A common pattern, used in the [calibration example]({{ "/computed_fields/#calibrations-from-a-calibration-file" | relative_url }}),
+A common pattern, used in the [calibration example]({{ "/cookbook/calibrated_values/" | relative_url }}),
 is to keep dated files under source control and point a fixed name at the current one:
 
 ```
@@ -272,12 +273,13 @@ to, and its git status is that of the dated file:
 ```
 - path: sources/local/uuw/mvp/calibrations.yaml
   source: /opt/openrvdas/local/uuw/mvp/calibrations.yaml
-  resolves_to: /opt/oceandatatools_local/uuw/mvp/calibrations-2026-10-01.yaml
+  resolves_to: /opt/openrvdas_uuw/mvp/calibrations-2026-10-01.yaml
   ...
 ```
 
-(Here `local/` is itself a link to a separate repository, so `resolves_to` shows the real
-location.) Snapshots taken with rc1 don't have `resolves_to`. For those, you can identify the dated
+(Here `local/uuw` is a link to the institution's own repository, checked out at
+`/opt/openrvdas_uuw`, as recommended in [Your Institution's Code and Configuration]({{ "/local_code/" | relative_url }}). So
+`resolves_to` shows the file's real location.) Snapshots taken with rc1 don't have `resolves_to`. For those, you can identify the dated
 file by matching sha256 values. Either way, it helps if each dated file says what it is in a comment
 at the top, so the copy in `sources/` is self-explanatory:
 
@@ -384,10 +386,11 @@ data, in one directory:
    0300. Its stderr file usually tells you *why*. They rotate, so copy them before they're
    overwritten.
 
-5. **A tag in your `local/` repository**, so the configuration can be checked out exactly as it was:
+5. **A tag in your institution's repository** (see [Your Institution's Code and Configuration]({{ "/local_code/" | relative_url }})),
+   so the configuration can be checked out exactly as it was:
 
    ```
-   cd /opt/openrvdas/local/uuw      # or wherever your local repository is
+   cd /opt/openrvdas_uuw            # your institution's repository, linked as local/uuw
    git status                       # commit anything uncommitted first
    git tag MVP2610-end
    git push --tags

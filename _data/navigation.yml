@@ -38,6 +38,8 @@ navdocs:
         url: /yaml/
       - title: "Cruise Definition Files"
         url: /cruise_definition_files/
+      - title: "Your Institution's Code and Configuration"
+        url: /local_code/
       - title: "The Cached Data Server"
         url: /cached_data_server/
       - title: "Recording What Ran: Snapshots and Journal"
@@ -52,7 +54,7 @@ navdocs:
 
   - title: Computing Derived Values
     children:
-      - title: "Computed Fields and Calibrations"
+      - title: "Computed Fields"
         url: /computed_fields/
       - title: "Averaging and Resampling"
         url: /interpolation_transform/
