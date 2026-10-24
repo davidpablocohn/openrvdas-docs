@@ -10,6 +10,12 @@ toc_sticky: true  # Makes the TOC stick on scroll
 
 This document describes how to apply calibration factors to raw sensor data to generate calibrated values.
 
+> **Note:** from OpenRVDAS v2.7.0, `ComputedFieldsTransform` handles calibrations of any form
+> (polynomials, conditional terms, formulas drawing on several instruments) and is the recommended
+> way to apply them. See [Computed Fields and Calibrations]({{ "/computed_fields/" | relative_url }}),
+> which also describes keeping coefficients in a dated, version-controlled calibration file. The
+> `ModifyValueTransform` approach below still works for simple linear calibrations.
+
 The process is similar to other forms of derived data loggers: read the raw value, apply the appropriate transform, and write the transformed value back out to the appropriate location.
 
 ## Applying linear calibration factors
