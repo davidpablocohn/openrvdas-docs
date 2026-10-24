@@ -124,11 +124,12 @@ older files are kept alongside it as ``{logger}.stderr.1``,
 failing and restarting in a loop: the first, most informative error may
 have already rotated out of the current file.
 
-_Note: this location changed recently. Installations that were upgraded
-without re-running the installer may still be writing logger stderr to the
-previous location, ``/var/tmp/openrvdas/{logger}.stderr``. If a logger's
-stderr file appears stale or missing, check there before concluding that
-the logger never started._
+_Note: this location is new in v2.7.0. Earlier versions wrote each logger's
+stderr directly to ``/var/log/openrvdas/{logger}.stderr``. After an upgrade,
+loggers write to the new ``loggers/`` subdirectory straight away (the logger
+manager creates it if necessary), but files written before the upgrade stay
+at the top level. If you're looking for a logger's output from before the
+upgrade, look there._
 
 # Running and Controlling the LoggerManager
 ## Running from the command line
