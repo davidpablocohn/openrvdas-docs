@@ -39,8 +39,8 @@ navdocs:
         url: /guide/running-system/#starting-and-stopping-loggers
       - title: "Watching the Data: Displays"
         url: /guide/running-system/#watching-the-data-displays
-      - title: "Where the Data Ends Up"
-        url: /guide/running-system/#where-the-data-ends-up
+      - title: "Where the Data End Up"
+        url: /guide/running-system/#where-the-data-end-up
       - title: "When Something Goes Red"
         url: /guide/running-system/#when-something-goes-red
 

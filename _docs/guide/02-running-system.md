@@ -26,7 +26,7 @@ Point a browser at the OpenRVDAS machine — `http://openrvdas`, or
 whatever your installation's hostname is. You should see the console's
 cruise management page:
 
-![Initial web console](../../assets/images/nbp_initial.png)
+![Initial web console](../../assets/images/nbp_running.png)
 
 Your installation runs one of OpenRVDAS's two consoles — Django or React
 (see [How It Works]({{ "/guide/introduction/#how-it-works" | relative_url }})).
@@ -78,10 +78,10 @@ keeps it simpler:
   data on the network, but writes nothing to disk.
 * `write` — as `no_write`, and the data is also written to logfiles.
 * `no_write+influx` and `write+influx` — as above, with parsed values
-  also sent to the InfluxDB database, if one is installed.
+  also sent to the InfluxDB database, if one is installed, for testing and display.
 
 To change the mode, select the mode button at the top of the logger
-table. A dialog opens with a dropdown of the modes the cruise definition
+table (the one labeled "off" in the illustration below). A dialog will open with a dropdown of the modes the cruise definition
 offers (and a view of the logger manager's recent stderr, useful when
 something misbehaves):
 
@@ -95,14 +95,14 @@ yellow to green:
 
 To change a **single logger** — say, to turn one noisy instrument off
 without disturbing the rest — select that logger's configuration button.
-The dialog shows a dropdown of the configurations defined for that
+The dialog will show a dropdown of the configurations defined for that
 logger, the logger's recent stderr output, and, at the bottom, the full
 definition of the selected configuration:
 
 ![Selecting a logger configuration](../../assets/images/sample_cruise_select_logger_config.png)
 
 An individually set logger keeps its configuration until the next mode
-change, which puts every logger back in its configuration for the
+change, which puts every logger back into the configuration assigned for the
 chosen mode.
 
 **Loading a cruise definition** is the one remaining control, and on
@@ -112,6 +112,8 @@ a cruise definition file; loading it populates the logger table and
 puts the system in the definition's default mode (`off`, for the sample
 cruise). Everything the console displays — loggers, configurations,
 modes — comes from this file.
+
+If the source file for the cruise definition changes, the console will display a yellow button in the status section declaring "Definition is stale. Reload definition". If a change to the file was expected, select the button; it will read in the updated cruise definition, altering the underlying configurations as appropriate.
 
 # Watching the Data: Displays
 
@@ -144,24 +146,25 @@ isn't sending parsed data; a mode with parsing (for Grafana, an
 [7. Storage, Displays and Distribution]({{ "/guide/storage-displays/" | relative_url }})
 covers building and modifying displays.
 
-# Where the Data Ends Up
+# Where the Data End Up
 
-Three places, with different lifetimes:
+Data go wherever your vessel's cruise definition file tells the loggers to send it, but by convention, there are four places to look for it:
 
 * **Logfiles** are the authoritative raw record. In modes that write to
   file, each logger appends every record it reads — raw, as it came
   from the instrument, plus a timestamp — to a file named for the
   logger with the current date appended (`seap-2026-10-28`), rolling
-  over at midnight UTC. Where those files live is set in the cruise
-  definition; the sample cruise writes under `/var/tmp/log/`, and your
-  vessel will have its own convention.
-* **The database** (InfluxDB, if installed) holds the parsed, named
-  fields — `S330HeadingTrue`, `MwxAirTemp` — as time series, for
-  Grafana and anything else that wants history.
+  over at midnight UTC, by default. Where those files live is set in the cruise
+  definition; the sample cruise writes under `/var/tmp/log/`, but a typical live installation will write somewhere like /var/data/openrvdas. Consult your vessel's documentation to find where you're storing raw data.
+* **As UDP packets**, broadcast on the local network. The standard convention is, after storing raw data to disk, to broadcast timestamped and logger-tagged records via UDP on one or more ports, to be parsed and processed by other loggers. The default UDP port in the sample definition is 6224. 
 * **The cached data server** holds only the latest values of each
   field, in memory, to feed live displays and derived-data loggers. It
   is not storage: its contents are gone on restart, which is fine,
   because the logfiles and the database are the records.
+* **The database** (InfluxDB, if installed) holds the parsed, named
+  fields — `S330HeadingTrue`, `MwxAirTemp` — as time series, for
+  Grafana and anything else that wants history.
+
 
 # When Something Goes Red
 
@@ -175,7 +178,7 @@ response, in order:
    full disk, a typo in a changed configuration.
 2. **Restart it.** In the same dialog, re-select the configuration it
    should be in. If the cause was transient — an instrument that was
-   power-cycled, a network blip — the logger comes back green and
+   power-cycled, a network blip — the logger will come back green and
    you're done.
 3. **Rule out the system-wide case.** If *every* logger is red and the
    status timestamps at the top of the page are stale, the console has
@@ -185,7 +188,7 @@ response, in order:
 4. **Write down what you saw** for the person you escalate to: which
    logger, which configuration, when it went red, the tail of its
    stderr, and anything that changed around that time (a mode change, a
-   definition reload, an instrument being serviced).
+   definition reload, an instrument being serviced). A screenshot or two - taken on your phone, if necessary - may provide vital information to someone trying to debug remotely
 
 A logger's stderr also goes to disk, where it survives console
 restarts: from v2.7.0, at `/var/log/openrvdas/loggers/<logger>.stderr`
