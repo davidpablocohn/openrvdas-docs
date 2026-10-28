@@ -239,10 +239,10 @@ loggers:
       # Every field to read; must repeat all fields listed below
       snapshot_fields: [AirTemp, BaroPressure, WindSpeed, WindDir]
 
-      # Fields to be averaged arithmetically (boxcar average); [] if none
+      # Fields to be averaged arithmetically (boxcar average); omit if none
       average_fields: [AirTemp, BaroPressure, WindSpeed]
 
-      # Fields to be averaged as angles (polar average); [] if none
+      # Fields to be averaged as angles (polar average); omit if none
       direction_fields: [WindDir]
 
       interval: 60      # seconds between outputs
