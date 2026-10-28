@@ -238,16 +238,19 @@ loggers:
     variables:
       # Every field to read; must repeat all fields listed below
       snapshot_fields: [AirTemp, BaroPressure, WindSpeed, WindDir]
-      # Averaged arithmetically (boxcar average)
+
+      # Fields to be averaged arithmetically (boxcar average); [] if none
       average_fields: [AirTemp, BaroPressure, WindSpeed]
-      # Averaged as angles (polar average); [] if none
+
+      # Fields to be averaged as angles (polar average); [] if none
       direction_fields: [WindDir]
+
       interval: 60      # seconds between outputs
       window: 60        # seconds of data in each average
 ```
 
-Every 60 seconds this will write `AvgAirTemp`, `AvgBaroPressure`,
-`AvgWindSpeed` and `AvgWindDir` back to the cached data server: each
+This logger will read `AirTemp`, `BaroPressure`, `WindSpeed` and  `WindDir` from the cached data server, and every 60 seconds will write `AvgAirTemp`, `AvgBaroPressure`,
+`AvgWindSpeed` and `AvgWindDir` back to it. Each
 output keeps its source's name with `Avg` prefixed. The template's
 `on+influx` config also writes the averages to InfluxDB.
 
@@ -302,7 +305,7 @@ results back:
 ![Derived data flow through the cached data server](../../assets/images/cached_data_server.png)
 
 The front-line loggers for the gyro, GPS and anemometer never know
-the true winds logger exists; it never knows which serial ports its
+the true winds logger exists, and the true winds logger never knows which serial ports its
 inputs came from. New values appear to its subscription as they're
 parsed; its outputs are instantly available to the displays, the
 database writers, and any further derived-data logger that wants to
