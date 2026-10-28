@@ -403,8 +403,9 @@ The same field, in each syntax:
 (?P<GravityValue>\d+)       # RegexParseTransform
 ```
 
-Both transforms do the same job on the same records, and both are
-driven by the same two kinds of definition:
+Both transforms do the same job on the same records, and for a real
+installation, both are usually driven by the same two kinds of
+definition:
 
 * A **device type** describes a *class* of instrument — a Seapath
   330, a Bell BGM-3 gravimeter — and the format of every message it
@@ -447,6 +448,34 @@ automatically from device definitions. Where `ParseTransform` has
 Its output is always a `DASRecord` (where `ParseTransform` returns
 plain dicts unless told otherwise) — a difference you'll only notice
 if a downstream component cares.
+
+**Where the formats live** is a choice of its own, and either parser
+offers both options:
+
+* **Inline, as `field_patterns`** on the transform itself. Simplest
+  for a one-off — a quick test, or a single odd instrument whose
+  records all look alike:
+
+  ```
+  - class: ParseTransform
+    kwargs:
+      field_patterns:
+        - '{:d}:{GravityValue:d} {GravityError:d}'
+  ```
+
+  `field_patterns` takes a list of formats tried in order, or a dict
+  keyed by message type for instruments that emit several kinds of
+  message. What it can't do is rename fields per device or attach
+  metadata — every record that matches gets exactly the field names
+  in the pattern.
+
+* **In device and device type definition files**, named by
+  `definition_path` — the preferred approach for an installation
+  with more than a couple of instruments. Formats are centralized
+  and shared (two gravimeters, one device type), each device renames
+  the generic field names to its own (`GravityValue` →
+  `Grv1GravityValue`), and per-field units and descriptions ride
+  along as metadata. The rest of this section describes these files.
 
 A device type lists one format, or several — as a list tried in
 order, or better, as a dict keyed by message type, which both
