@@ -7,10 +7,13 @@ toc_label: "In this section"
 toc_icon: "list"
 toc_sticky: true
 ---
-Where the data goes once a logger has it: the cached data server that
-feeds everything live, the external databases that keep history, the displays
-people actually look at, mirroring it all ashore, and spreading the
-load across machines when one stops being enough.
+This section discusses where the data goes once a logger has it, including:
+* the cached data server that
+feeds everything live
+* any external databases that keep history
+* the displays people actually look at
+* mirroring it all ashore, and
+* spreading the load across machines when one stops being enough.
 
 # The Cached Data Server
 
@@ -77,7 +80,7 @@ The writers available:
 * **`InfluxDBWriter`**, for InfluxDB, a time-series database. This is
   the most common choice, and the one the rest of this section uses as
   its example.
-* **`DatabaseWriter`**, with connectors for MySQL (and MariaDB),
+* **`DatabaseWriter`**, a generic writer with connectors for MySQL, MariaDB,
   PostgreSQL and MongoDB. Each connector has a setup script under
   `database/`.
 * **`RedisWriter`**, for publishing to Redis.
@@ -199,28 +202,55 @@ non-restricted data only.)
 # Distribution and Load Balancing
 
 One machine runs most installations comfortably. The reason to use
-two isn't usually capacity — it's blast radius. Acquisition is the
-part whose failure loses data forever; parsing, databases and
-dashboards can crash and catch up. So the classic split puts the
-boring, load-bearing work on one box and everything interesting on
-another:
+more than one isn't usually capacity — it's isolation. Logging is the
+part whose failure loses data forever; databases and displays can
+crash and catch up. So the aim of splitting an installation across
+machines is to keep everything else from interfering with the
+loggers.
+
+**Two machines: isolate the database and displays.** The first and
+most valuable split moves the database and displays off the machine
+doing the logging:
 
 ![Two-machine partition](../../assets/images/two_machine_partition.png)
 
-The acquisition machine runs the front-line loggers — read,
-timestamp, write raw to disk, broadcast — and nothing else. A second
-machine reads the broadcast, and runs the parser, the derived-data
-loggers, the database and Grafana. Science browsing dashboards, a
-runaway query, a Grafana upgrade: none of it can touch the box that's
-holding the serial ports.
+The logging machine runs all of OpenRVDAS: the front-line loggers
+(read, timestamp, write raw to disk, broadcast) and the loggers that
+parse and compute derived values. The second machine runs the
+database and Grafana. The parsing loggers reach it simply by pointing
+their database writer at the second machine's address instead of
+`localhost`.
 
-The relay between them is nothing new — the same mechanisms the
-loggers already use, reaching across machines instead of across
-processes:
+This guards against the two most common ways a busy installation
+hurts its own logging. A database that grows until it fills its disk
+fills the database machine's disk, not the one the raw logfiles are
+being written to. And a heavy display load — a room full of
+scientists browsing dashboards, a runaway query, a Grafana upgrade
+gone wrong — competes for the second machine's CPU and memory, not
+the loggers'.
+
+**Three machines: isolate the front-line loggers too.** For truly
+robust operation, also separate the front-line loggers from
+everything downstream of them — parsing, derived data and the rest:
+
+![Three-machine partition](../../assets/images/three_machine_partition.png)
+
+The first machine now does nothing but read the instruments, write
+the raw records to disk and broadcast them. A second runs the
+parsing and derived-data loggers, and a third the database and
+displays. A malformed record that crashes the parser, a
+derived-data logger that spins out of control, or a configuration
+change to the computations then can't touch the machine holding the
+serial ports. That machine is so simple that there's little left to
+go wrong with it.
+
+The relay from the front-line machine to the parsing machine uses
+the same mechanisms the loggers already use, reaching across
+machines instead of across processes:
 
 * **UDP broadcast** is the lightweight default: the front-line
   loggers' `UDPWriter`s already broadcast to the subnet, and the
-  second machine's `parse_data` logger just runs its `UDPReader`
+  parsing machine's `parse_data` logger just runs its `UDPReader`
   there instead. If a firewall sits between them, the data ports
   (6221–6226 by convention) must be open, per
   [section 3]({{ "/guide/installation/#standard-installation" | relative_url }}).
@@ -229,13 +259,7 @@ processes:
   `data_server` at `host:port` rather than `localhost`, and
   `CachedDataWriter` buffers through interruptions.
 
-Under heavier load the same logic extends to three boxes — front-line
-acquisition, parse-and-compute, and database/display — each failure
-domain one step further from the instruments:
-
-![Three-machine partition](../../assets/images/three_machine_partition.png)
-
-Where the pieces land is pure configuration: the cruise definition's
+In either arrangement, where the pieces land is pure configuration: the cruise definition's
 variables name the UDP destination, data server and database URL, so
 moving a tier to another machine is a variables change, not a
 redesign. The shoreside replica above is the same idea stretched over
