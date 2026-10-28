@@ -146,9 +146,9 @@ isn't sending parsed data; a mode with parsing (for Grafana, an
 [7. Storage, Displays and Distribution]({{ "/guide/storage-displays/" | relative_url }})
 covers building and modifying displays.
 
-# Where the Data End Up
+# Where the Data Ends Up
 
-Data go wherever your vessel's cruise definition file tells the loggers to send it, but by convention, there are four places to look for it:
+Data goes wherever your vessel's cruise definition file tells the loggers to send it, but by convention, there are four places to look for it:
 
 * **Logfiles** are the authoritative raw record. In modes that write to
   file, each logger appends every record it reads — raw, as it came

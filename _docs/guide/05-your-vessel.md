@@ -7,65 +7,609 @@ toc_label: "In this section"
 toc_icon: "list"
 toc_sticky: true
 ---
-This section turns a fresh installation into *your ship's* system, in the
-order you'd actually do the work: set up your institution's repository,
-write a cruise definition, build and test loggers for your instruments,
-and teach the system to parse what they say. It ends with a worked
-example that does all of it for one new sensor.
+This section turns a fresh installation into *your ship's* system, in
+the order you'd actually do the work: set up your institution's
+repository, write a cruise definition, build and test loggers for your
+instruments, and teach the system to parse what they say. It ends with
+a worked example that does all of it for one new sensor.
+
+Two habits make everything in this section easier. First, keep the NBP
+sample cruise (section
+[4]({{ "/guide/nbp-tutorial/" | relative_url }})) open beside you — it
+is a working model of every pattern described here. Second, gather a
+file of timestamped sample data for each of your instruments as you go:
+with `simulate_data` replaying it, you can build and debug every
+configuration at your desk, with no instrument attached and no watch
+disturbed.
+
+Throughout, we'll use a fictional institution, the University of Upper
+Windsock (`uuw`), and its vessel the M/V Plunger (`mvp`).
 
 # Your Institution's Repository and local/
 
-*Not yet rewritten. In the meantime, see
-[Your Institution's Code and Configuration]({{ "/local_code/" | relative_url }}).*
+Every ship running OpenRVDAS accumulates files of its own: cruise
+definitions, device definitions for its instruments, calibration
+files, perhaps a transform or two written for an unusual sensor.
+Those files belong in a git repository of your own, checked out
+alongside OpenRVDAS and symlinked into OpenRVDAS's `local/` directory:
 
-Keeping your vessel's definitions, device types and custom code in your
-own repository, linked into `local/` — so OpenRVDAS upgrades never touch
-your configuration and your configuration is under your version control.
+```
+cd /opt
+git clone https://github.com/uuw/openrvdas_uuw.git
+ln -s /opt/openrvdas_uuw /opt/openrvdas/local/uuw
+```
+
+Everything in your repository can now be referred to from within the
+OpenRVDAS directory as `local/uuw/...`, as though it were part of
+OpenRVDAS — while remaining entirely separate from it. Why this
+arrangement:
+
+* **Your history is your own.** Cruise definitions and calibrations
+  are committed, reviewed and tagged in your repository, on your
+  schedule.
+* **Upgrading OpenRVDAS doesn't touch your files.** The link isn't
+  part of the OpenRVDAS repository, so a new release leaves it, and
+  everything behind it, alone.
+* **One repository can serve a fleet**: shared device definitions and
+  templates at the top, a directory per vessel below.
+* **Your configuration can be recorded exactly.** A
+  [config snapshot]({{ "/guide/operations/#snapshots-and-the-state-journal" | relative_url }})
+  records the commit of every repository its files came from — your
+  configuration's version, separately from OpenRVDAS's.
+
+Three details that save grief:
+
+* **Make sure `local/uuw` doesn't already exist** before running
+  `ln -s` — if it's already a directory, the link lands *inside* it
+  and nothing will find your files. Check with
+  `ls -l /opt/openrvdas/local/uuw`.
+* **The OpenRVDAS user must be able to read the checkout**, since the
+  logger manager and loggers run as that user.
+* **Keep `git status` clean** in the OpenRVDAS checkout by excluding
+  the link: `echo local/uuw >> /opt/openrvdas/.git/info/exclude`.
+
+A layout that works well:
+
+```
+/opt/openrvdas_uuw/                  linked as /opt/openrvdas/local/uuw
+  devices/                           device definitions shared across vessels
+  logger_templates/                  logger templates of your own
+  modules/                           readers, transforms and writers of your own
+  mvp/                               the M/V Plunger
+    devices/                         devices specific to this vessel
+    calibrations-2026-10-01.yaml     calibration coefficients, dated
+    calibrations.yaml -> calibrations-2026-10-01.yaml
+    MVP2610_cruise.yaml              a cruise definition
+  lmg/                               another vessel
+```
+
+Refer to these files in cruise definitions through the link — as
+`local/uuw/...`, never as `/opt/openrvdas_uuw/...` — so the
+definitions stay independent of where the repository is checked out.
+And keep secrets (an InfluxDB token, a Sealog JWT) out of the
+repository: put them in a git-ignored file and pull it in with an
+`includes:` entry like any other file.
+
+At the end of a cruise, tag the repository
+(`git tag MVP2610-end && git push --tags`) so the configuration can be
+checked out later exactly as it ran.
 
 # Writing a Cruise Definition
 
-*Not yet rewritten. In the meantime, see
-[Cruise Definition Files]({{ "/cruise_definition_files/" | relative_url }})
-and [Logger Configuration Files]({{ "/logger_configuration_files/" | relative_url }}),
-with [A Short Introduction to YAML]({{ "/yaml/" | relative_url }}) if YAML
-is new to you.*
+A cruise definition is one YAML file that declares everything the
+vessel runs. Its top-level keys:
 
-The `loggers`, `configs` and `modes` sections; config templates; includes;
-and validating the result with `validate_config`.
+* `loggers` — the loggers that exist, and the configurations each one
+  can run;
+* `configs` — the definitions of those configurations (unless defined
+  inline or by template, below);
+* `modes` — which configuration each logger should run in each cruise
+  mode, with `default_mode` naming the mode the system starts in;
+* `cruise` — metadata: the cruise id (displayed at the top of the
+  console), start and end dates;
+* and optionally `includes`, `variables` and `logger_templates`, which
+  are what keep the file maintainable.
+
+(If YAML itself is new to you, the
+[YAML primer]({{ "/guide/reference/#yaml-syntax" | relative_url }})
+covers everything these files use — including the classic trap that
+`off` is a YAML keyword, so the mode name must be quoted: `'off'`.)
+
+Written out longhand, the structure looks like this:
+
+```
+loggers:
+  gyr1:
+    configs: [gyr1-off, gyr1-net, gyr1-net+file]
+  knud:
+    configs: [knud-off, knud-net, knud-net+file]
+
+configs:
+  gyr1-off: {}          # an empty config means "not running"
+  gyr1-net:
+    readers:
+      ...               # full reader/transform/writer definitions,
+  gyr1-net+file:        # as described in the next subsection
+    ...
+
+modes:
+  'off':      [gyr1-off, knud-off]
+  port:       [gyr1-net, knud-off]
+  underway:   [gyr1-net+file, knud-net+file]
+
+default_mode: 'off'
+```
+
+This longhand form works, and every other form reduces to it — but for
+a real vessel it is unmanageably verbose: the full-form NBP sample
+definition runs over 1,500 lines, nearly all of it near-duplicate
+logger configurations. Three features, used together, bring that down
+to a couple of hundred:
+
+**Variables.** Define values once under a top-level `variables` key
+and reference them anywhere as `<<variable_name>>`:
+
+```
+variables:
+  cruise: MVP2610
+  raw_udp_port: 6224
+  file_root: /var/data/openrvdas
+  parse_definition_path: logger/devices/NMEA_0183.yaml,local/uuw/devices/*.yaml
+```
+
+A reference may carry a default, used when the variable isn't
+defined: `<<baud_rate|9600>>`. (Pick `file_root` deliberately — the
+sample cruise's `/var/tmp/log` is self-cleaning scratch space, fine
+for the demo and wrong for a ship.)
+
+**Logger templates.** Most loggers on a vessel are the same logger
+with different parameters. A template defines the set of
+configurations once, with variables where loggers differ:
+
+```
+logger_templates:
+  serial_logger_template:
+    configs:
+      'off': {}
+      net:
+        readers:
+        - class: SerialReader
+          kwargs:
+            baudrate: <<baud_rate>>
+            port: <<serial_port>>
+        transforms:
+        - class: TimestampTransform
+        - class: PrefixTransform
+          kwargs:
+            prefix: <<logger>>
+        writers:
+        - class: UDPWriter
+          kwargs:
+            port: <<raw_udp_port>>
+      net+file:
+        ...
+```
+
+and each logger then becomes three lines:
+
+```
+loggers:
+  gyr1:
+    logger_template: serial_logger_template
+    variables:
+      serial_port: /dev/ttyr15
+      baud_rate: 4800
+```
+
+When the definition is loaded, each logger's template expands into
+full configurations named `gyr1-off`, `gyr1-net`, `gyr1-net+file`,
+exactly as if written longhand. `<<logger>>` expands to the logger's
+own name.
+
+**Includes.** Templates and shared fragments live in their own files
+— OpenRVDAS ships standard ones under `contrib/logger_templates/`,
+and yours go in your repository — pulled in by an `includes` list,
+wildcards allowed:
+
+```
+includes:
+  - contrib/logger_templates/serial_logger_template.yaml
+  - contrib/logger_templates/parse_data_logger_template.yaml
+  - local/uuw/logger_templates/*.yaml
+  - local/uuw/mvp/calibrations.yaml
+```
+
+Before loading any definition, run it through the validator:
+
+```
+validate_config local/uuw/mvp/MVP2610_cruise.yaml
+```
+
+It checks, among other things, that every config a logger declares is
+defined, that every mode covers every logger, and that no mode names
+an unknown config — the errors that otherwise surface as a cryptic
+failure at load time. (One warning to expect:
+`Unknown transform class` for components of your own, which the
+validator can't know about.) A pre-commit hook in the OpenRVDAS
+repository (`scripts/validate_yaml_precommit.sh`) will run it on
+every YAML file you commit, which is worth wiring into your
+institution's repository.
 
 # Creating and Testing Loggers
 
-*Not yet rewritten. In the meantime, see
-[Introduction to Loggers]({{ "/intro_to_loggers/" | relative_url }}) and
-[The Listener Script]({{ "/listen_py/" | relative_url }}).*
+A logger configuration is the `readers` / `transforms` / `writers`
+heart of the matter: each key takes a list of components, every
+component a `class` and its `kwargs`. The configuration is a literal
+description of the Python objects to build:
 
-Building a logger configuration a stage at a time with `listen`, testing
-it against simulated data, then dropping it into the cruise definition.
+```
+readers:                    # all readers run in parallel
+- class: SerialReader
+  kwargs:
+    port: /dev/ttyr15
+    baudrate: 9600
+transforms:                 # transforms apply in series, in order
+- class: TimestampTransform # no kwargs needed
+- class: PrefixTransform
+  kwargs:
+    prefix: gyr1
+writers:                    # all writers run in parallel
+- class: LogfileWriter
+  kwargs:
+    filebase: /var/data/openrvdas/gyr1/raw/MVP2610_gyr1
+- class: UDPWriter
+  kwargs:
+    port: 6224
+```
+
+![Generic listener dataflow](../../assets/images/generic_listener.png)
+
+Readers run in parallel and their output merges; transforms run in
+series; the last transform's output goes to every writer in parallel.
+Arguments with defaults may be omitted. Two refinements worth knowing:
+
+* `stderr_writers:` — an optional key, same format as `writers`,
+  saying where the logger's own diagnostic messages should go.
+* `mirror_to:` — any reader or transform can carry a `mirror_to` key
+  naming a writer that receives a copy of every record the component
+  produces. This is how the standard serial template stores the
+  timestamped raw record *before* prefixing: a tap on the
+  `TimestampTransform`, delivered asynchronously so a slow disk never
+  blocks the data flow.
+
+**Build it a stage at a time.** The working method, learned in the
+[tutorial]({{ "/guide/nbp-tutorial/#exploring-with-listen" | relative_url }}),
+is to grow the pipeline under `listen`, checking the output at each
+step — reader alone, then with the timestamp, then the prefix, then
+swap `--write_file -` for the real writers:
+
+```
+listen --serial port=/tmp/tty_gyr1 --write_file -
+listen --serial port=/tmp/tty_gyr1 --transform_timestamp --write_file -
+listen --serial port=/tmp/tty_gyr1 --transform_timestamp \
+       --transform_prefix gyr1 --write_udp 6224 --write_file -
+```
+
+One `listen` gotcha will bite you exactly once: **flags are processed
+in command-line order.** Transforms apply in the order given, and any
+flag that modifies a component must come *before* that component's
+flag — `--parse_definition_path` before `--transform_parse`,
+`--slice_separator` before `--transform_slice`. Add `-v` for info
+logging, `-v -v` for debug.
+
+Once a stage works, move it into YAML, and run the YAML the same way:
+
+```
+listen --config_file gyr1_test.yaml
+listen --config_file local/uuw/mvp/MVP2610_cruise.yaml:gyr1-net
+```
+
+The second form runs a single configuration straight out of the
+cruise definition — the exact thing the logger manager will run.
+Against `simulate_data` replaying recorded data, this closes the
+loop: definition, logger and parsing all tested before an instrument
+is ever touched.
+
+**Keep front-line loggers dumb.** The pattern the sample cruise
+models is worth adopting as policy: the logger attached to the
+instrument timestamps the record, stores it raw, forwards it by UDP —
+and does nothing else. Parsing and computation happen in second-line
+loggers (one `parse_data` logger handling every instrument's output
+is usually sufficient). The logger closest to the data is the one
+whose failure loses data; keep it too simple to fail, and let the
+complicated things crash harmlessly downstream.
+
+**When no stock component fits**, write your own. A reader is any
+Python class with a `read()` method that returns a record; a
+transform, anything with `transform(record)`; a writer, anything with
+`write(record)`. Put the file in your repository's `modules/`
+directory and name it in the configuration with a `module` key —
+the Python path follows the directory path, no `__init__.py` needed:
+
+```
+transforms:
+- class: ScaleTransform
+  module: local.uuw.modules.scale_transform
+  kwargs:
+    factor: 3
+```
 
 # Readers for Your Hardware
 
-*Not yet rewritten. In the meantime, see
-[Reading from Serial Ports]({{ "/serial_readers/" | relative_url }}) and
-[Reading from Modbus Devices]({{ "/modbus_readers/" | relative_url }}).*
+The components most shaped by your particular vessel are the readers.
+The common cases:
 
-Serial ports (and their permissions), UDP and TCP sources, MQTT and
-modbus — and writing a custom Reader when nothing on the shelf speaks
-your instrument's protocol.
+* **Serial instruments** — `SerialReader(port=..., baudrate=...)`,
+  the workhorse seen throughout this Guide; additional parameters
+  (parity, stop bits, timeouts) cover the awkward cases. Make sure
+  the OpenRVDAS user can open the device — on most Linux systems
+  that means membership in the group that owns it (e.g. `dialout`).
+  A missing permission is the classic cause of a logger that's red
+  from the moment it starts.
+* **Instruments that must be asked** — `PolledSerialReader` extends
+  `SerialReader` with command sequences to send before, during and
+  after reading: issue a query, read the response, repeat; a
+  `__PAUSE__` directive provides delays, and start/stop commands
+  handle instruments that need waking up and putting to bed.
+* **Network instruments** — `UDPReader(port=...)` and
+  `TCPReader(...)` for sensors that broadcast or serve their data;
+  `MQTTReader` for brokers.
+* **Industrial equipment** — `ModBusTCPReader` and
+  `ModBusSerialReader` poll Modbus registers and coils by number,
+  for flowmeters, winches, PLCs and the like that speak Modbus
+  rather than lines of text.
+* **Everything else** — a custom reader, as above: any class with a
+  `read()` method. If the instrument speaks an odd dialect over a
+  supported transport, it's often simpler to keep `SerialReader` and
+  write a custom *transform* to make sense of what it says.
+
+Component parameters are documented exhaustively in the
+[component catalog]({{ "/guide/reference/#component-catalog" | relative_url }})
+and the [API reference]({{ "/guide/reference/#api-reference" | relative_url }});
+the legacy pages on
+[serial readers]({{ "/serial_readers/" | relative_url }}) and
+[Modbus readers]({{ "/modbus_readers/" | relative_url }}) hold worked
+examples of the exotic options.
 
 # Parsing and Device Types
 
-*Not yet rewritten. In the meantime, see
-[Record Parsing]({{ "/parsing/" | relative_url }}) and the
-[NMEA Device Type Library]({{ "/nmea_device_types/" | relative_url }}).*
+Storing raw records faithfully is half the job; the other half is
+parsing them into named values that can be displayed, compared and
+computed with. In OpenRVDAS, parsing is the `ParseTransform`'s job,
+and it is driven by two kinds of definition:
 
-How parsed fields get their names: device and device type definitions,
-the bundled NMEA library, writing definitions for your own instruments,
-and checking them with `check_parse_format`.
+* A **device type** describes a *class* of instrument — a Seapath
+  330, a Bell BGM-3 gravimeter — and the format of every message it
+  can emit.
+* A **device** is one physical instance on your ship. It names its
+  device type and maps the type's generic field names to names
+  specific to this installation — `HeadingTrue` becomes
+  `Gyr1HeadingTrue` — so two instruments of the same type coexist
+  without colliding. Fields you don't map are quietly dropped, which
+  is also how you keep uninteresting fields out of your system.
+
+The parser receives records in the envelope the front-line loggers
+built — `data_id timestamp message` — and uses the `data_id` prefix
+to find the right device, hence the right formats:
+
+```
+s330 2014-08-01T00:00:00.522000Z $INHDT,218.26,T*1A
+            ↓
+{'data_id': 's330', 'timestamp': 1406851200.522,
+ 'fields': {'S330HeadingTrue': 218.26}}
+```
+
+**Formats** are written in the
+[PyPI `parse` module](https://pypi.org/project/parse/)'s syntax:
+literal text with `{FieldName:type}` placeholders, where the types
+are `d` (integer), `f` (float), `g` (general number), `w` (word),
+`x` (hex), `ti` (ISO8601 time) and friends. OpenRVDAS adds types the
+standard set lacks, most importantly the *optional* variants `od`,
+`of`, `og`, `ow` — real instruments routinely emit records with
+empty fields, and `{SpeedKt:of}` matches an empty slot where
+`{SpeedKt:f}` would reject the whole record. There are also `nlat`
+and `nlat_dir`, which parse NMEA's degrees-decimal-minutes latitude
+and longitude straight into signed decimal degrees.
+
+A device type lists one format, or several — as a list tried in
+order, or better, as a dict keyed by message type, which both
+documents the formats and stamps each parsed record with its
+`message_type`:
+
+```
+device_types:
+  Seapath330:
+    format:
+      HDT: "$INHDT,{HeadingTrue:f},T*{CheckSum:x}"
+      VTG: "$INVTG,{CourseTrue:of},T,{CourseMag:of},M,{SpeedKt:of},N,{SpeedKm:of},K,{Mode:w}*{CheckSum:x}"
+    fields:
+      HeadingTrue:
+        units: "degrees"
+        description: "True heading"
+```
+
+The per-field `units` and `description` metadata is optional but
+pays for itself: the parser attaches it to the data stream at
+intervals (the `metadata_interval` argument), where displays and the
+database pick it up.
+
+**You rarely start from nothing.** OpenRVDAS ships a library of NMEA
+0183 device types in `logger/devices/NMEA_0183.yaml` — thirteen
+types covering GPS and GPS/INS units, gyros and MRUs, depth
+sounders, speed logs, anemometers, weather sensors, autopilots, AIS,
+radar and more, 108 message formats in all. For a standard marine
+instrument, your work reduces to writing the *device* entry:
+
+```
+devices:
+  seap:
+    device_type: "NMEA_GPS_INS"
+    fields:
+      HeadingTrue: "SeapHeadingTrue"
+      Latitude: "SeapLatitude"
+      SpeedKt: "SeapSpeedKt"
+```
+
+Definitions live in YAML files — a `devices:` key, a
+`device_types:` key, and optionally `includes:` to pull in other
+definition files, such as the NMEA library or your fleet-wide
+definitions. Tell the parser where to look with `definition_path`;
+note that giving a path *replaces* the default, so name everything
+you need:
+
+```
+- class: ParseTransform
+  kwargs:
+    definition_path: logger/devices/NMEA_0183.yaml,local/uuw/devices/*.yaml,local/uuw/mvp/devices/*.yaml
+    metadata_interval: 10
+```
+
+Two tools keep format-writing honest: `validate_config` checks
+definition files' structure, and `check_parse_format` tries a format
+against a sample record on the spot:
+
+```
+check_parse_format \
+    --format '$INHDT,{HeadingTrue:f},T*{CheckSum:x}' \
+    --string '$INHDT,218.26,T*1A'
+```
+
+For formats too irregular for the `parse` syntax, the
+`RegexParseTransform` is a drop-in alternative that uses Python
+regular expressions (`(?P<FieldName>pattern)`) in otherwise
+identical device definitions. And when records carry trustworthy
+embedded NMEA timestamps, `TimestampTransform` can be told
+`use_nmea_timestamp: true` to prefer them over the system clock. The
+full treatment of both, and of the parser's output formats, is on the
+legacy [Record Parsing]({{ "/parsing/" | relative_url }}) page,
+destined for the
+[reference section]({{ "/guide/reference/" | relative_url }}).
 
 # Worked Example: Adding a Sensor
 
-*Not yet rewritten. In the meantime, see
-[Adding a Sensor]({{ "/adding_a_sensor/" | relative_url }}).*
+The M/V Plunger has gained a winch monitor, `wnc1`, on serial port
+`/dev/ttyUSB3` at 19200 baud, emitting records like:
 
-A new instrument, end to end: reader, device type, logger configurations,
-cruise definition entries, and a display — using everything above.
+```
+$FKWNC,2026-10-26T08:50:20.915150,MASH10,-3.0,0,-5.4
+```
+
+(timestamp, winch ID, wire tension, payout rate, payout). Here is the
+whole job, using everything above.
+
+**1. Capture sample data.** Before configuring anything, record some
+timestamped reality:
+
+```
+listen --serial port=/dev/ttyUSB3,baudrate=19200 \
+       --transform_timestamp \
+       --write_file local/uuw/mvp/test_data/wnc1_samples
+```
+
+A few minutes' worth, committed to the repository, is the test data
+for this instrument forever after. From now on the real instrument
+isn't needed:
+
+```
+simulate_data --serial /tmp/tty_wnc1 --baudrate 19200 \
+              --filebase local/uuw/mvp/test_data/wnc1_samples
+```
+
+**2. Write the device type.** No NMEA library entry covers this one,
+so in `local/uuw/devices/winch.yaml`:
+
+```
+device_types:
+  Winch_FKW:
+    description: "FKW deck winch monitor"
+    format:
+      FKWNC: "$FKWNC,{Timestamp:ti},{WinchID:w},{Tension:g},{Rate:g},{Payout:g}"
+    fields:
+      Tension:
+        units: "kgf"
+        description: "Wire tension"
+      Rate:
+        units: "m/min"
+        description: "Payout speed"
+      Payout:
+        units: "m"
+        description: "Wire payout"
+```
+
+Check the format against a real record before going further:
+
+```
+check_parse_format \
+    --format '$FKWNC,{Timestamp:ti},{WinchID:w},{Tension:g},{Rate:g},{Payout:g}' \
+    --string '$FKWNC,2026-10-26T08:50:20.915150,MASH10,-3.0,0,-5.4'
+```
+
+**3. Write the device.** In the same file (or the vessel's own
+`local/uuw/mvp/devices/`):
+
+```
+devices:
+  wnc1:
+    device_type: "Winch_FKW"
+    serial_number: "FKW-2214"
+    description: "Aft A-frame winch, /dev/ttyUSB3"
+    fields:
+      Tension: "Wnc1Tension"
+      Rate: "Wnc1Rate"
+      Payout: "Wnc1Payout"
+```
+
+Run `validate_config local/uuw/devices/winch.yaml` to catch
+structural slips.
+
+**4. Prove the pipeline end to end** against the simulated port:
+
+```
+listen --serial port=/tmp/tty_wnc1,baudrate=19200 \
+       --transform_timestamp \
+       --transform_prefix wnc1 \
+       --parse_definition_path "local/uuw/devices/*.yaml" \
+       --transform_parse \
+       --write_file -
+```
+
+Parsed records with `Wnc1Tension`, `Wnc1Rate` and `Wnc1Payout`
+scrolling by means the device definitions are right.
+
+**5. Add the logger to the cruise definition.** With the standard
+serial template already included, the logger is three lines, plus its
+configs in each mode:
+
+```
+loggers:
+  wnc1:
+    logger_template: serial_logger_template
+    variables:
+      serial_port: /dev/ttyUSB3
+      baud_rate: 19200
+
+modes:
+  'off':     [..., wnc1-off]
+  port:      [..., wnc1-off]
+  underway:  [..., wnc1-net+file]
+```
+
+Make sure the cruise definition's `parse_definition_path` variable
+includes `local/uuw/devices/*.yaml`, so the `parse_data` logger can
+see the new definitions. Then:
+
+```
+validate_config local/uuw/mvp/MVP2610_cruise.yaml
+```
+
+which will catch, among other things, any mode you forgot to add
+`wnc1` to.
+
+**6. Load and watch.** Commit, then reload the definition in the
+console — if it's already loaded, the console will have noticed the
+file change and be offering its
+["Definition is stale. Reload definition"]({{ "/guide/running-system/#starting-and-stopping-loggers" | relative_url }})
+button. Set the mode; `wnc1` goes yellow, then green; its raw file
+grows under `file_root`; and `Wnc1Tension` is now a field the
+displays, the database and the derived-data machinery of section
+[6]({{ "/guide/computed-values/" | relative_url }}) all know about.
