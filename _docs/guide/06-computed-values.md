@@ -243,12 +243,29 @@ loggers:
       window: 60
 ```
 
-Every 60 seconds this writes `AvgAirTemp`, `AvgBaroPressure`,
-`AvgWindSpeed` and `AvgWindDir` back to the cached data server.
-`WindDir` is averaged *as an angle* — readings of 359° and 1° average
-to 0°, not 180° — which is what `direction_fields` (the
-`polar_average` algorithm) is for. The template's `on+influx` config
-also writes the averages to InfluxDB.
+Every 60 seconds this will write `AvgAirTemp`, `AvgBaroPressure`,
+`AvgWindSpeed` and `AvgWindDir` back to the cached data server. The
+three field lists play different roles in the logger the template
+builds:
+
+* **`snapshot_fields`** is the *subscription*: the full list of
+  fields the logger's `CachedDataReader` asks the cached data server
+  for. It must contain every field named in the other two lists —
+  the template machinery can't join two lists itself, so you repeat
+  them here. A field listed only in `snapshot_fields` is read but
+  produces no output.
+* **`average_fields`** names the fields averaged arithmetically (the
+  `boxcar_average` algorithm): temperatures, pressures, speeds —
+  anything where the mean of the readings is the number you want.
+* **`direction_fields`** names the fields averaged *as angles* (the
+  `polar_average` algorithm). Compass directions can't be averaged
+  arithmetically — readings of 359° and 1° would average to 180°,
+  the opposite of the truth; the polar average gives 0°. Wind and
+  current directions and headings belong here. Use
+  `direction_fields: []` if there are none.
+
+Each output field keeps its source's name with `Avg` prefixed. The
+template's `on+influx` config also writes the averages to InfluxDB.
 
 Three properties of the output are worth having straight before you
 wire a display to it:
