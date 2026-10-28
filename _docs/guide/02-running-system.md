@@ -146,6 +146,51 @@ isn't sending parsed data; a mode with parsing (for Grafana, an
 [7. Storage, Displays and Distribution]({{ "/guide/storage-displays/" | relative_url }})
 covers building and modifying displays.
 
+# Sidebar: Advanced Data Snooping
+
+If you also have terminal access on the OpenRVDAS machine — as the
+OpenRVDAS user, with the
+[virtual environment activated]({{ "/guide/installation/#the-python-virtual-environment" | relative_url }})
+— you can watch the data without any display at all:
+
+* **Watch a logfile grow.** In modes that write to file, each logger
+  appends to its current logfile, so `tail -f` will show records as
+  they arrive:
+
+  ```
+  tail -f /var/tmp/log/gyr1/raw/NBP1406_gyr1-$(date -u +%Y-%m-%d)
+  ```
+
+  (That's the sample cruise's path; your vessel's cruise definition
+  decides where logfiles live.)
+
+* **Listen to the UDP broadcast.** Every front-line logger broadcasts
+  its records on UDP — port 6224 by convention — and `listen` will
+  show you that stream, every instrument interleaved:
+
+  ```
+  listen --udp 6224 --write_file -
+  ```
+
+  One catch: only one process can be bound to the port at a time, and
+  in any active mode the `parse_data` logger already is. Set
+  `parse_data` to `off` in the console first. While it's off, raw
+  logging continues untouched, but the displays and database stop
+  updating — remember to set it back when you're done.
+
+* **Subscribe to parsed values by name.** The least disruptive of the
+  three: ask the cached data server for just the fields you care
+  about:
+
+  ```
+  listen --cached_data Gyr1HeadingTrue,MwxPortRelWindSpeed --write_file -
+  ```
+
+  Nothing needs stopping — the cached data server is built for many
+  subscribers — and each new value prints as it arrives. Use the
+  parsed field names, the same ones the displays use; `fields@host:port`
+  reaches a server on another machine.
+
 # Where the Data Ends Up
 
 Data goes wherever your vessel's cruise definition file tells the loggers to send it, but by convention, there are four places to look for it:

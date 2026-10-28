@@ -171,7 +171,13 @@ one-line `listen` command or less:
 
 * the serial port: `listen --serial port=/tmp/tty_gyr1`
 * the UDP broadcast — every instrument's records interleaved:
-  `listen --udp 6224 --write_file -`
+  `listen --udp 6224 --write_file -`. Only one process can bind the
+  port, and in any active mode the `parse_data` logger already has
+  it, so set `parse_data` to `off` in the console first (and back
+  afterwards)
+* the parsed values, by name, from the cached data server — nothing
+  needs stopping, since the server is built for many subscribers:
+  `listen --cached_data Gyr1HeadingTrue --write_file -`
 * the file on disk: `tail -f /var/tmp/log/gyr1/raw/NBP1406_gyr1-<date>`
 * the parsed values, as a display: with the system in a parsing mode,
   open `http://openrvdas/display/nbp_dashboard.html` and watch the
