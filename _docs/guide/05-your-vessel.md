@@ -383,8 +383,28 @@ examples of the exotic options.
 
 Storing raw records faithfully is half the job; the other half is
 parsing them into named values that can be displayed, compared and
-computed with. In OpenRVDAS, parsing is the `ParseTransform`'s job,
-and it is driven by two kinds of definition:
+computed with. OpenRVDAS provides two transforms for the purpose:
+
+* **`ParseTransform`** — the original and default parser. Its formats
+  are written in the
+  [PyPI `parse` module](https://pypi.org/project/parse/)'s syntax:
+  literal text with `{FieldName:type}` placeholders, readable enough
+  that a format doubles as documentation of the message.
+* **`RegexParseTransform`** — a newer alternative that uses Python
+  regular expressions, with named capture groups
+  (`(?P<FieldName>pattern)`) in place of the placeholders. It trades
+  some readability for the full power of the regex engine, for
+  messages too irregular or ambiguous for the `parse` syntax.
+
+The same field, in each syntax:
+
+```
+{GravityValue:d}            # ParseTransform
+(?P<GravityValue>\d+)       # RegexParseTransform
+```
+
+Both transforms do the same job on the same records, and both are
+driven by the same two kinds of definition:
 
 * A **device type** describes a *class* of instrument — a Seapath
   330, a Bell BGM-3 gravimeter — and the format of every message it
@@ -407,17 +427,26 @@ s330 2014-08-01T00:00:00.522000Z $INHDT,218.26,T*1A
  'fields': {'S330HeadingTrue': 218.26}}
 ```
 
-**Formats** are written in the
-[PyPI `parse` module](https://pypi.org/project/parse/)'s syntax:
-literal text with `{FieldName:type}` placeholders, where the types
-are `d` (integer), `f` (float), `g` (general number), `w` (word),
-`x` (hex), `ti` (ISO8601 time) and friends. OpenRVDAS adds types the
-standard set lacks, most importantly the *optional* variants `od`,
-`of`, `og`, `ow` — real instruments routinely emit records with
-empty fields, and `{SpeedKt:of}` matches an empty slot where
-`{SpeedKt:f}` would reject the whole record. There are also `nlat`
-and `nlat_dir`, which parse NMEA's degrees-decimal-minutes latitude
-and longitude straight into signed decimal degrees.
+**`ParseTransform` format strings** use placeholder types that
+roughly follow Python's own: `d` (integer), `f` (float), `g`
+(general number), `w` (word), `x` (hex), `ti` (ISO8601 time) and
+friends — the type both matches the text and converts the value.
+OpenRVDAS adds types the standard set lacks, most importantly the
+*optional* variants `od`, `of`, `og`, `ow` — real instruments
+routinely emit records with empty fields, and `{SpeedKt:of}` matches
+an empty slot where `{SpeedKt:f}` would reject the whole record.
+There are also `nlat` and `nlat_dir`, which parse NMEA's
+degrees-decimal-minutes latitude and longitude straight into signed
+decimal degrees.
+
+**`RegexParseTransform` patterns** have no types: a regex captures
+text. Type conversion comes separately, either from a `fields`
+argument mapping field names to types (`{'GravityValue': 'int'}`) or
+automatically from device definitions. Where `ParseTransform` has
+`:of` for an optional float, a regex says so directly (`[\d.]*`).
+Its output is always a `DASRecord` (where `ParseTransform` returns
+plain dicts unless told otherwise) — a difference you'll only notice
+if a downstream component cares.
 
 A device type lists one format, or several — as a list tried in
 order, or better, as a dict keyed by message type, which both
@@ -482,16 +511,25 @@ check_parse_format \
     --string '$INHDT,218.26,T*1A'
 ```
 
-For formats too irregular for the `parse` syntax, the
-`RegexParseTransform` is a drop-in alternative that uses Python
-regular expressions (`(?P<FieldName>pattern)`) in otherwise
-identical device definitions. And when records carry trustworthy
-embedded NMEA timestamps, `TimestampTransform` can be told
+**Which to use?** Start with `ParseTransform`: its formats are
+easier to write, to read back, and to check with
+`check_parse_format`, and the bundled NMEA library is written in its
+syntax. Reach for `RegexParseTransform` when a message defeats the
+`parse` syntax — irregular delimiters, ambiguous fields, formats
+that need lookahead — or on a machine where the `parse` package
+isn't available (the regex engine is built into Python). The two use
+identically structured device and device type definition files,
+differing only in the format strings themselves, so switching a
+device type from one to the other means rewriting its formats, not
+restructuring anything.
+
+One related setting: when records carry trustworthy embedded NMEA
+timestamps, `TimestampTransform` can be told
 `use_nmea_timestamp: true` to prefer them over the system clock. The
-full treatment of both, and of the parser's output formats, is on the
-legacy [Record Parsing]({{ "/parsing/" | relative_url }}) page,
-destined for the
-[reference section]({{ "/guide/reference/" | relative_url }}).
+full treatment of both parsers — every format type, output options
+and the regex differences in detail — is on the legacy
+[Record Parsing]({{ "/parsing/" | relative_url }}) page, destined
+for the [reference section]({{ "/guide/reference/" | relative_url }}).
 
 # Worked Example: Adding a Sensor
 
