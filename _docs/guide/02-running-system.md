@@ -148,10 +148,9 @@ covers building and modifying displays.
 
 # Sidebar: Advanced Data Snooping
 
-If you also have terminal access on the OpenRVDAS machine — as the
-OpenRVDAS user, with the
-[virtual environment activated]({{ "/guide/installation/#the-python-virtual-environment" | relative_url }})
-— you can watch the data without any display at all:
+If you also have terminal access on the OpenRVDAS machine as the
+OpenRVDAS user with the
+[virtual environment activated]({{ "/guide/installation/#the-python-virtual-environment" | relative_url }}), you can watch the data without any display at all:
 
 * **Watch a logfile grow.** In modes that write to file, each logger
   appends to its current logfile, so `tail -f` will show records as
@@ -161,10 +160,10 @@ OpenRVDAS user, with the
   tail -f /var/tmp/log/gyr1/raw/NBP1406_gyr1-$(date -u +%Y-%m-%d)
   ```
 
-  (That's the sample cruise's path; your vessel's cruise definition
+  (The above example uses the sample cruise's path; your vessel's cruise definition
   decides where logfiles live.)
 
-* **Listen to the UDP broadcast.** Every front-line logger broadcasts
+* **Listen to the UDP broadcast.** In the sample cruise configuration, and others following the recommended logger organization, every front-line logger broadcasts
   its records on UDP — port 6224 by convention — and `listen` will
   show you that stream, every instrument interleaved:
 
@@ -172,18 +171,21 @@ OpenRVDAS user, with the
   listen --udp 6224 --write_file -
   ```
 
-  One catch: only one process can be bound to the port at a time, and
-  in any active mode the `parse_data` logger already is. Set
-  `parse_data` to `off` in the console first. While it's off, raw
-  logging continues untouched, but the displays and database stop
+  One catch: only one process can be bound to the port at a time per machine, and
+  in any active mode the `parse_data` logger already is. To listen in, you either need to temporarily set
+  `parse_data` to `off` in the console prior to listening, or listen from a different machine on the same network. While `parse_data` is off, raw
+  logging will continue untouched, but the displays and database will stop
   updating — remember to set it back when you're done.
+
+  Note that different vessels may be configured to broadcast on different UDP ports, and some may use a different port for each logger; use the web console to open the logger you want to listen to and look for the port listed in its UDPWriter to be sure
 
 * **Subscribe to parsed values by name.** The least disruptive of the
   three: ask the cached data server for just the fields you care
-  about:
+  about, optionally using wildcards:
 
   ```
-  listen --cached_data Gyr1HeadingTrue,MwxPortRelWindSpeed --write_file -
+  listen --cached_data S330\*,Gyr1HeadingTrue \
+    --transform_to_json
   ```
 
   Nothing needs stopping — the cached data server is built for many
