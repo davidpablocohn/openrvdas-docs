@@ -286,7 +286,7 @@ adding one component at a time and running the file after each
 addition:
 
 ```
-listen --config_file gyr1_test.yaml
+listen gyr1_test.yaml
 ```
 
 Start with just the reader. As a convenience, if a configuration
@@ -309,7 +309,7 @@ Once the configuration lives in the cruise definition, the same
 command runs it from there, by naming it after a colon:
 
 ```
-listen --config_file local/uuw/mvp/MVP2610_cruise.yaml:gyr1-net
+listen local/uuw/mvp/MVP2610_cruise.yaml:gyr1-net
 ```
 
 This runs a single configuration straight out of the cruise

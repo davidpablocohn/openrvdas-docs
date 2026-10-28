@@ -168,6 +168,10 @@ directory:
 The pattern holds for the rest of the tools: the installed name is the
 script's filename without `.py`.
 
+Relatedly, the Guide passes `listen` its configuration file as a plain
+argument — `listen gyr1_test.yaml`. If your installation is old, you
+may need to spell out the flag: `listen --config_file gyr1_test.yaml`.
+
 Note that all the above commands assume that OpenRVDAS was installed according to instructions, and that the virtual environment created during installation has been activated, as described in
 [The Python Virtual Environment]({{ "/guide/installation/#the-python-virtual-environment" | relative_url }}).
 

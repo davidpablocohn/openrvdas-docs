@@ -222,7 +222,7 @@ logger configuration in a cruise definition file can be run by itself,
 by naming it after a colon:
 
 ```
-listen --config_file test/NBP1406/NBP1406_cruise.yaml:gyr1-net
+listen test/NBP1406/NBP1406_cruise.yaml:gyr1-net
 ```
 
 First set `gyr1` to `off` in the console — two loggers can't share one

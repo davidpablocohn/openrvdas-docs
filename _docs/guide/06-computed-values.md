@@ -118,7 +118,7 @@ with the anemometer's zero line drawn from a calibration file. The
 complete, tested configuration is in the repository at
 `test/configs/computed_true_winds.yaml` (runnable against the NBP
 sample cruise with
-`listen --config_file test/configs/computed_true_winds.yaml`), and
+`listen test/configs/computed_true_winds.yaml`), and
 walked through line by line, with the full option tables, on the
 [Computed Fields]({{ "/computed_fields/" | relative_url }}) page. If
 you just want true winds and the dedicated `TrueWindsTransform` suits
