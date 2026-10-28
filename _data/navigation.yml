@@ -114,8 +114,8 @@ navdocs:
         url: /guide/storage-displays/
       - title: "The Cached Data Server"
         url: /guide/storage-displays/#the-cached-data-server
-      - title: "The Database"
-        url: /guide/storage-displays/#the-database
+      - title: "External Databases"
+        url: /guide/storage-displays/#external-databases
       - title: "Displays"
         url: /guide/storage-displays/#displays
       - title: "Shoreside Replication"

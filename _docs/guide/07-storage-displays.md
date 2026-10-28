@@ -8,7 +8,7 @@ toc_icon: "list"
 toc_sticky: true
 ---
 Where the data goes once a logger has it: the cached data server that
-feeds everything live, the database that keeps history, the displays
+feeds everything live, the external databases that keep history, the displays
 people actually look at, mirroring it all ashore, and spreading the
 load across machines when one stops being enough.
 
@@ -20,8 +20,8 @@ field, served to subscribers over websockets. The standard
 installation runs one under supervisor on port **8766**, with a disk
 cache that re-warms the memory cache across restarts and retention
 limits (`--back_seconds`, `--max_records`) that keep it from growing
-without bound. It is deliberately not storage — the logfiles and the
-database are the records — but everything *live* flows through it:
+without bound. It is deliberately not long-term or archival storage — the logfiles and
+any external database are the records — but everything *live* flows through it:
 console status, display widgets, derived-data loggers, and your own
 subscribers.
 
@@ -63,14 +63,46 @@ browser `WebSocket`. The
 page documents the full protocol, every client pattern, and the
 server's flags.
 
-# The Database
+# External Databases
 
-InfluxDB holds what the CDS doesn't: history. Each parsed field lands
-as a time series, queryable by any tool that speaks Flux — Grafana
-first among them. Installation and credentials were covered in
-[section 3]({{ "/guide/installation/#influxdb-and-grafana" | relative_url }});
-with `database/influxdb/settings.py` filled in, feeding the database
-is one writer in a parsing logger:
+OpenRVDAS has no database of its own. The cached data server holds
+only recent values, and the logfiles hold raw records, so for history
+you can query — a week of heading, a cruise's worth of sea surface
+temperature — loggers write their parsed fields to an external
+database. Which database is your choice. To OpenRVDAS it is just
+another destination, reached through a writer.
+
+The writers available:
+
+* **`InfluxDBWriter`**, for InfluxDB, a time-series database. This is
+  the most common choice, and the one the rest of this section uses as
+  its example.
+* **`DatabaseWriter`**, with connectors for MySQL (and MariaDB),
+  PostgreSQL and MongoDB. Each connector has a setup script under
+  `database/`.
+* **`RedisWriter`**, for publishing to Redis.
+* **Contributed writers** in the
+  [openrvdas_contrib](https://github.com/OceanDataTools/openrvdas_contrib)
+  repository, such as a TimescaleDB writer.
+* **Your own.** A writer is any class with a `write(record)` method
+  (see
+  [Creating and Testing Loggers]({{ "/guide/your-vessel/#creating-and-testing-loggers" | relative_url }})),
+  so if your institution already runs a database, a writer for it is a
+  short piece of code.
+
+Whichever you use, the pattern is the same: the database writer sits
+in a parsing logger next to its `CachedDataWriter`, so each parsed
+record goes both to the live hub and into history.
+
+## InfluxDB
+
+Most OpenRVDAS installations use InfluxDB, mostly because it pairs
+well with Grafana for displays. Each parsed field is stored as a time
+series, and InfluxDB's query language, Flux, can select, aggregate
+and transform them. Installation and credentials are covered in
+[section 3]({{ "/guide/installation/#influxdb-and-grafana" | relative_url }}).
+Once `database/influxdb/settings.py` is filled in, feeding the
+database takes one writer:
 
 ```
 writers:
@@ -84,7 +116,7 @@ writers:
 ```
 
 `measurement_name` groups fields under the instrument they came from,
-which keeps the database browsable; the sample cruise's `+influx`
+which keeps the database browsable. The sample cruise's `+influx`
 modes do exactly this.
 
 Two working tips. First, **generate Flux queries instead of writing
@@ -92,38 +124,33 @@ them**: build the query in InfluxDB's Data Explorer (pick fields, set
 aggregation and range, Submit), then open its Script Editor and paste
 the resulting Flux into a Grafana panel. Second, **InfluxDB tasks can
 compute**: a task is a Flux query run on a schedule, writing its
-results to another bucket — the mechanism behind both the
+results to another bucket. Tasks are the mechanism behind both the
 [feed-status monitoring]({{ "/guide/troubleshooting/#monitoring-feed-health" | relative_url }})
 dashboard and the
 [shoreside replication](#shoreside-replication) below.
-
-InfluxDB is the recommended database, not the only one. A
-`DatabaseWriter` with pluggable connectors covers PostgreSQL, MySQL,
-MariaDB and MongoDB, and contributed writers exist for TimescaleDB,
-Redis and CORIOLIX's PostgreSQL schema — or roll your own, as with
-any writer.
 
 # Displays
 
 **Grafana dashboards** are the recommended display route: open
 source, drag-and-drop, maintained by a large community that isn't us.
-Once Grafana has the InfluxDB data source (section
+Grafana reads from most common databases, InfluxDB included. Once it
+has a data source for yours (for InfluxDB, see section
 [3]({{ "/guide/installation/#influxdb-and-grafana" | relative_url }})),
-a dashboard is a set of panels, each backed by a Flux query — time
-series, gauges, stats, maps. Like OpenRVDAS, Grafana takes plugins,
+a dashboard is a set of panels, each backed by a query — time series,
+gauges, stats, maps. Like OpenRVDAS, Grafana takes plugins,
 and purpose-built marine panels exist: the
 [OpenRVDAS compass panel](https://github.com/OceanDataTools/grafana-compass-panel)
 draws an integrated wind/compass rose from heading and wind fields:
 
 ![Grafana compass panel](../../assets/images/grafana_compass_panel.png)
 
-**Grafana Live** covers the case InfluxDB can't: sub-second,
+**Grafana Live** covers the case a database can't: sub-second,
 lag-free display. The `GrafanaLiveWriter` posts records straight to
 Grafana's live-streaming endpoint — no database in the path, 20 Hz
 and up — for the helm display or winch readout where a
 store-then-query round trip is too slow. Streamed data isn't
-retained, so loggers that feed Grafana Live usually also write to
-InfluxDB for the record. Setup is on the
+retained, so loggers that feed Grafana Live usually also write to a
+database for the record. Setup is on the
 [Grafana Live]({{ "/grafana_live/" | relative_url }}) page.
 
 **The built-in display widgets** predate all of this: Highcharts- and
@@ -141,8 +168,9 @@ page.
 
 The goal: the same Grafana dashboards ashore that the ship uses at
 sea, fed over a satellite link that comes and goes — with control
-over which sensors shore is allowed to see. The pieces, all standard
-InfluxDB machinery driven by OpenRVDAS modes:
+over which sensors shore is allowed to see. Most databases have some
+form of replication. The recipe here is for InfluxDB, and its pieces
+are all standard InfluxDB machinery driven by OpenRVDAS modes:
 
 1. **Tag at write time.** The parsing logger's `InfluxDBWriter` tags
    every measurement `restricted: 'no'` — except in a
@@ -182,8 +210,8 @@ another:
 The acquisition machine runs the front-line loggers — read,
 timestamp, write raw to disk, broadcast — and nothing else. A second
 machine reads the broadcast, and runs the parser, the derived-data
-loggers, InfluxDB and Grafana. Science browsing dashboards, a runaway
-Flux query, a Grafana upgrade: none of it can touch the box that's
+loggers, the database and Grafana. Science browsing dashboards, a
+runaway query, a Grafana upgrade: none of it can touch the box that's
 holding the serial ports.
 
 The relay between them is nothing new — the same mechanisms the
@@ -208,7 +236,7 @@ domain one step further from the instruments:
 ![Three-machine partition](../../assets/images/three_machine_partition.png)
 
 Where the pieces land is pure configuration: the cruise definition's
-variables name the UDP destination, data server and InfluxDB URL, so
+variables name the UDP destination, data server and database URL, so
 moving a tier to another machine is a variables change, not a
 redesign. The shoreside replica above is the same idea stretched over
 a satellite link — and a second OpenRVDAS installation elsewhere on
