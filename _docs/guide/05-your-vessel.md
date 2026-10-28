@@ -30,8 +30,10 @@ Windsock (`uuw`), and its vessel the M/V Plunger (`mvp`).
 Every ship running OpenRVDAS accumulates files of its own: cruise
 definitions, device definitions for its instruments, calibration
 files, perhaps a transform or two written for an unusual sensor.
-Those files belong in a git repository of your own, checked out
-alongside OpenRVDAS and symlinked into OpenRVDAS's `local/` directory:
+Those files belong in a repository of your own, checked out
+alongside OpenRVDAS and symlinked into OpenRVDAS's `local/` directory.
+
+Assuming you've installed OpenRVDAS into `/opt/openrvdas`, the conventional setup for your institutional repository would be alongside it, e.g., in `/opt/openrvdas_uuw`:
 
 ```
 cd /opt
@@ -107,8 +109,7 @@ vessel runs. Its top-level keys:
   mode, with `default_mode` naming the mode the system starts in;
 * `cruise` — metadata: the cruise id (displayed at the top of the
   console), start and end dates;
-* and optionally `includes`, `variables` and `logger_templates`, which
-  are what keep the file maintainable.
+* and optionally `includes`, `variables` and `logger_templates`, which pull in calibration values and logger templates that let you keep your own configuration files concise and maintainable.
 
 (If YAML itself is new to you, the
 [YAML primer]({{ "/guide/reference/#yaml-syntax" | relative_url }})
@@ -264,51 +265,58 @@ writers:                    # all writers run in parallel
 
 ![Generic listener dataflow](../../assets/images/generic_listener.png)
 
-Readers run in parallel and their output merges; transforms run in
-series; the last transform's output goes to every writer in parallel.
+If multiple Readers are defined in a configuration, they run in parallel and their output merges. Transforms run in
+series; the last transform's output goes to every Writer in parallel.
 Arguments with defaults may be omitted. Two refinements worth knowing:
 
-* `stderr_writers:` — an optional key, same format as `writers`,
-  saying where the logger's own diagnostic messages should go.
-* `mirror_to:` — any reader or transform can carry a `mirror_to` key
+* `mirror_to:` — any reader or transform can optionally carry a `mirror_to` key
   naming a writer that receives a copy of every record the component
-  produces. This is how the standard serial template stores the
+  produces. Think of it as a "tap" in the data flow. This is how the standard serial template stores the
   timestamped raw record *before* prefixing: a tap on the
   `TimestampTransform`, delivered asynchronously so a slow disk never
   blocks the data flow.
+* `stderr_writers:` — an optional key, same format as `writers`,
+  saying where the logger's own diagnostic messages should go.
 
-**Build it a stage at a time.** The working method, learned in the
+**Build it a stage at a time.** Command-line flags, as used in the
 [tutorial]({{ "/guide/nbp-tutorial/#exploring-with-listen" | relative_url }}),
-is to grow the pipeline under `listen`, checking the output at each
-step — reader alone, then with the timestamp, then the prefix, then
-swap `--write_file -` for the real writers:
-
-```
-listen --serial port=/tmp/tty_gyr1 --write_file -
-listen --serial port=/tmp/tty_gyr1 --transform_timestamp --write_file -
-listen --serial port=/tmp/tty_gyr1 --transform_timestamp \
-       --transform_prefix gyr1 --write_udp 6224 --write_file -
-```
-
-One `listen` gotcha will bite you exactly once: **flags are processed
-in command-line order.** Transforms apply in the order given, and any
-flag that modifies a component must come *before* that component's
-flag — `--parse_definition_path` before `--transform_parse`,
-`--slice_separator` before `--transform_slice`. Add `-v` for info
-logging, `-v -v` for debug.
-
-Once a stage works, move it into YAML, and run the YAML the same way:
+are fine for quick exploration — peeking at a port, snooping a UDP
+stream. But building a logger is best done by growing its YAML file,
+adding one component at a time and running the file after each
+addition:
 
 ```
 listen --config_file gyr1_test.yaml
+```
+
+Start with just the reader. As a convenience, if a configuration
+specifies no writer, `listen` will send the output to stdout, so a
+one-component file already shows you the raw records on your screen.
+Then add the `TimestampTransform` and run it again; then the
+`PrefixTransform`; then the real writers, checking the output at each
+step. When something breaks, the problem is in the component you just
+added. The result of this process *is* the logger configuration —
+there's no translation step at the end, as there would be from a
+command line.
+
+Add `-v` for info logging, `-v -v` for debug. (If you do work with
+command-line flags, one gotcha will bite you exactly once: flags are
+processed in command-line order, so any flag that modifies a
+component must come *before* that component's flag —
+`--parse_definition_path` before `--transform_parse`.)
+
+Once the configuration lives in the cruise definition, the same
+command runs it from there, by naming it after a colon:
+
+```
 listen --config_file local/uuw/mvp/MVP2610_cruise.yaml:gyr1-net
 ```
 
-The second form runs a single configuration straight out of the
-cruise definition — the exact thing the logger manager will run.
-Against `simulate_data` replaying recorded data, this closes the
-loop: definition, logger and parsing all tested before an instrument
-is ever touched.
+This runs a single configuration straight out of the cruise
+definition — the exact thing the logger manager will run. Against
+`simulate_data` replaying recorded data, this closes the loop:
+definition, logger and parsing all tested before an instrument is
+ever touched.
 
 **Keep front-line loggers dumb.** The pattern the sample cruise
 models is worth adopting as policy: the logger attached to the
