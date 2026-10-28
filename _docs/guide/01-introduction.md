@@ -76,7 +76,7 @@ anemometer — is called a **logger**. A logger is defined in a few lines of
 YAML naming its components and their parameters, and can be run by itself
 from the command line with the `listen` command, which is also the tool of
 choice for debugging. Loggers typically have several interchangeable
-**logger configurations** — `off`, `net` (read and broadcast), `net/file`
+**logger configurations** — for example: `off`, `net` (read and broadcast), `net/file`
 (broadcast and record) — describing what the logger should do in different
 circumstances.
 
@@ -110,11 +110,12 @@ installed system can switch between them (see the
 in the Installation section). You can also run with no console at all and
 drive everything from the command line.
 
-Two more pieces complete the picture. The **cached data server** holds the
-latest values of every named field loggers send it and feeds them to
-subscribers — the console's status displays, dashboard widgets, and loggers
-that compute derived values from other loggers' output. And an optional
-**InfluxDB/Grafana** stack stores the parsed data in a time-series database
+Two more pieces complete the picture:
+* The **cached data server** holds the
+latest values of every named data field that loggers send it, and feeds them to
+subscribers, such as the console's status displays, dashboard widgets, and other loggers
+that compute derived values from raw data. 
+* An optional **InfluxDB/Grafana** stack stores the parsed data in a time-series database
 and serves graphical dashboards from it.
 
 # How to Read This Guide
@@ -167,12 +168,15 @@ directory:
 The pattern holds for the rest of the tools: the installed name is the
 script's filename without `.py`.
 
+Note that all the above commands assume that OpenRVDAS was installed according to instructions, and that the virtual environment created during installation has been activated, as described in
+[The Python Virtual Environment]({{ "/guide/installation/#the-python-virtual-environment" | relative_url }}).
+
 **Web consoles.** Where the Guide says "the console" without
 qualification, it applies to both the Django and React consoles. Where the
 two differ, both are described. Screenshots are of the Django console
 unless captioned otherwise.
 
 **Paths.** Examples assume OpenRVDAS is installed in `/opt/openrvdas`,
-the installer's default, with institution-specific files in
+the installer's default, with institution-specific files in a separate repository, linked into
 `/opt/openrvdas/local/` as described in
 [Your Institution's Repository and local/]({{ "/guide/your-vessel/#your-institutions-repository-and-local" | relative_url }}).

@@ -50,6 +50,8 @@ navdocs:
         url: /guide/installation/
       - title: "Standard Installation"
         url: /guide/installation/#standard-installation
+      - title: "The Python Virtual Environment"
+        url: /guide/installation/#the-python-virtual-environment
       - title: "Minimal Installation"
         url: /guide/installation/#minimal-installation
       - title: "Sidebar: Choosing and Switching Consoles"
