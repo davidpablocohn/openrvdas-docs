@@ -120,7 +120,7 @@ with the timestamp the logger added on receipt.
 > that go untouched for 30 days are cleaned up automatically. That is
 > exactly right for a demo and exactly wrong for a cruise; when you
 > adapt the sample for a real vessel, one of the first things to change
-> is `file_root` (see
+> is `file_root` to a more durable location (see
 > [Writing a Cruise Definition]({{ "/guide/your-vessel/#writing-a-cruise-definition" | relative_url }})).
 
 # Following a Record Through the System
@@ -162,8 +162,7 @@ repeated per instrument.
    NMEA MRU whose `HEHDT` sentences carry a true heading, and emits a
    structured record with a named field: `Gyr1HeadingTrue: 218.53`.
    Its `CachedDataWriter` then sends that record to the cached data
-   server; in an `+influx` mode, an `InfluxDBWriter` also writes it to
-   the database.
+   server. In an `+influx` mode, an `InfluxDBWriter` also writes the record to the InfluxDB database.
 
 4. **Subscribers take it from there.** The cached data server hands
    the new value to whoever has subscribed to it: the console's
