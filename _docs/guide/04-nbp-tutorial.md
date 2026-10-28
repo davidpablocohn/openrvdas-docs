@@ -23,7 +23,10 @@ You will need:
   [2. Working with a Running Installation]({{ "/guide/running-system/" | relative_url }}));
 * a terminal on the OpenRVDAS machine, as the OpenRVDAS user, in the
   `/opt/openrvdas` directory, with the
-  [virtual environment activated]({{ "/guide/installation/#the-python-virtual-environment" | relative_url }}).
+  [virtual environment activated]({{ "/guide/installation/#the-python-virtual-environment" | relative_url }});
+* the cruise mode set to `off`, if a cruise definition is already
+  loaded in the console. Running loggers hold the simulated serial
+  ports, and the first half of this tutorial needs those ports free.
 
 # Simulating Live Data
 
@@ -48,7 +51,9 @@ start it with `supervisorctl start simulate:simulate_nbp`.
 
 Now have a first look at the data. In your terminal, run a minimal
 logger — one reader, no transforms, no writers, so the records go to
-your screen:
+your screen (this is why the cruise mode must be `off`: a running
+`gyr1` logger would be reading the same port, and the two of you
+would each get fragments of the stream):
 
 ```
 listen --serial port=/tmp/tty_gyr1
@@ -169,7 +174,10 @@ repeated per instrument.
 You can eavesdrop on every hop of that journey yourself, each with a
 one-line `listen` command or less:
 
-* the serial port: `listen --serial port=/tmp/tty_gyr1`
+* the serial port: `listen --serial port=/tmp/tty_gyr1` — but set
+  `gyr1` to `off` in the console first: a serial port has only one
+  stream to give, and with the `gyr1` logger running, the two of you
+  would each get fragments of it
 * the UDP broadcast — every instrument's records interleaved:
   `listen --udp 6224 --write_file -`. Only one process can bind the
   port, and in any active mode the `parse_data` logger already has
