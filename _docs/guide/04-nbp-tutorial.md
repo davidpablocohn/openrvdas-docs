@@ -59,7 +59,7 @@ would each get fragments of the stream):
 listen --serial port=/tmp/tty_gyr1
 ```
 
-You should see the Palmer's gyrocompass reporting its heading, one NMEA
+You should see the NBP's gyrocompass reporting its heading, one NMEA
 sentence at a time:
 
 ```
@@ -100,19 +100,20 @@ the InfluxDB database if one is installed.
 
 Select the mode button and change the mode to `no_write`, as described
 in [Starting and Stopping Loggers]({{ "/guide/running-system/#starting-and-stopping-loggers" | relative_url }}).
-Over a few seconds the loggers pass through yellow to green: each one
-is now reading its simulated instrument and broadcasting the records on
-UDP port 6224 — but writing nothing to disk.
+Over the next few seconds, the loggers will pass through yellow to
+green: each one will now be reading its simulated instrument and
+broadcasting the records on UDP port 6224 — but writing nothing to
+disk.
 
-Now change the mode to `write`. The loggers stay green, and logfiles
-begin to grow. In your terminal:
+Now change the mode to `write`. The loggers will stay green, and
+logfiles will begin to grow. In your terminal:
 
 ```
 tail -f /var/tmp/log/gyr1/raw/NBP1406_gyr1-$(date -u +%Y-%m-%d)
 ```
 
-shows the gyrocompass's records being written as they arrive, each with
-the timestamp the logger added on receipt.
+will show the gyrocompass's records being written as they arrive, each
+with the timestamp the logger added on receipt.
 
 > **Why `/var/tmp/log`?** The sample cruise deliberately writes
 > somewhere disposable — on most Linux systems, files under `/var/tmp`
@@ -226,8 +227,8 @@ listen --config_file test/NBP1406/NBP1406_cruise.yaml:gyr1-net
 ```
 
 First set `gyr1` to `off` in the console — two loggers can't share one
-serial port — then run the command above. You are now running exactly
-what the logger manager runs, but in the foreground of your own
+serial port — then run the command above. You will then be running
+exactly what the logger manager runs, but in the foreground of your own
 terminal, with its errors in your face. That, in one sentence, is the
 debugging method of section
 [9. Troubleshooting]({{ "/guide/troubleshooting/" | relative_url }}):
