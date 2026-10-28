@@ -1,6 +1,6 @@
 ---
 permalink: /guide/reference/
-title: "Reference"
+title: "10. Reference"
 layout: single
 toc: true
 toc_label: "In this section"

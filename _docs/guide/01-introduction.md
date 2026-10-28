@@ -1,6 +1,6 @@
 ---
 permalink: /guide/introduction/
-title: "Introduction"
+title: "1. Introduction"
 layout: single
 toc: true
 toc_label: "In this section"

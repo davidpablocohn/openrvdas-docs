@@ -1,6 +1,6 @@
 ---
 permalink: /guide/troubleshooting/
-title: "Troubleshooting"
+title: "9. Troubleshooting"
 layout: single
 toc: true
 toc_label: "In this section"

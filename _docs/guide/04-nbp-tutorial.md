@@ -1,6 +1,6 @@
 ---
 permalink: /guide/nbp-tutorial/
-title: "Tutorial: The NBP Sample Cruise"
+title: "4. Tutorial: The NBP Sample Cruise"
 layout: single
 toc: true
 toc_label: "In this section"
