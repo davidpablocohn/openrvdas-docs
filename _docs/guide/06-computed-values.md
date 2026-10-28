@@ -236,36 +236,31 @@ loggers:
   met_avg:
     logger_template: averaging_logger_template
     variables:
+      # Every field to read; must repeat all fields listed below
       snapshot_fields: [AirTemp, BaroPressure, WindSpeed, WindDir]
+      # Averaged arithmetically (boxcar average)
       average_fields: [AirTemp, BaroPressure, WindSpeed]
+      # Averaged as angles (polar average); [] if none
       direction_fields: [WindDir]
-      interval: 60
-      window: 60
+      interval: 60      # seconds between outputs
+      window: 60        # seconds of data in each average
 ```
 
 Every 60 seconds this will write `AvgAirTemp`, `AvgBaroPressure`,
-`AvgWindSpeed` and `AvgWindDir` back to the cached data server. The
-three field lists play different roles in the logger the template
-builds:
+`AvgWindSpeed` and `AvgWindDir` back to the cached data server: each
+output keeps its source's name with `Avg` prefixed. The template's
+`on+influx` config also writes the averages to InfluxDB.
 
-* **`snapshot_fields`** is the *subscription*: the full list of
-  fields the logger's `CachedDataReader` asks the cached data server
-  for. It must contain every field named in the other two lists —
-  the template machinery can't join two lists itself, so you repeat
-  them here. A field listed only in `snapshot_fields` is read but
-  produces no output.
-* **`average_fields`** names the fields averaged arithmetically (the
-  `boxcar_average` algorithm): temperatures, pressures, speeds —
-  anything where the mean of the readings is the number you want.
-* **`direction_fields`** names the fields averaged *as angles* (the
-  `polar_average` algorithm). Compass directions can't be averaged
-  arithmetically — readings of 359° and 1° would average to 180°,
-  the opposite of the truth; the polar average gives 0°. Wind and
-  current directions and headings belong here. Use
-  `direction_fields: []` if there are none.
+`snapshot_fields` is the logger's subscription to the cached data
+server, which is why it has to repeat the other two lists: the
+template machinery can't join two lists itself. A field listed only
+in `snapshot_fields` is read but produces no output.
 
-Each output field keeps its source's name with `Avg` prefixed. The
-template's `on+influx` config also writes the averages to InfluxDB.
+Directions get their own list because compass angles can't be
+averaged arithmetically: readings of 359° and 1° would average to
+180°, the opposite of the truth, where the polar average gives 0°.
+Wind and current directions and headings belong in
+`direction_fields`.
 
 Three properties of the output are worth having straight before you
 wire a display to it:
