@@ -1,6 +1,6 @@
 ---
 permalink: /guide/running-system/
-title: "2. Working with a Running Installation"
+title: '2\. Working with a Running Installation'
 layout: single
 toc: true
 toc_label: "In this section"

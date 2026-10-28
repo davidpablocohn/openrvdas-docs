@@ -1,6 +1,6 @@
 ---
 permalink: /guide/your-vessel/
-title: "5. Setting Up Your Own Vessel"
+title: '5\. Setting Up Your Own Vessel'
 layout: single
 toc: true
 toc_label: "In this section"

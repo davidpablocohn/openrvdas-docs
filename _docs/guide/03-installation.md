@@ -1,6 +1,6 @@
 ---
 permalink: /guide/installation/
-title: "3. Installation"
+title: '3\. Installation'
 layout: single
 toc: true
 toc_label: "In this section"

@@ -1,6 +1,6 @@
 ---
 permalink: /guide/computed-values/
-title: "6. Computed and Calibrated Values"
+title: '6\. Computed and Calibrated Values'
 layout: single
 toc: true
 toc_label: "In this section"

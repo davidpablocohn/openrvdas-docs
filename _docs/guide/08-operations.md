@@ -1,6 +1,6 @@
 ---
 permalink: /guide/operations/
-title: "8. Operations and Recordkeeping"
+title: '8\. Operations and Recordkeeping'
 layout: single
 toc: true
 toc_label: "In this section"

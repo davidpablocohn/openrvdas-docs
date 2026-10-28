@@ -1,6 +1,6 @@
 ---
 permalink: /guide/storage-displays/
-title: "7. Storage, Displays and Distribution"
+title: '7\. Storage, Displays and Distribution'
 layout: single
 toc: true
 toc_label: "In this section"
