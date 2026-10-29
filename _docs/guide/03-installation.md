@@ -19,10 +19,9 @@ OpenRVDAS v2.7.0 officially supports:
 * **RHEL, Rocky Linux and AlmaLinux 9 and 10**;
 * **macOS**.
 
-All other things being equal, the preferred distribution is the
-latest release of Ubuntu.
+All other things being equal, the preferred distribution is Ubuntu 25.10.
 
-Ubuntu 20.04 and earlier, Debian 11 and earlier (including Raspberry
+**Deprecation**: As of OpenRVDAS v2.7.0, Ubuntu 20.04 and earlier, Debian 11 and earlier (including Raspberry
 Pi OS "bullseye"), and CentOS/RHEL/Rocky/Alma 8 and earlier are no
 longer supported: none of them packages the Python that v2.7.0 needs
 (below), and RHEL 8's SQLite is too old for the Django that comes
@@ -33,26 +32,24 @@ deployment, give OpenRVDAS a dedicated machine or VM; for trying it
 out, a personal machine is fine — you'll just answer "no" to the
 start-on-boot questions and start things by hand.
 
-It doesn't need much of a machine. A VM with **2 CPUs, 8 GB of
-memory and a 64 GB disk** has run a full installation, loggers,
-console, InfluxDB and Grafana together, on a research vessel. Loggers
-alone, with Grafana, have run on a Raspberry Pi 4 with 2 GB. The
-component that grows is the disk: raw logfiles are plain text and
-stay small, but a database that is never pruned, and the stderr of a
-logger that crashes for weeks, will fill any partition eventually.
-Put the data directory on a partition you can watch, and give the
+**Hardware.** A stripped-down installation running only loggers works
+on a machine as small as a Raspberry Pi Zero. The full system needs at
+least 4 GB of memory; with InfluxDB and Grafana on the same machine,
+at least 2 cores and 8 GB are recommended. Disk is the
+resource that grows: raw logfiles are small, but an unpruned database
+or the stderr of a logger stuck in a crash loop will fill a partition
+eventually. Put the data directory where you can watch it, and give the
 database a retention policy (see
 [InfluxDB]({{ "/guide/storage-displays/#influxdb" | relative_url }})).
 
-It needs **Python 3.11 or newer**, and the installer takes care of
-that itself. It uses the system `python3` where that is new enough
-(Ubuntu 24.04 and later, Debian 12, RHEL/Rocky/Alma 10); where it
-isn't, it installs Python 3.11 beside the system one, from the
-deadsnakes PPA on Ubuntu 22.04 and from AppStream on RHEL/Rocky/Alma
-9; on macOS it uses Homebrew's Python 3.12. The same interpreter
-serves the main virtual environment and, if you choose that console,
-the React console's. Only a [minimal installation](#minimal-installation)
-leaves finding a Python 3.11 to you.
+**Python.** OpenRVDAS needs Python 3.11 or newer. The installer
+provides it: it uses the system `python3` where that is new enough
+(Ubuntu 24.04 and later, Debian 12, RHEL/Rocky/Alma 10), installs
+3.11 alongside the system one where it isn't (Ubuntu 22.04,
+RHEL/Rocky/Alma 9), and uses Homebrew's Python on macOS. One
+interpreter serves both the main virtual environment and the React
+console's. Only a [minimal installation](#minimal-installation) leaves
+the choice of Python to you.
 
 # Standard Installation
 
