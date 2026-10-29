@@ -7,53 +7,68 @@ toc_label: "In this section"
 toc_icon: "list"
 toc_sticky: true
 ---
-This section is about running a real cruise, as distinct from
-configuring one:
+The earlier sections were about setting a system up. This one is about
+running it through a real cruise:
 
-* proving, months later, what ran and with which configuration;
-* controlling the system without the console, from scripts and other
-  systems;
-* letting the ship's position, or the data itself, drive logger
-  changes so a watchstander doesn't have to.
+* keeping a record of what ran, so questions can be answered months
+  later;
+* controlling the system from the command line or from other
+  programs, without the web console;
+* letting the ship's position, or the data itself, change logger
+  configurations automatically.
 
 # Snapshots and the State Journal
 
 Data is only as useful as what is known about how it was collected.
-Months after a cruise, someone will ask which calibration
-coefficients were applied to the TSG, whether the true winds came
-from the port or starboard anemometer, or why there is a gap in the
-gravimeter record at 0300 on day 12. OpenRVDAS v2.7.0 added three
-tools for answering those questions: a **state journal** the logger
-manager keeps as it runs, a **`config_snapshot`** command that
-captures a configuration in full, and **automatic snapshots** taken
-whenever the configuration changes.
+Months after a cruise, someone will ask questions like these:
+
+* Which calibration coefficients were applied to the TSG?
+* Were the true winds computed from the port or the starboard
+  anemometer?
+* Why is there a gap in the gravimeter record at 0300 on day 12?
+
+OpenRVDAS v2.7.0 added three tools for answering them:
+
+* the **state journal**, a running log of everything the logger
+  manager does;
+* **`config_snapshot`**, a command that saves a complete copy of a
+  configuration;
+* **automatic snapshots**, which the logger manager takes whenever the
+  configuration changes.
 
 ## The state journal
 
-From v2.7.0, the logger manager keeps a journal by default: one file
-per UTC day at `/var/log/openrvdas/logger_manager_journal-YYYY-MM-DD`,
-one JSON line per event. It records definitions loaded, mode
-changes, and every logger started, stopped, switched, crashed,
-recovered or given up on — each with the time, the logger and
-configuration involved, and the version of the code the logger was
-started with (as `git describe` reports it, with a `-dirty` marker
-and hash if the working tree had uncommitted edits, so a transform
-patched mid-cruise is distinguishable from the release). A change of
-mode looks like this (unwrapped in the file):
+The logger manager keeps a journal of everything it does. It's on by
+default from v2.7.0. The journal records:
+
+* each cruise definition that is loaded;
+* each change of cruise mode;
+* each logger that is started, stopped, switched to a different
+  configuration, crashes, recovers, or is given up on.
+
+Each entry gives the time, the logger and configuration involved, and
+the version of the OpenRVDAS code the logger was running. If someone
+had edited the code without committing the change, the version shows
+that too, so you can tell when a transform was patched mid-cruise.
+
+The journal is written as one file per day (UTC), named
+`/var/log/openrvdas/logger_manager_journal-YYYY-MM-DD`. Each line of
+the file is one event in JSON. A change of mode looks like this
+(it's a single line in the file):
 
 ```
 {"data_id": "logger_manager", "message_type": "mode_changed", "timestamp": 1792677791.204,
  "fields": {"event": "mode_changed", "time": "2026-10-22T14:03:11.204Z", "from": "no_write", "to": "write"}}
 ```
 
-Two design points keep it useful. Crashes are counted, not listed —
-a logger failing in a loop journals its first crash and reports the
-total when it recovers, fails or is stopped, so a noisy serial port
-can't fill the journal. And journaling can never get in the way of
-managing loggers: if the directory isn't writable, the logger manager
-logs one warning and carries on.
+A logger that keeps crashing won't fill the journal. Only its first
+crash is recorded, and the total number of crashes is recorded when
+the logger recovers, fails or is stopped. And the journal can never
+interfere with running loggers: if the logger manager can't write it,
+it logs a warning and carries on.
 
-Because each line is plain JSON, `jq` and `grep` work directly on it:
+Since each line is plain JSON, you can search the journal with `jq` or
+`grep`:
 
 ```
 # Every mode change, in order
@@ -65,35 +80,38 @@ jq -r 'select(.message_type=="mode_changed")
 grep '"logger": "gyr1"' /var/log/openrvdas/logger_manager_journal-*
 ```
 
-The journal is written in the same format and file naming as
-`LogfileWriter` output, so a `LogfileReader` can read and follow it —
-which makes the journal a data stream any logger can consume. The
-[Sealog integration](#logger-events-in-sealog) below is built on
-exactly that. The journal's location is set by the logger manager's
-`--state_journal` argument (`none` turns it off); the full event
-catalogue is on the legacy
+The journal uses the same format as the logfiles a `LogfileWriter`
+writes. That means a logger can read it with a `LogfileReader`, just
+as it would read instrument data. The
+[Sealog example](#logger-events-in-sealog) below uses this.
+
+To move the journal or turn it off, use the logger manager's
+`--state_journal` argument (`--state_journal none` turns it off). The
+full list of journal events is on the legacy
 [Recording What Ran]({{ "/cruise_records/" | relative_url }}) page.
 
 ## Taking a snapshot
 
-The journal says *what happened*; a snapshot captures *what the
-configuration was*. On a running system:
+The journal records what happened. A snapshot records what the
+configuration was. To take one of a running system:
 
 ```
 cd /opt/openrvdas
 config_snapshot --output /var/log/openrvdas/snapshots
 ```
 
-With no definition named, `config_snapshot` asks the journal which
-definition the logger manager loaded most recently and snapshots
-that — a record of what is running now. It will print the path of
-the snapshot it wrote, a directory named for the cruise id and the
-UTC time; `--tar` also writes a `.tar.gz` beside it for attaching to a
-report. Naming a cruise definition file instead snapshots that
-definition whether or not it's loaded, for example to record what
-you're about to sail with.
+`config_snapshot` will look in the journal to find the cruise
+definition that is currently loaded, and snapshot that. It will print
+the location of the snapshot, a directory named after the cruise id
+and the time. A few variations:
 
-A snapshot contains:
+* Add `--tar` to also get the snapshot as a single `.tar.gz` file,
+  handy for attaching to a report.
+* Name a cruise definition file to snapshot that file instead, whether
+  or not it's loaded. This is useful for recording what you're about
+  to sail with.
+
+A snapshot directory contains:
 
 ```
 MVP2610_20261023T212317Z/
@@ -104,28 +122,29 @@ MVP2610_20261023T212317Z/
   patches/                      "git diff HEAD" of any repository with uncommitted changes
 ```
 
-`sources/` is the part that makes the snapshot reloadable: the cruise
-definition, every file it includes (templates, calibration files),
-every device definition file its parsers use, and any logfile header
-files, each at its path relative to the OpenRVDAS directory.
-`expanded_config.yaml` is the definition after every include,
-template and variable has been resolved — exactly what the logger
-manager saw, and usually the quickest answer to "what exactly was
-this logger doing?" And `MANIFEST.yaml` records the OpenRVDAS
-version; the commit, branch and dirty state of every repository a
-file came from (OpenRVDAS itself and your
-[institution's repository]({{ "/guide/your-vessel/#your-institutions-repository-and-local" | relative_url }}));
-the OS, Python and every installed package; a sha256 for every
-captured file; and, replayed from the journal, the state of every
-logger at the moment of the snapshot.
+What each part is for:
 
-That last part is where a snapshot earns its keep. For each logger it
-records the configuration running, whether it is `running`,
-`crashing`, `failed` or `stopped`, the code version it started with,
-and `matches_definition` — whether what's running is identical to
-what's in the definition file now. Edit a calibration file, or
-repoint its symlink, without reloading the definition, and the next
-snapshot will say so:
+* **`sources/`** has a copy of every file the cruise definition was
+  built from: the definition itself, the templates and calibration
+  files it includes, and the device definitions its parsers use. With
+  these, the configuration can be loaded again later, exactly as it
+  was.
+* **`expanded_config.yaml`** is the cruise definition with every
+  include, template and variable filled in. It's exactly what the
+  logger manager saw, and usually the quickest way to answer "what was
+  this logger actually doing?"
+* **`MANIFEST.yaml`** records the versions of everything involved:
+  OpenRVDAS, your
+  [institution's repository]({{ "/guide/your-vessel/#your-institutions-repository-and-local" | relative_url }}),
+  the operating system, Python and every installed package. It also
+  records what state each logger was in when the snapshot was taken.
+
+That last item is often the most useful. For each logger, the manifest
+says which configuration it was running, whether it was running
+normally, crashing or stopped, and whether its configuration matches
+the definition file on disk. If someone edits a calibration file and
+forgets to reload the definition, the running loggers are still using
+the old values, and the snapshot will warn you:
 
 ```
 WARNING: These files have changed since the definition was loaded, so may not match what
@@ -133,18 +152,18 @@ is running: sources/local/uuw/mvp/calibrations.yaml
 WARNING: These loggers are running configs that differ from this definition: tsg_cal
 ```
 
-Symlinked files are captured under the name the definition used, with
-the contents of the file they pointed to, and the manifest records
-the real file as `resolves_to` — so the
-[dated calibration files]({{ "/guide/computed-values/#calibrations" | relative_url }})
-convention leaves a precise trail.
+If a file is a symbolic link, such as a `calibrations.yaml` that
+points to a dated calibration file, the snapshot saves the contents of
+the file it points to and notes that file's name in the manifest. So
+the [dated calibration files]({{ "/guide/computed-values/#calibrations" | relative_url }})
+convention leaves an exact record of which coefficients were in use.
 
-One caution: `expanded_config.yaml` has anything resembling a
-password, token or API key replaced with `<redacted>`, but the files
-under `sources/` are copied byte for byte so that they stay
-reloadable. If any of them appear to contain a secret,
-`config_snapshot` will warn you and name them. Bear that in mind
-before a snapshot leaves the ship.
+**A caution about secrets.** In `expanded_config.yaml`, anything that
+looks like a password, token or API key is replaced with
+`<redacted>`. The files in `sources/` are copied unchanged, though, so
+that they can be loaded again. If any of them seem to contain a
+secret, `config_snapshot` will warn you and name the files. Check
+before sending a snapshot off the ship.
 
 ## Automatic snapshots
 
@@ -180,23 +199,27 @@ snapshot directory.
 
 ## Archiving a cruise
 
-At the end of a cruise, the goal is a self-contained record that
-will still answer questions after the system has been reconfigured
-for the next one. Collect, next to the data:
+At the end of a cruise, save a record that will still answer
+questions after the system has been set up for the next cruise. Put
+these next to the cruise's data:
 
-1. **A final snapshot of what is running**, before anything is shut
-   down: `config_snapshot --output $ARCHIVE --tar`.
-2. **Every automatic snapshot** taken during the cruise — together
-   they record each configuration change as it happened.
-3. **The whole journal.** A snapshot includes only the journal since
-   the logger manager last started, and it may have restarted several
-   times; the daily files are tiny, so copy them all.
-4. **The loggers' stderr files** from `/var/log/openrvdas/loggers/`.
-   The journal says *that* the gravimeter logger crashed at 0300; its
-   stderr usually says *why*. They rotate, so copy them before they're
-   overwritten.
-5. **A tag in your institution's repository** (`git tag MVP2610-end`),
-   so the configuration can be checked out exactly as it was.
+1. **A final snapshot**, taken before anything is shut down or
+   changed.
+2. **All the automatic snapshots** from the cruise. Together they
+   show every change to the configuration, as it happened.
+3. **The whole journal.** Each snapshot includes the journal only
+   since the logger manager last started, and it may have been
+   restarted during the cruise. The journal files are small, so copy
+   them all.
+4. **The loggers' stderr files**, from `/var/log/openrvdas/loggers/`.
+   The journal tells you *that* a logger crashed at 0300; its stderr
+   file usually tells you *why*. Older stderr files are eventually
+   deleted, so copy them before that happens.
+5. **A tag in your institution's repository**, such as
+   `git tag MVP2610-end`, so the configuration can be checked out
+   later exactly as it was.
+
+Steps 1 to 4 as commands:
 
 ```
 CRUISE=MVP2610
@@ -209,40 +232,47 @@ cp -a /var/log/openrvdas/logger_manager_journal-* $ARCHIVE/journal/
 cp -a /var/log/openrvdas/loggers/. $ARCHIVE/logger_stderr/
 ```
 
-For a quick record partway through a cruise, step 1 alone captures
-the configuration, the code version and the current state of every
-logger.
+For a quick record partway through a cruise, step 1 alone is enough.
+One snapshot captures the configuration, the code version and the
+state of every logger.
 
 ## Logger events in Sealog
 
 If your ship runs [Sealog](https://github.com/OceanDataTools/sealog-server),
-mode changes and logger failures belong in the event log next to
-everything else, where a watchstander scrolling back through the
-night sees "mode changed to underway" and "gravimeter logger failed"
-in context. Since the journal is a data stream, a logger does this
-with three components: a `LogfileReader` that follows the journal
-(`tail: true`, `refresh_file_spec: true` to roll over to each new
-day's file), a
-[`ComputedFieldsTransform`]({{ "/guide/computed-values/#computed-fields" | relative_url }})
-whose rules pick out the events of interest and shape their fields
-into Sealog's `event_value`, `event_free_text` and `event_option_*`
-fields — returning `None` for everything else, so that with
-`delete_other_fields: true` uninteresting events are dropped
-entirely — and a `SealogWriter` that posts the result. Give this
-logger the same configuration in every mode, so mode changes don't
-restart it (a restart replays the journal from the beginning), and
-keep its Sealog token in an included file that isn't committed. The
-complete logger, with its rules, is on the legacy
+it helps to have mode changes and logger failures appear in its event
+log. A watchstander looking back through the night's events will then
+see "mode changed to underway" or "gravimeter logger failed" alongside
+everything else that happened.
+
+Because a logger can read the journal, an ordinary logger can do this.
+It needs three components:
+
+* a **`LogfileReader`** that follows the journal as it grows;
+* a **[`ComputedFieldsTransform`]({{ "/guide/computed-values/#computed-fields" | relative_url }})**
+  that picks out the events you want and turns each one into the
+  fields a Sealog event needs, dropping all the others;
+* a **`SealogWriter`** that posts the events to the Sealog server.
+
+Two things to get right:
+
+* Give this logger the same configuration in every cruise mode. When a
+  logger restarts, it rereads the journal from the beginning and posts
+  those events again. A logger whose configuration doesn't change
+  won't be restarted by a mode change.
+* The `SealogWriter` needs an access token. Keep it in a separate
+  included file that isn't committed to your repository.
+
+The complete logger configuration is on the legacy
 [Recording What Ran]({{ "/cruise_records/#creating-sealog-events-from-logger-state-changes" | relative_url }})
 page.
 
 # Command-Line and API Control
 
-Everything the console does, the logger manager will also do from a
-command line or a program. Three routes:
+Anything you can do in the web console, you can also do from the
+command line or from another program. There are three ways.
 
-**`lmcmd`** connects to the running logger manager's database and
-takes the same commands the console issues:
+**`lmcmd`** sends commands to the running logger manager. It takes the
+same commands the console uses:
 
 ```
 lmcmd load_configuration local/uuw/mvp/MVP2610_cruise.yaml
@@ -252,59 +282,71 @@ lmcmd get_logger_configs gyr1
 lmcmd set_active_logger_config gyr1 gyr1-off
 ```
 
-Run with no arguments it opens an interactive `command?` prompt;
-`help` lists every command. This is the operator's tool for a
-headless installation, for a cron job that switches modes at a
-scheduled time, and for recovering a system whose console is down.
-Note that `lmcmd` speaks to the logger manager through the Django
-console's database (`--database django`, the default, or `sqlite`);
-under the React console the equivalent is its API.
+Run it with no arguments for an interactive `command?` prompt, where
+`help` lists every command. `lmcmd` is useful:
 
-**The REST API** is the route for other systems. The Django console
-exposes endpoints for loading and reloading definitions, selecting
-modes and editing logger configurations —
-`api/select-cruise-mode/`, `api/load-configuration-file/`,
-`api/edit-logger-config/` and the rest, with a browsable schema at
-`/api/schema/swagger-ui/` — behind the same authentication as the
-console. The React console's FastAPI back end has its own API, with
-live documentation at `/docs` and `/redoc` if you told the installer
-to expose them. Status comes back the other way, through the cached
-data server: the logger manager publishes `status:cruise_definition`
-and `status:logger_status` fields there, and loggers' stderr arrives
-as `stderr:` fields, so any subscriber can watch the system as the
-console does. The legacy
-[Controlling Loggers]({{ "/controlling_loggers/" | relative_url }})
-page lists the endpoints and shows how to add your own.
+* on an installation with no web console;
+* for a cron job that changes the mode at a set time;
+* when the console is down and you still need to control the loggers.
 
-**The logger manager itself** can be run by hand, with a definition
-and mode on its command line, for a test machine or a one-off:
+`lmcmd` works with the Django console's database. With the React
+console, use its API instead.
+
+**The REST API** lets other programs control the logger manager.
+The Django console provides endpoints such as
+`api/select-cruise-mode/`, `api/load-configuration-file/` and
+`api/edit-logger-config/`. You can browse and try them all at
+`/api/schema/swagger-ui/`. They require the same login as the console.
+The React console has its own API, documented at `/docs` and `/redoc`
+if you chose to make those pages available when you installed it.
+
+To *watch* the system from a program, subscribe to the cached data
+server. The logger manager publishes the state of the cruise and of
+every logger there, in the `status:cruise_definition` and
+`status:logger_status` fields, and each logger's error output appears
+in `stderr:` fields. This is how the console itself gets its status.
+The legacy [Controlling Loggers]({{ "/controlling_loggers/" | relative_url }})
+page lists all the endpoints, and shows how to add your own.
+
+**The logger manager can also be run by hand**, which is handy on a
+test machine:
 
 ```
 logger_manager --config local/uuw/mvp/MVP2610_cruise.yaml --mode port
 ```
 
-With no `--database`, it keeps its state in memory and offers its own
-`command?` console; the installed service runs it with `--no-console`
-and the console's database instead. Its other arguments of
-operational interest are `--state_journal`, `--snapshot_dir` and
-`--stderr_file_pattern`, which places each logger's stderr (default
-`/var/log/openrvdas/loggers/{logger}.stderr`, rotated at 1 MB with up
-to 100 older files kept).
+This loads the definition and sets the mode. Run this way, the logger
+manager keeps its state in memory and gives you its own `command?`
+prompt. A few of its other arguments are worth knowing:
+
+* `--state_journal` sets where the journal is written;
+* `--snapshot_dir` turns on automatic snapshots;
+* `--stderr_file_pattern` sets where each logger's error output goes.
+  The default is `/var/log/openrvdas/loggers/{logger}.stderr`. Each
+  file is rotated when it reaches 1 MB, and up to 100 older files are
+  kept.
 
 # Geofencing and Conditional Control
 
-Changing logger configurations as the ship moves is routine and
-error-prone: start logging as the ship leaves port, stop recording
-restricted instruments on entering a foreign EEZ, start again on
-leaving. Each is a mode change that a watchstander has to remember,
-at an hour nobody chose. The same components that move data can make
-the change automatically — because to OpenRVDAS, a command to the
-logger manager is just another record a logger can write.
+Some mode changes depend on where the ship is. You might start logging
+as the ship leaves port, stop recording some instruments on entering
+a foreign country's waters, and start again on leaving. A watchstander
+has to remember to make each of these changes, often at an
+inconvenient hour.
 
-The pattern is a logger whose reader watches the parsed data, whose
-transform emits a command when a condition is met, and whose writer
-is a `LoggerManagerWriter` that passes the command to the logger
-manager. For geofencing, the transform is `GeofenceTransform`:
+OpenRVDAS can make them automatically. A command to the logger
+manager, such as `set_active_mode underway`, is just a piece of text,
+and a logger can write it like any other record. So a logger can
+watch the data and change the mode when it sees the right condition.
+
+Such a logger has three parts:
+
+* a reader that receives the parsed data;
+* a transform that outputs a command when a condition is met;
+* a **`LoggerManagerWriter`**, which passes the command to the logger
+  manager.
+
+For geofencing, the transform is a `GeofenceTransform`:
 
 ```
 readers:
@@ -332,47 +374,59 @@ writers:
         - 'sleep '
 ```
 
-The transform watches the stream for records carrying the named
-latitude and longitude fields, compares each position with the
-boundary, and emits a message only when the position has *crossed*
-it since the last record — entering, or leaving. The writer checks
-each message against `allowed_prefixes` and, if it passes, issues it
-to the logger manager as a command. So crossing into the EEZ will
-switch the system to `eez` mode and crossing out will switch it back
-to `underway`, each change journaled like any other. Boundary files
-are GML polygons; EEZ boundaries can be downloaded from
-[marineregions.org](https://marineregions.org/eezsearch.php).
+Here's what happens:
 
-Details that matter in practice:
+1. The `GeofenceTransform` reads the ship's latitude and longitude
+   from each record and compares the position with the boundary.
+2. When the ship crosses into the boundary, it outputs
+   `set_active_mode eez`. When the ship crosses out, it outputs
+   `set_active_mode underway`. The rest of the time it outputs
+   nothing.
+3. The `LoggerManagerWriter` passes the command to the logger manager,
+   which will change the mode. The change is recorded in the journal
+   like any other.
 
-* **`distance_from_boundary_in_degrees`** moves the fence inward
-  (negative) or outward from the boundary, giving a buffer so the
-  change happens before the line rather than on it. It is in
-  degrees, deliberately: a distance in nautical miles would need a
-  projection that changes with position.
+Boundary files are in GML format. EEZ boundaries can be downloaded
+from [marineregions.org](https://marineregions.org/eezsearch.php).
+
+Some options worth knowing:
+
+* **`distance_from_boundary_in_degrees`** moves the fence inside the
+  boundary (negative values) or outside it, so the mode changes a
+  little before the ship reaches the line. The distance is in degrees
+  rather than nautical miles because converting between the two
+  depends on where you are.
 * **`seconds_between_checks`** limits how often the position is
-  tested, which keeps the cost negligible on a 10 Hz GPS feed.
-* **`boundary_dir_name`** takes a directory of `.gml` files and fences
-  their union. Keeping every EEZ you might need in one directory and
-  symlinking the ones currently in force into another makes updating
-  the fence a matter of adding or removing a link and cycling the
-  geofence logger `off` and back `on`.
-* **`allowed_prefixes`** on the writer is the safety catch: only
-  commands matching the list reach the logger manager, so a stray
-  record can't do anything but change modes. Several commands can
-  share one record, separated by semicolons, and `sleep N` pauses
-  between them to let a change settle.
-* The transform depends on packages that neither the standard
-  installer nor a minimal installation includes. Install the
-  `geofence` extra once, with the virtual environment active:
-  `pip install -e '.[geofence]'` from the OpenRVDAS directory. Both
-  components also need `module:` named, as they aren't among the
-  defaults `listen` imports.
+  checked, to save work on a fast GPS feed.
+* **`boundary_dir_name`** uses every `.gml` file in a directory, with
+  the fence around all of them together. One way to use it: keep all
+  the EEZ files you might need in one directory, and link the ones in
+  force into another. To change the fence, add or remove a link, then
+  switch the geofence logger `off` and back `on`.
+* **`allowed_prefixes`** on the writer is a safety check. Only commands
+  that start with one of these prefixes are passed to the logger
+  manager. In this example, the logger can change the mode and nothing
+  else.
 
-The same pattern works on any field, not just position. The
-`QCFilterTransform` emits a message when a field leaves a stated
-range — here, declaring the ship underway once it moves faster than
-half a knot:
+The writer also accepts several commands in one record, separated by
+semicolons, and a `sleep N` command that waits N seconds between
+them.
+
+Before using the `GeofenceTransform`, install the packages it needs.
+They aren't installed by default. With the virtual environment active,
+from the OpenRVDAS directory:
+
+```
+pip install -e '.[geofence]'
+```
+
+Note that the configuration names a `module:` for both components.
+`listen` doesn't load them automatically.
+
+**The same approach works with any field, not just position.** The
+`QCFilterTransform` outputs a command when a field goes outside a
+range you set. This one declares the ship underway once its speed is
+over half a knot:
 
 ```
 transforms:
@@ -382,13 +436,26 @@ transforms:
       message: set_active_mode underway
 ```
 
-`bounds` takes comma-separated `field:low:high` triplets describing
-the *normal* range; the message is emitted when a value falls outside
-it. The transform fires in one direction only, so switching back when
-the ship slows again takes a second logger (or a `ComposedWriter`)
-with the complementary bounds. And since the condition is just a
-transform, a
+`bounds` gives the *normal* range for a field, as
+`field:lowest:highest`. You can list several fields, separated by
+commas. When a value goes outside its range, the transform outputs the
+message.
+
+Two things to be aware of:
+
+* It only works in one direction. To switch back when the ship slows
+  down, add a second logger with the opposite range.
+* Unlike the `GeofenceTransform`, which speaks only when the ship
+  crosses a boundary, the `QCFilterTransform` outputs its message for
+  *every* record that is out of range. Here, that means the logger
+  manager will be told to set `underway` mode with every GPS record
+  for as long as the ship is moving. Each time, every logger is put
+  back into its configuration for that mode. So if a watchstander
+  switches one logger off by hand, it won't stay off. Use this
+  approach only where that's acceptable.
+
+For more complicated rules, use a
 [`ComputedFieldsTransform`]({{ "/guide/computed-values/#computed-fields" | relative_url }})
-rule that evaluates to a command string — or to `None` — can express
-whatever logic the ship's operating rules require, with the
-`LoggerManagerWriter` unchanged downstream.
+whose equation produces the command when its condition is met, and
+nothing otherwise. The `LoggerManagerWriter` works the same way
+whichever transform feeds it.
