@@ -47,8 +47,10 @@ project, alongside Sealog, the shipboard event logger it works with, and OpenVDM
 
 ## Requirements and License
 
-The complete OpenRVDAS system runs on Linux (Ubuntu, Debian and Raspbian; CentOS, RHEL,
-Rocky and AlmaLinux) and macOS, and needs Python 3.11 or newer. Most modules, and the `listen` script that assembles and runs them into loggers, also run under Windows via Cygwin, however the logger manager and other servers have not been adapted and tested under that environment.
+The complete OpenRVDAS system runs on Linux (Ubuntu 22.04 and later, Debian 12 including
+Raspberry Pi OS, and RHEL, Rocky and AlmaLinux 9 and later) and macOS, and needs Python 3.11 or
+newer, which the installer provides where the system's is older. Ubuntu, in its latest release, is
+the preferred distribution. Most modules, and the `listen` script that assembles and runs them into loggers, also run under Windows via Cygwin, however the logger manager and other servers have not been adapted and tested under that environment.
 
 While stripped-down installations of OpenRVDAS can run on systems as minimal as a Raspberry Pi Zero, for the full system we recommend a machine with at least 4GB of RAM. An installation serving both OpenRVDAS and accompanying InfluxDB (database) and Grafana (display) servers should have at least 2 cores and 8 GB of RAM.
 

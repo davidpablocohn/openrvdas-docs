@@ -7,9 +7,12 @@ toc_label: "Contents"
 toc_icon: "list"
 toc_sticky: true  # Makes the TOC stick on scroll
 ---
-At the time of this writing OpenRVDAS has been built and tested against MacOS X, CentOS 7-9, Rocky 8-9, Ubuntu 18-23
-and Raspbian operating systems. It may be possible to build against other Linux-based operating systems, and guides
-will be added here as they are verified and documented.
+As of v2.7.0, OpenRVDAS officially supports Ubuntu 22.04 through 25.10 (and Linux Mint 22), Debian 12 including
+Raspberry Pi OS "bookworm", RHEL/Rocky/AlmaLinux 9 and 10, and MacOS; the installer refuses older releases before
+installing anything. The preferred distribution, all other things being equal, is the latest release of Ubuntu. It may
+be possible to build against other Linux-based operating systems, and guides will be added here as they are verified
+and documented. The current requirements are in the Guide's
+[Installation]({{ "/guide/installation/" | relative_url }}) section.
 
 You will need to be able to run the ``sudo`` command. To begin installation, grab the script from Github and run from
 the command line using the following commands:

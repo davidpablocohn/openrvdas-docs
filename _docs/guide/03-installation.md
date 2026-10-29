@@ -12,14 +12,26 @@ what you want), the minimal alternative (for when you truly can't use
 the installer), the optional InfluxDB/Grafana stack, securing the
 result, and upgrading later.
 
-The installer recognizes macOS, CentOS/RHEL/Rocky/Alma 7–10, Ubuntu
-18–25, Debian and Raspbian. With the Python requirement below, the
-practical choices for a new installation are Ubuntu 22.04 or newer,
-Debian 12, RHEL/Rocky/Alma 9 or newer, and macOS. Other Linux
-distributions are likely workable but uncharted. For a real deployment, give it a
-dedicated machine or VM; for trying it out, a personal machine is fine
-— you'll just answer "no" to the start-on-boot questions and start
-things by hand.
+OpenRVDAS v2.7.0 officially supports:
+
+* **Ubuntu 22.04 through 25.10**, and Linux Mint 22;
+* **Debian 12**, including Raspberry Pi OS "bookworm";
+* **RHEL, Rocky Linux and AlmaLinux 9 and 10**;
+* **macOS**.
+
+All other things being equal, the preferred distribution is the
+latest release of Ubuntu.
+
+Ubuntu 20.04 and earlier, Debian 11 and earlier (including Raspberry
+Pi OS "bullseye"), and CentOS/RHEL/Rocky/Alma 8 and earlier are no
+longer supported: none of them packages the Python that v2.7.0 needs
+(below), and RHEL 8's SQLite is too old for the Django that comes
+with it. New in v2.7.0, the installer checks the operating system
+first and refuses an unsupported one by name, before installing
+anything. Other Linux distributions are uncharted. For a real
+deployment, give OpenRVDAS a dedicated machine or VM; for trying it
+out, a personal machine is fine — you'll just answer "no" to the
+start-on-boot questions and start things by hand.
 
 It doesn't need much of a machine. A VM with **2 CPUs, 8 GB of
 memory and a 64 GB disk** has run a full installation, loggers,
@@ -32,25 +44,15 @@ Put the data directory on a partition you can watch, and give the
 database a retention policy (see
 [InfluxDB]({{ "/guide/storage-displays/#influxdb" | relative_url }})).
 
-It needs **Python 3.11 or newer**. The installer uses the system
-`python3` on Linux and Homebrew's Python 3.12 on macOS, so on Ubuntu
-24.04, Debian 12, RHEL/Rocky/Alma 10 and macOS nothing more is needed.
-Where the system Python is older, install a newer one before running
-the installer: on Ubuntu 22.04, which ships 3.10,
-
-```
-sudo add-apt-repository ppa:deadsnakes/ppa
-sudo apt install python3.11 python3.11-venv python3.11-dev
-```
-
-and on RHEL, Rocky and Alma 9, which ship 3.9,
-
-```
-sudo dnf install python3.11 python3.11-devel
-```
-
-Ubuntu 20.04 and CentOS/RHEL/Rocky 8 ship Python 3.8 or older; a
-newer release of the operating system is the better path there.
+It needs **Python 3.11 or newer**, and the installer takes care of
+that itself. It uses the system `python3` where that is new enough
+(Ubuntu 24.04 and later, Debian 12, RHEL/Rocky/Alma 10); where it
+isn't, it installs Python 3.11 beside the system one, from the
+deadsnakes PPA on Ubuntu 22.04 and from AppStream on RHEL/Rocky/Alma
+9; on macOS it uses Homebrew's Python 3.12. The same interpreter
+serves the main virtual environment and, if you choose that console,
+the React console's. Only a [minimal installation](#minimal-installation)
+leaves finding a Python 3.11 to you.
 
 # Standard Installation
 
@@ -216,9 +218,12 @@ pip install pyyaml pyserial websockets parse
 pip install -e . --no-deps
 ```
 
-The `pip install -e .` step registers `listen`, `simulate_data` and
-the other OpenRVDAS commands in the virtual environment, so the
-command names work here just as on a standard installation.
+The `python3` here must be 3.11 or newer; `pip install -e .` checks
+and refuses an older one. (This is the one path on which the installer
+isn't there to find or install a suitable Python for you.) That step
+registers `listen`, `simulate_data` and the other OpenRVDAS commands in
+the virtual environment, so the command names work here just as on a
+standard installation.
 
 Those five packages cover the core components. For the wider set —
 database writers, the Modbus reader — run `pip install -e .` *without*
@@ -247,10 +252,8 @@ If in doubt, take the default. The React console has requirements the
 Django console doesn't: **Node.js 22.13.0 or newer** to build its
 front end (the installer installs or upgrades Node itself), and the
 `web_backend`/`web_frontend` git submodules, which the installer
-fetches. Its back end runs in a virtual environment of its own; it
-needs the same Python 3.11 as the rest of the system, and if you want
-it on a different interpreter from the main one, point the installer
-at it with `BACKEND_PYTHON=python3.11 bash install_openrvdas.sh`.
+fetches. Its back end runs in a virtual environment of its own, built
+with the same Python the installer chose for the main one.
 
 Only one console runs at a time — both define the same nginx service —
 but from v2.7.0 the installer writes the configuration for both on
