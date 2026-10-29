@@ -125,7 +125,7 @@ writers:
 which keeps the database browsable. The sample cruise's `+influx`
 modes do exactly this.
 
-Two working tips. First, **generate Flux queries instead of writing
+Three working tips. First, **generate Flux queries instead of writing
 them**: build the query in InfluxDB's Data Explorer (pick fields, set
 aggregation and range, Submit), then open its Script Editor and paste
 the resulting Flux into a Grafana panel. Second, **InfluxDB tasks can
@@ -133,7 +133,13 @@ compute**: a task is a Flux query run on a schedule, writing its
 results to another bucket. Tasks are the mechanism behind both the
 [feed-status monitoring]({{ "/guide/troubleshooting/#monitoring-feed-health" | relative_url }})
 dashboard and the
-[shoreside replication](#shoreside-replication) below.
+[shoreside replication](#shoreside-replication) below. Third, **give
+the bucket a retention policy**. By default InfluxDB keeps everything
+forever, and on a ship that means the database, not the raw logfiles,
+is what eventually fills the disk. A bucket's settings (in the web
+console, under Load Data, then Buckets) set how long it keeps data;
+the raw logfiles remain the permanent record, so the database only
+needs to hold as much history as the displays use.
 
 # Displays
 

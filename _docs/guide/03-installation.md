@@ -19,6 +19,17 @@ dedicated machine or VM; for trying it out, a personal machine is fine
 — you'll just answer "no" to the start-on-boot questions and start
 things by hand.
 
+It doesn't need much of a machine. A VM with **2 CPUs, 8 GB of
+memory and a 64 GB disk** has run a full installation, loggers,
+console, InfluxDB and Grafana together, on a research vessel. Loggers
+alone, with Grafana, have run on a Raspberry Pi 4 with 2 GB. The
+component that grows is the disk: raw logfiles are plain text and
+stay small, but a database that is never pruned, and the stderr of a
+logger that crashes for weeks, will fill any partition eventually.
+Put the data directory on a partition you can watch, and give the
+database a retention policy (see
+[InfluxDB]({{ "/guide/storage-displays/#influxdb" | relative_url }})).
+
 It needs **Python 3.8 or newer**. The installer uses the system
 `python3` on Linux and Homebrew's Python 3.12 on macOS, and builds a
 3.8 of its own on CentOS/RHEL 7 and 8, whose system Python is older.
