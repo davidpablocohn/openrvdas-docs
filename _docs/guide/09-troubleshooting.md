@@ -224,7 +224,9 @@ validate_config local/uuw/mvp/MVP2610_cruise.yaml
 ```
 
 This finds misspelled variables, configs that aren't defined, modes
-that leave out a logger, and equations that won't compile. It takes a
+that leave out a logger, and equations that won't compile. If it
+passes, the definition will load — unless it includes a file that
+isn't on this machine, which the validator can't check. It takes a
 second and saves a lot of guessing.
 
 **2. Run the failing logger's configuration by itself.** Set the

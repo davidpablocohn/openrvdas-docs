@@ -229,9 +229,9 @@ validate_config local/uuw/mvp/MVP2610_cruise.yaml
 It checks, among other things, that every config a logger declares is
 defined, that every mode covers every logger, and that no mode names
 an unknown config — the errors that otherwise surface as a cryptic
-failure at load time. (One warning to expect:
-`Unknown transform class` for components of your own, which the
-validator can't know about.) A pre-commit hook in the OpenRVDAS
+failure at load time. If it passes, the definition will load, with one
+exception: it can't check a definition whose included files aren't
+present on the machine where it runs. A pre-commit hook in the OpenRVDAS
 repository (`scripts/validate_yaml_precommit.sh`) will run it on
 every YAML file you commit, which is worth wiring into your
 institution's repository.
