@@ -12,9 +12,11 @@ what you want), the minimal alternative (for when you truly can't use
 the installer), the optional InfluxDB/Grafana stack, securing the
 result, and upgrading later.
 
-OpenRVDAS has been built and tested against macOS, CentOS/RHEL 7–9,
-Rocky 8–9, Ubuntu 18–23 and Raspbian. Other Linux distributions are
-likely workable but uncharted. For a real deployment, give it a
+The installer recognizes macOS, CentOS/RHEL/Rocky/Alma 7–10, Ubuntu
+18–25, Debian and Raspbian. With the Python requirement below, the
+practical choices for a new installation are Ubuntu 22.04 or newer,
+Debian 12, RHEL/Rocky/Alma 9 or newer, and macOS. Other Linux
+distributions are likely workable but uncharted. For a real deployment, give it a
 dedicated machine or VM; for trying it out, a personal machine is fine
 — you'll just answer "no" to the start-on-boot questions and start
 things by hand.
@@ -30,14 +32,25 @@ Put the data directory on a partition you can watch, and give the
 database a retention policy (see
 [InfluxDB]({{ "/guide/storage-displays/#influxdb" | relative_url }})).
 
-It needs **Python 3.8 or newer**. The installer uses the system
-`python3` on Linux and Homebrew's Python 3.12 on macOS, and builds a
-3.8 of its own on CentOS/RHEL 7 and 8, whose system Python is older.
-(Ubuntu 18.04's Python 3.6 is too old, so that release needs a newer
-Python installed first.) Two parts need more: the `HTTPReader` and
-`ModBusSerialReader` components need Python 3.10, and the React
-console's back end needs 3.11; see the
-[console sidebar](#sidebar-choosing-and-switching-between-the-django-and-react-consoles).
+It needs **Python 3.11 or newer**. The installer uses the system
+`python3` on Linux and Homebrew's Python 3.12 on macOS, so on Ubuntu
+24.04, Debian 12, RHEL/Rocky/Alma 10 and macOS nothing more is needed.
+Where the system Python is older, install a newer one before running
+the installer: on Ubuntu 22.04, which ships 3.10,
+
+```
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt install python3.11 python3.11-venv python3.11-dev
+```
+
+and on RHEL, Rocky and Alma 9, which ship 3.9,
+
+```
+sudo dnf install python3.11 python3.11-devel
+```
+
+Ubuntu 20.04 and CentOS/RHEL/Rocky 8 ship Python 3.8 or older; a
+newer release of the operating system is the better path there.
 
 # Standard Installation
 
@@ -231,13 +244,13 @@ OpenRVDAS has two web consoles, and the installer asks which to set up:
 | `none` | | No web console: a headless system controlled from the command line with `lmcmd`. |
 
 If in doubt, take the default. The React console has requirements the
-Django console doesn't: **Python 3.11 or newer** for its back end (on
-systems with an older default Python, install a newer one and point
-the installer at it with `BACKEND_PYTHON=python3.11 bash
-install_openrvdas.sh`), **Node.js 22.13.0 or newer** to build its
+Django console doesn't: **Node.js 22.13.0 or newer** to build its
 front end (the installer installs or upgrades Node itself), and the
 `web_backend`/`web_frontend` git submodules, which the installer
-fetches.
+fetches. Its back end runs in a virtual environment of its own; it
+needs the same Python 3.11 as the rest of the system, and if you want
+it on a different interpreter from the main one, point the installer
+at it with `BACKEND_PYTHON=python3.11 bash install_openrvdas.sh`.
 
 Only one console runs at a time — both define the same nginx service —
 but from v2.7.0 the installer writes the configuration for both on
