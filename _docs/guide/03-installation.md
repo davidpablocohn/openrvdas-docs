@@ -19,6 +19,15 @@ dedicated machine or VM; for trying it out, a personal machine is fine
 — you'll just answer "no" to the start-on-boot questions and start
 things by hand.
 
+It needs **Python 3.8 or newer**. The installer uses the system
+`python3` on Linux and Homebrew's Python 3.12 on macOS, and builds a
+3.8 of its own on CentOS/RHEL 7 and 8, whose system Python is older.
+(Ubuntu 18.04's Python 3.6 is too old, so that release needs a newer
+Python installed first.) Two parts need more: the `HTTPReader` and
+`ModBusSerialReader` components need Python 3.10, and the React
+console's back end needs 3.11; see the
+[console sidebar](#sidebar-choosing-and-switching-between-the-django-and-react-consoles).
+
 # Standard Installation
 
 > **Do you actually need a minimal installation instead?** Almost
