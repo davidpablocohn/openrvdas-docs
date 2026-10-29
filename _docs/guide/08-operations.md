@@ -44,7 +44,9 @@ default from v2.7.0. The journal records:
 * each cruise definition that is loaded;
 * each change of cruise mode;
 * each logger that is started, stopped, switched to a different
-  configuration, crashes, recovers, or is given up on.
+  configuration, crashes, recovers, or is given up on;
+* each time a file the loaded definition was built from changes on
+  disk, such as a calibration file being edited.
 
 Each entry gives the time, the logger and configuration involved, and
 the version of the OpenRVDAS code the logger was running. If someone
@@ -87,8 +89,9 @@ as it would read instrument data. The
 
 To move the journal or turn it off, use the logger manager's
 `--state_journal` argument (`--state_journal none` turns it off). The
-full list of journal events is on the legacy
-[Recording What Ran]({{ "/cruise_records/" | relative_url }}) page.
+full list of journal events, with the fields each one carries, is on
+the legacy [Recording What Ran]({{ "/cruise_records/" | relative_url }})
+page.
 
 ## Taking a snapshot
 
@@ -110,6 +113,10 @@ and the time. A few variations:
 * Name a cruise definition file to snapshot that file instead, whether
   or not it's loaded. This is useful for recording what you're about
   to sail with.
+* If the journal isn't in its usual place, say where with
+  `--journal`. If there is no journal at all, `--loaded-time` tells
+  `config_snapshot` when the definition was loaded, so it can still
+  flag files changed since then.
 
 A snapshot directory contains:
 
@@ -133,6 +140,12 @@ What each part is for:
   include, template and variable filled in. It's exactly what the
   logger manager saw, and usually the quickest way to answer "what was
   this logger actually doing?"
+* **`logger_manager_journal.jsonl`** is the journal since the logger
+  manager last started: what was loaded, which mode was set, and what
+  each logger has been doing.
+* **`patches/`** holds any uncommitted changes to the code or to your
+  configuration files, so that even an unofficial fix made at sea is
+  on record.
 * **`MANIFEST.yaml`** records the versions of everything involved:
   OpenRVDAS, your
   [institution's repository]({{ "/guide/your-vessel/#your-institutions-repository-and-local" | relative_url }}),
@@ -213,8 +226,8 @@ these next to the cruise's data:
    them all.
 4. **The loggers' stderr files**, from `/var/log/openrvdas/loggers/`.
    The journal tells you *that* a logger crashed at 0300; its stderr
-   file usually tells you *why*. Older stderr files are eventually
-   deleted, so copy them before that happens.
+   file usually tells you *why*. Only a limited number of old stderr
+   files are kept, so copy them before they're gone.
 5. **A tag in your institution's repository**, such as
    `git tag MVP2610-end`, so the configuration can be checked out
    later exactly as it was.
@@ -280,6 +293,7 @@ lmcmd get_modes
 lmcmd set_active_mode underway
 lmcmd get_logger_configs gyr1
 lmcmd set_active_logger_config gyr1 gyr1-off
+lmcmd reload_configuration
 ```
 
 Run it with no arguments for an interactive `command?` prompt, where
@@ -287,18 +301,23 @@ Run it with no arguments for an interactive `command?` prompt, where
 
 * on an installation with no web console;
 * for a cron job that changes the mode at a set time;
-* when the console is down and you still need to control the loggers.
+* when the console is down and you still need to control the loggers;
+* for reloading the definition from a script after changing a
+  calibration file, so the loggers pick up the new values.
 
-`lmcmd` works with the Django console's database. With the React
-console, use its API instead.
+`lmcmd` works with the Django console's database, and with the SQLite
+one (`--database sqlite`). With the React console, use its API
+instead.
 
 **The REST API** lets other programs control the logger manager.
 The Django console provides endpoints such as
 `api/select-cruise-mode/`, `api/load-configuration-file/` and
 `api/edit-logger-config/`. You can browse and try them all at
-`/api/schema/swagger-ui/`. They require the same login as the console.
-The React console has its own API, documented at `/docs` and `/redoc`
-if you chose to make those pages available when you installed it.
+`/api/schema/swagger-ui/`. Requests need an authentication token,
+which `api/obtain-auth-token/` issues in exchange for a console
+username and password. The React console has its own API, documented
+at `/docs` and `/redoc` if you chose to make those pages available
+when you installed it.
 
 To *watch* the system from a program, subscribe to the cached data
 server. The logger manager publishes the state of the cruise and of
@@ -317,7 +336,10 @@ logger_manager --config local/uuw/mvp/MVP2610_cruise.yaml --mode port
 
 This loads the definition and sets the mode. Run this way, the logger
 manager keeps its state in memory and gives you its own `command?`
-prompt. A few of its other arguments are worth knowing:
+prompt. (The installed service runs it differently: with
+`--database django` or `--database fastapi` so that the console can
+talk to it, and `--no-console`.) A few of its other arguments are
+worth knowing:
 
 * `--state_journal` sets where the journal is written;
 * `--snapshot_dir` turns on automatic snapshots;
@@ -423,6 +445,27 @@ Here's what happens:
 Boundary files are in GML format. EEZ boundaries can be downloaded
 from [marineregions.org](https://marineregions.org/eezsearch.php).
 
+**Where to put the geofence logger.** It goes in the cruise
+definition like any other logger, with a configuration for each mode.
+Two things follow from how the transform works:
+
+* The transform treats the first position it sees as a crossing. So
+  as soon as the logger starts, it will set the mode to match where
+  the ship is. That's useful after a restart, but it also means the
+  logger should be `off` in any mode it shouldn't override. If it ran
+  in `port` mode, for example, it would move the ship out of `port`
+  mode the moment it started.
+* Give it the same configuration in every mode where it runs. A mode
+  change restarts only the loggers whose configuration changes, and a
+  restarted geofence logger will issue a fresh mode command at once.
+
+**Before relying on it, test it.** Make a copy of the logger
+configuration with the `LoggerManagerWriter` replaced by a
+`TextFileWriter`, and run it with `listen` while the system is in a
+mode that parses data. The commands the geofence would have sent will
+be printed instead of acted on. To see a crossing, a test boundary
+drawn around the ship's current position works well.
+
 Some options worth knowing:
 
 * **`distance_from_boundary_in_degrees`** moves the fence inside the
@@ -446,13 +489,20 @@ The writer also accepts several commands in one record, separated by
 semicolons, and a `sleep N` command that waits N seconds between
 them.
 
-Before using the `GeofenceTransform`, install the packages it needs.
-They aren't installed by default. With the virtual environment active,
-from the OpenRVDAS directory:
+Two requirements:
 
-```
-pip install -e '.[geofence]'
-```
+* The `GeofenceTransform` needs packages that aren't installed by
+  default. With the virtual environment active, from the OpenRVDAS
+  directory:
+
+  ```
+  pip install -e '.[geofence]'
+  ```
+
+* The `LoggerManagerWriter` reaches the logger manager through its
+  database, and as of v2.7.0 it can use the Django, SQLite or
+  in-memory one, but not the React console's. On a system running the
+  React console, the writer can't deliver its commands.
 
 Note that the configuration names a `module:` for the
 `GeofenceTransform` and the `LoggerManagerWriter`. `listen` doesn't
