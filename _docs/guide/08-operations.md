@@ -148,24 +148,35 @@ before a snapshot leaves the ship.
 
 ## Automatic snapshots
 
-Given a `--snapshot_dir`, the logger manager takes snapshots by
-itself: each time a cruise definition is loaded or reloaded, and each
-time any file the definition was built from changes on disk (checked
-with one `stat()` per file, so it costs almost nothing). Each is
-journaled as `snapshot_taken`, with its reason and path, or
-`snapshot_failed` with the error. Snapshots run in the background and
-never delay the logger manager.
+You don't have to remember to take snapshots. The logger manager can
+take them for you, and it will do so at two moments:
 
-The installer asks whether to turn this on ("Take automatic
-snapshots of the cruise definition?") and where to put them; about
-200 KB each, they're worth having on any real installation. On an
-installed system, the setting lives on the logger manager's command
-line in its supervisor file (`--snapshot_dir /var/log/openrvdas/snapshots`),
-and the directory must exist and be writable by the OpenRVDAS user.
-After loading a definition, you will see a new directory there and a
-`snapshot_taken` line at the end of the day's journal; a
-`snapshot_failed` line's `error` field says why, and the usual cause
-is a directory the OpenRVDAS user can't write to.
+* whenever a cruise definition is loaded or reloaded;
+* whenever one of the files the definition was built from changes,
+  such as a calibration file or a logger template.
+
+Checking for changed files costs almost nothing, and snapshots are
+written in the background, so turning this on won't slow the system
+down. Each one is about 200 KB for the sample NBP cruise. They're
+worth having on any real installation.
+
+The installer asks whether you want automatic snapshots, and where to
+keep them. If you said no and change your mind, rerun the installer
+and say yes. The setting is the logger manager's `--snapshot_dir`
+argument, for example `--snapshot_dir /var/log/openrvdas/snapshots`.
+
+To check that it's working, load a cruise definition. A new snapshot
+directory should appear, and the journal should record it:
+
+```
+ls -t /var/log/openrvdas/snapshots | head -1
+grep snapshot_ /var/log/openrvdas/logger_manager_journal-$(date -u +%F) | tail -1
+```
+
+The journal line will say `snapshot_taken` if all went well. If it
+says `snapshot_failed`, its `error` field gives the reason. The usual
+cause is that the OpenRVDAS user isn't allowed to write to the
+snapshot directory.
 
 ## Archiving a cruise
 
