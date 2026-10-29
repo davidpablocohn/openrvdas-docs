@@ -200,7 +200,10 @@ To check that it's working, load a cruise definition. A new snapshot
 directory should appear, and the journal should record it:
 
 ```
+# Show the newest snapshot directory
 ls -t /var/log/openrvdas/snapshots | head -1
+
+# Show the most recent snapshot event in today's journal
 grep snapshot_ /var/log/openrvdas/logger_manager_journal-$(date -u +%F) | tail -1
 ```
 
@@ -238,9 +241,16 @@ CRUISE=MVP2610
 ARCHIVE=/data/$CRUISE/openrvdas_records
 mkdir -p $ARCHIVE/snapshots $ARCHIVE/journal $ARCHIVE/logger_stderr
 
+# 1. A final snapshot of what is running
 config_snapshot --output $ARCHIVE --tar
+
+# 2. All the automatic snapshots from the cruise
 cp -a /var/log/openrvdas/snapshots/${CRUISE}_* $ARCHIVE/snapshots/
+
+# 3. The whole journal
 cp -a /var/log/openrvdas/logger_manager_journal-* $ARCHIVE/journal/
+
+# 4. The loggers' stderr files
 cp -a /var/log/openrvdas/loggers/. $ARCHIVE/logger_stderr/
 ```
 
@@ -287,11 +297,18 @@ The python script **`lmcmd`** sends commands to the running logger manager. It t
 same commands the console uses:
 
 ```
+# Load a cruise definition
 lmcmd load_configuration local/uuw/mvp/MVP2610_cruise.yaml
+
+# List the modes it defines, then switch to one
 lmcmd get_modes
 lmcmd set_active_mode underway
+
+# List one logger's configurations, then switch it to one
 lmcmd get_logger_configs gyr1
 lmcmd set_active_logger_config gyr1 gyr1-off
+
+# Reload the definition after its files have changed
 lmcmd reload_configuration
 ```
 

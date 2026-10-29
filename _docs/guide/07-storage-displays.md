@@ -52,7 +52,10 @@ doesn't want a websocket — the server also answers plain HTTP GET on
 the same port:
 
 ```
+# List every field the server currently has
 curl http://localhost:8766/fields
+
+# Get the latest value and timestamp of particular fields
 curl http://localhost:8766/latest/S330CourseTrue,S330SpeedKt
 ```
 

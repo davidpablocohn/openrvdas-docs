@@ -72,12 +72,13 @@ isn't running, nothing else matters until it is.
 displays are blank, ask the cached data server what it actually has:
 
 ```
+# List every field the server currently has
 curl http://localhost:8766/fields
+
+# Watch new values of particular fields as they arrive
+# (if nothing appears, they aren't arriving)
 listen --cached_data SeapLatitude,Gyr1HeadingTrue
 ```
-
-The first lists every field it knows about. The second shows new
-values as they arrive, or nothing if they aren't arriving.
 
 **A snapshot.** When you suspect that what's running isn't what's in
 the files, take a snapshot. Its manifest says, for each logger,
