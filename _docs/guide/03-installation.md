@@ -72,7 +72,7 @@ accepts. What it asks, in rough order:
 * **SSL?** Default no. Answering yes leads to providing or creating
   certificate files — see
   [Securing the Installation](#securing-the-installation).
-* **Console port.** Port 80 by default (442 with SSL).
+* **Console port.** Port 80 by default (443 with SSL).
 * **Firewall?** On CentOS/RHEL/Rocky the installer can configure
   `firewalld`, on Ubuntu `ufw`; both default to no. If you say yes,
   **accept the default UDP ports (6221–6226)** when prompted — those

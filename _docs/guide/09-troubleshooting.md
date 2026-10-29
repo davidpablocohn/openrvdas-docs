@@ -148,16 +148,85 @@ other definition problems before you try to load it.
 
 **A cruise definition has a mode named `False`**, or `off` mode is
 missing. In YAML, an unquoted `off` means false. Mode names, and
-config names like `gyr1-off`, must be quoted when they're exactly
-`off`, `on`, `yes` or `no`: `'off':`. See the
+config names (like `gyr1-off`), must be quoted if they exactly match a YAML keyword, such as
+`off`, `on`, `yes` or `no`. Use the quoted form, `'off':`, instead. See the
 [YAML primer]({{ "/guide/reference/#yaml-syntax" | relative_url }}).
 
 **Every logger turns red at once, and the status times at the top of
 the console stop updating.** The console has lost contact with the
-cached data server, not the loggers. The loggers are almost certainly
+cached data server, not the loggers. The loggers are probably
 still running and still writing to disk. Check `supervisorctl status
 cached_data_server`, and restart it if it isn't running. Then reload
 the console page.
+
+**The console loads but never comes alive, and only on some
+networks.** The console works from the OpenRVDAS machine, or over the
+ship's wired network. But from a laptop on a particular wifi network,
+the page appears and nothing on it updates: no logger states, no
+status times. The cause is the network, not OpenRVDAS. Some wifi
+networks, often guest or institutional ones, pass web traffic through
+an HTTP proxy, usually as part of the router's firewall or content
+filter. The console page itself is ordinary web traffic, so it gets
+through. Its live updates come from the cached data server over a
+websocket, which starts as a web request with an `Upgrade` header
+asking to switch protocols. Some proxies strip that header. The
+request then reaches the cached data server as a plain web request,
+and the server refuses it. Opening port 8766 won't help: the console
+reaches the cached data server through the console's own port, at the
+path `/cds-ws`.
+
+You can confirm it in two places. In the browser's developer console,
+`Trying to connect to websocket at ...` repeats every three seconds,
+and if the proxy identifies itself, a warning starting `WebSocket
+connection appears to be blocked by an HTTP proxy` follows. On the
+server, `/var/log/openrvdas/cached_data_server.stderr` will have a
+matching warning:
+
+```
+WARNING cached_data_server.py:1050 WebSocket upgrade on port 8766 was blocked
+by an HTTP proxy (Via: 1.1 squid) which stripped the Upgrade header. ...
+```
+
+Both warnings depend on the proxy announcing itself with a `Via`
+header, which most proxies do but not all. To test the path directly,
+ask for a websocket by hand from the affected laptop:
+
+```
+curl -i --max-time 2 -H "Connection: Upgrade" -H "Upgrade: websocket" \
+     -H "Sec-WebSocket-Version: 13" \
+     -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
+     http://openrvdas/cds-ws
+```
+
+A reply of `101 Switching Protocols` means websockets get through.
+A reply of `400 Bad Request`, with `Expected a WebSocket upgrade` in
+the body, means something stripped the header. If the same command,
+run on the OpenRVDAS machine against `http://localhost/cds-ws`, also
+gets a 400, the problem is the machine's nginx configuration rather
+than the network.
+
+The fixes, best first:
+
+* **Turn on SSL.** A proxy can't read or change HTTPS traffic, so
+  secure websockets pass through it untouched. This is the lasting
+  fix; see
+  [Securing the Installation]({{ "/guide/installation/#securing-the-installation" | relative_url }}).
+* **Change networks.** Use the ship's wired network, or a wifi network
+  that doesn't go through the proxy.
+* **Fix the proxy**, if it's yours to configure: allow websocket
+  upgrades, or exempt the OpenRVDAS machine.
+* **Tunnel through SSH.** SSH traffic is encrypted, so the proxy can't
+  touch it either. Forward a local port to the console, then browse to
+  `http://localhost:8080`:
+
+  ```
+  ssh -L 8080:localhost:80 rvdas@openrvdas
+  ```
+
+The React console's live updates also arrive over websockets, so a
+proxy like this breaks it the same way, and the same fixes apply. The
+diagnostic warnings above are the Django console's and the cached data
+server's; the React console doesn't print them.
 
 **Loggers are green but all the displays are blank.** Usually the
 system is in a mode that doesn't parse data, so nothing reaches the
