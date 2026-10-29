@@ -346,20 +346,43 @@ Such a logger has three parts:
 * a **`LoggerManagerWriter`**, which passes the command to the logger
   manager.
 
-For geofencing, the transform is a `GeofenceTransform`:
+For geofencing, the transform is a `GeofenceTransform`. This example
+uses the sample cruise's Seapath GPS (`seap`):
 
 ```
 readers:
-  class: UDPReader
+  class: CachedDataReader
   kwargs:
-    port: 6224
+    data_server: localhost:8766
+    subscription:
+      fields:
+        SeapLatitude: {seconds: 0}
+        SeapNorS: {seconds: 0}
+        SeapLongitude: {seconds: 0}
+        SeapEorW: {seconds: 0}
 
 transforms:
+  # The GPS gives unsigned degrees plus a hemisphere letter, but the
+  # geofence needs signed degrees (negative for south and west).
+  - class: ComputedFieldsTransform
+    kwargs:
+      update_on_fields: [SeapLatitude]
+      max_field_age: {SeapNorS: 10, SeapLongitude: 10, SeapEorW: 10}
+      delete_input_fields: true
+      delete_other_fields: true
+      fields:
+        SignedLat:
+          equation: "lat * (-1 if ns == 'S' else 1)"
+          inputs: {lat: SeapLatitude, ns: SeapNorS}
+        SignedLon:
+          equation: "lon * (-1 if ew == 'W' else 1)"
+          inputs: {lon: SeapLongitude, ew: SeapEorW}
+
   - class: GeofenceTransform
     module: logger.transforms.geofence_transform
     kwargs:
-      latitude_field_name: S330Latitude
-      longitude_field_name: S330Longitude
+      latitude_field_name: SignedLat
+      longitude_field_name: SignedLon
       boundary_file_name: local/uuw/mvp/boundaries/argentina_eez.gml
       entering_boundary_message: set_active_mode eez
       leaving_boundary_message: set_active_mode underway
@@ -376,13 +399,24 @@ writers:
 
 Here's what happens:
 
-1. The `GeofenceTransform` reads the ship's latitude and longitude
-   from each record and compares the position with the boundary.
-2. When the ship crosses into the boundary, it outputs
+1. The `CachedDataReader` gets the ship's position from the cached
+   data server. It has to read from there, not from the UDP
+   broadcast: the broadcast carries the raw records, and the named,
+   parsed fields only exist once the `parse_data` logger has parsed
+   them.
+2. The `ComputedFieldsTransform` turns the position into signed
+   degrees. The NMEA device definitions give latitude and longitude
+   as positive numbers, with the hemisphere in a separate field
+   (`SeapNorS` is `N` or `S`). The geofence needs south and west as
+   negative numbers. Without this step, the ship's position would be
+   wrong anywhere south of the equator or west of Greenwich,
+   including everywhere in the Argentine EEZ.
+3. The `GeofenceTransform` compares each position with the boundary.
+   When the ship crosses into the boundary, it outputs
    `set_active_mode eez`. When the ship crosses out, it outputs
    `set_active_mode underway`. The rest of the time it outputs
    nothing.
-3. The `LoggerManagerWriter` passes the command to the logger manager,
+4. The `LoggerManagerWriter` passes the command to the logger manager,
    which will change the mode. The change is recorded in the journal
    like any other.
 
@@ -420,8 +454,9 @@ from the OpenRVDAS directory:
 pip install -e '.[geofence]'
 ```
 
-Note that the configuration names a `module:` for both components.
-`listen` doesn't load them automatically.
+Note that the configuration names a `module:` for the
+`GeofenceTransform` and the `LoggerManagerWriter`. `listen` doesn't
+load those two automatically.
 
 **The same approach works with any field, not just position.** The
 `QCFilterTransform` outputs a command when a field goes outside a
